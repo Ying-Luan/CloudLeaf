@@ -6,6 +6,7 @@
   "author": "Plasmo Corp. <foss@plasmo.com>",
   "scripts": {
     "dev": "npm run postinstall && plasmo dev",
+    "dev:edge": "npm run postinstall && plasmo dev --target=edge-mv3",
     "build": "npm run postinstall && plasmo build",
     "package": "npm run postinstall && plasmo package",
     "postinstall": "node scripts/patch.js"
@@ -28,6 +29,9 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "permissions": [
+      "bookmarks"
+    ],
     "host_permissions": [
       "https://*/*"
     ]
