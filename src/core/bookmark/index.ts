@@ -1,4 +1,4 @@
-import { type BookMark, type SyncPayload } from "../../types"
+import { type BookMark, type SyncPayload } from "~/src/types"
 
 
 function processBookmarkNode(node: chrome.bookmarks.BookmarkTreeNode): BookMark | null {

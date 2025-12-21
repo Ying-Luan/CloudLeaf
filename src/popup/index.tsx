@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import packageInfo from "../../package.json"
+import packageInfo from "package.json"
 import "./index.css"
 import { getBookmarks } from "~src/core/bookmark"
 

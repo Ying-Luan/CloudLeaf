@@ -1,4 +1,4 @@
-import { type SyncPayload, type ProviderResult } from "../types"
+import { type SyncPayload, type ProviderResult } from "~/src/types"
 import { BaseProvider } from "./base"
 
 

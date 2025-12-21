@@ -12,6 +12,7 @@
     "postinstall": "node scripts/patch.js"
   },
   "dependencies": {
+    "@plasmohq/storage": "^1.15.0",
     "@tailwindcss/postcss": "^4.1.18",
     "plasmo": "0.90.5",
     "postcss": "^8.5.6",
