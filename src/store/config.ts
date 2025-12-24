@@ -11,9 +11,21 @@ export const storage = new Storage({
  */
 export async function getUserConfig(): Promise<UserConfig> {
   return {
-    githubAccessToken: (await storage.get("githubAccessToken")) || "",
-    githubGistId: (await storage.get("githubGistId")) || "",
-    githubGistFileName: (await storage.get("githubGistFileName")) || "CloudLeaf.json",
+    gist: {
+      enabled: (await storage.get("gistEnabled")) || false,
+      accessToken: (await storage.get("gistAccessToken")) || "",
+      gistId: (await storage.get("gistGistId")) || "",
+      fileName: (await storage.get("gistFileName")) || "CloudLeaf.json",
+    },
+    jianguoyun: {
+      enabled: (await storage.get("jianguoyunEnabled")) || false,
+      serverUrl: (await storage.get("jianguoyunServerUrl")) || "https://dav.jianguoyun.com/dav",
+      username: (await storage.get("jianguoyunUsername")) || "",
+      password: (await storage.get("jianguoyunPassword")) || "",
+      filePath: (await storage.get("jianguoyunFilePath")) || "/CloudLeaf/bookmarks.json",
+    },
+    customWebdav: [],
+    lastSyncAt: (await storage.get("lastSyncAt")) || 0,
   }
 }
 
