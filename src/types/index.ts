@@ -1,3 +1,3 @@
-export * from './bookmark'
-export * from './providers'
-export * from './config'
+export * from "./providers"
+export * from "./config"
+export * from "./bookmark"

@@ -1,6 +1,7 @@
 import { Storage } from "@plasmohq/storage"
-import { type UserConfig } from "~src/types"
+import { type UserConfig, DEFAULT_USER_CONFIG } from "~/src/types"
 
+const CONFIG_KEY = "userConfig"
 
 export const storage = new Storage({
   area: "local",
@@ -10,32 +11,41 @@ export const storage = new Storage({
  * 获取用户配置
  */
 export async function getUserConfig(): Promise<UserConfig> {
+  const config = await storage.get<UserConfig>(CONFIG_KEY)
+
+  if (!config) {
+    return { ...DEFAULT_USER_CONFIG }
+  }
+
+  // 合并默认值，确保结构完整
   return {
-    gist: {
-      enabled: (await storage.get("gistEnabled")) || false,
-      accessToken: (await storage.get("gistAccessToken")) || "",
-      gistId: (await storage.get("gistGistId")) || "",
-      fileName: (await storage.get("gistFileName")) || "CloudLeaf.json",
-    },
-    jianguoyun: {
-      enabled: (await storage.get("jianguoyunEnabled")) || false,
-      serverUrl: (await storage.get("jianguoyunServerUrl")) || "https://dav.jianguoyun.com/dav",
-      username: (await storage.get("jianguoyunUsername")) || "",
-      password: (await storage.get("jianguoyunPassword")) || "",
-      filePath: (await storage.get("jianguoyunFilePath")) || "/CloudLeaf/bookmarks.json",
-    },
-    customWebdav: [],
-    lastSyncAt: (await storage.get("lastSyncAt")) || 0,
+    gist: config.gist,
+    webDavConfigs: config.webDavConfigs || [],
+    customVendors: config.customVendors || [],
+    lastSyncAt: config.lastSyncAt || 0,
   }
 }
 
 /**
  * 设置用户配置
  */
-export async function setUserConfig(config: Partial<UserConfig>): Promise<void> {
-  const tasks = Object.entries(config).map(([key, value]) => {
-    if (value)
-      return storage.set(key as keyof UserConfig, value)
-  })
-  await Promise.all(tasks)
+export async function setUserConfig(config: UserConfig): Promise<void> {
+  await storage.set(CONFIG_KEY, config)
+}
+
+/**
+ * 更新部分用户配置
+ */
+export async function updateUserConfig(updates: Partial<UserConfig>): Promise<UserConfig> {
+  const current = await getUserConfig()
+  const updated = { ...current, ...updates }
+  await setUserConfig(updated)
+  return updated
+}
+
+/**
+ * 清空用户配置
+ */
+export async function clearUserConfig(): Promise<void> {
+  await storage.remove(CONFIG_KEY)
 }

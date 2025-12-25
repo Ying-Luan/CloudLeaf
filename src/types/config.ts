@@ -1,41 +1,66 @@
 /**
- * 用户总配置接口
+ * 用户总配置（持久化）
  */
 export interface UserConfig {
-  gist: GistConfig
-  jianguoyun: BaseWebDAVConfig
-  customWebdav: CustomWebDAVConfig[]
+  /** Gist 配置 */
+  gist?: GistConfig
+  /** WebDAV 账号配置列表 */
+  webDavConfigs?: WebDAVUserConfig[]
+  /** 自定义云厂商元数据列表 */
+  customVendors?: CustomVendorConfig[]
+  /** 上次同步时间 */
   lastSyncAt: number
 }
 
 /**
- * GitHub Gist 配置接口
+ * GitHub Gist 配置
  */
 export interface GistConfig {
-  enabled: boolean
+  enabled?: boolean
   accessToken: string
   gistId: string
-  fileName: string
+  fileName?: string
 }
 
 /**
- * WebDAV 基础配置接口
- * 所有 WebDAV 服务通用
+ * WebDAV 用户账号配置
+ * 只存储用户凭据和关联的云厂商 ID
  */
-export interface BaseWebDAVConfig {
-  enabled: boolean
-  serverUrl: string
+export interface WebDAVUserConfig {
+  /** 是否启用 */
+  enabled?: boolean
+  /** 云厂商 ID（关联到 WebDAVRegistry） */
+  vendorId?: string
+  /** 用户名 */
   username: string
+  /** 密码 */
   password: string
+  /** 服务器地址（可选，覆盖云厂商默认值） */
+  serverUrl?: string
+  /** 文件路径（必填，用户级配置） */
   filePath: string
 }
 
 /**
- * 自定义 WebDAV 配置接口
- * 继承基础配置，添加标识字段
+ * 自定义云厂商元数据配置
+ * 启动时会加载到 WebDAVRegistry
+ * 只包含服务商信息，不包含用户特定配置
  */
-export interface CustomWebDAVConfig extends BaseWebDAVConfig {
+export interface CustomVendorConfig {
+  /** 唯一标识 */
   id: string
+  /** 显示名称 */
   name: string
+  /** 服务器地址 */
+  serverUrl: string
 }
 
+/**
+ * 默认用户配置
+ */
+export const DEFAULT_USER_CONFIG: UserConfig = {
+  gist: undefined,
+  webDavConfigs: [],
+  customVendors: [],
+  lastSyncAt: 0,
+}
