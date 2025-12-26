@@ -1,4 +1,4 @@
-import { type SyncPayload, type ProviderResult } from "~/src/types"
+import { type SyncPayload, type Result } from "~/src/types"
 
 /**
  * L1: 存储提供者基类
@@ -14,16 +14,16 @@ export abstract class BaseProvider {
     /**
      * 验证配置是否有效
      */
-    abstract isValid(): Promise<ProviderResult<boolean>>
+    abstract isValid(): Promise<Result<boolean>>
 
     /**
      * 上传书签到云端
      * @param data 书签数据
      */
-    abstract upload(data: SyncPayload): Promise<ProviderResult<void>>
+    abstract upload(data: SyncPayload): Promise<Result<void>>
 
     /**
      * 从云端下载书签
      */
-    abstract download(): Promise<ProviderResult<SyncPayload>>
+    abstract download(): Promise<Result<SyncPayload>>
 }

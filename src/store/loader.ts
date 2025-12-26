@@ -3,12 +3,14 @@ import type { UserConfig, CustomVendorConfig } from "~/src/types"
 
 /**
  * 从 UserConfig 加载自定义云厂商到注册表
- * 应在应用启动时调用
+ * 应在应用启动时调用 ？ 使用时即调入
  */
 export function loadCustomVendorsFromConfig(config: UserConfig): void {
     if (!config.customVendors || config.customVendors.length === 0) {
         return
     }
+
+    WebDAVRegistry.clearCustomVendors()
 
     for (const vendor of config.customVendors) {
         try {

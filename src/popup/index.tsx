@@ -1,17 +1,40 @@
-import { useEffect, useState } from "react"
 import packageInfo from "package.json"
 import "./index.css"
-import { getBookmarks } from "~src/core/bookmark"
+import { useSync } from "~src/hooks/useSync"
+import { setBookmarks } from "~src/core/bookmark"
+import Button from "~src/components/Button"
 
 function IndexPopup() {
-  useEffect(() => {
-    console.log("Popup loaded")
-    getBookmarks().then(bookmarks => {
-      console.log("Bookmarks:", bookmarks)
-    })
-  }, [])
-
+  const { loading, error, performUpload, performDownload } = useSync()
   const version = packageInfo.version
+
+  const handleUpload = async () => {
+    const result = await performUpload()
+    if (!result.success) return
+    if (result.data.status === 'behind') {
+      if (confirm("云端数据较新，是否强制上传覆盖？")) {
+        await performUpload(true)
+        alert("强制上传成功")
+      }
+    } else {
+      await performUpload(true)
+      alert("上传成功")
+    }
+  }
+
+  const handleDownload = async () => {
+    const result = await performDownload()
+    if (!result.success) return
+    if (result.data.status === 'ahead') {
+      if (confirm("本地数据较新，是否强制下载覆盖？")) {
+        await setBookmarks(result.data.payload)
+        alert("强制下载成功")
+      }
+    } else {
+      await setBookmarks(result.data.payload)
+      alert("下载成功")
+    }
+  }
 
   return (
     <div className="w-60 p-5 bg-white flex flex-col gap-6">
@@ -21,13 +44,17 @@ function IndexPopup() {
       </header>
 
       <div className="flex flex-col gap-3">
-        <button className="w-full py-2 bg-white text-black border border-slate-200 rounded-md hover:bg-slate-50 transition-all activate:scale-95 cursor-pointer font-medium">
-          上传书签
-        </button>
+        <Button
+          label="上传书签"
+          onClick={handleUpload}
+          loading={loading}
+        />
 
-        <button className="w-full py-2 bg-white text-black border border-slate-200 rounded-md hover:bg-slate-50 transition-all activate:scale-95 cursor-pointer font-medium">
-          下载书签
-        </button>
+        <Button
+          label="下载书签"
+          onClick={handleDownload}
+          loading={loading}
+        />
       </div>
     </div>
   )

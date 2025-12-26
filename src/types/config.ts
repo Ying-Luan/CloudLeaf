@@ -20,6 +20,7 @@ export interface GistConfig {
   accessToken: string
   gistId: string
   fileName?: string
+  priority?: number
 }
 
 /**
@@ -31,14 +32,12 @@ export interface WebDAVUserConfig {
   enabled?: boolean
   /** 云厂商 ID（关联到 WebDAVRegistry） */
   vendorId?: string
-  /** 用户名 */
   username: string
-  /** 密码 */
   password: string
-  /** 服务器地址（可选，覆盖云厂商默认值） */
   serverUrl?: string
-  /** 文件路径（必填，用户级配置） */
   filePath: string
+  /** 优先级，数值越小优先级越高 */
+  priority?: number
 }
 
 /**

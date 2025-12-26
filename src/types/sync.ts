@@ -6,14 +6,11 @@ import { type BookMark } from "."
  */
 export interface SyncPayload {
   updatedAt: number
+  numBookmarks: number
   bookmarks: BookMark[]
 }
 
-/**
- * 存储提供者结果接口
- */
-export interface ProviderResult<T> {
-  success: boolean
-  data?: T
-  error?: string
-}
+export type SyncStatus =
+  | 'ahead'      // 本地较新
+  | 'behind'     // 云端较新
+  | 'synced'     // 两端一致

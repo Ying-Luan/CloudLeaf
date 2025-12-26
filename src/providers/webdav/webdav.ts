@@ -1,4 +1,4 @@
-import { type SyncPayload, type ProviderResult } from "~/src/types"
+import { type SyncPayload, type Result } from "~/src/types"
 import { HttpProvider } from "~/src/providers"
 import { HttpStatus } from "~/src/constants"
 import { WebDAVStatus, WebDAVStatusMessage } from "~/src/constants"
@@ -36,7 +36,7 @@ export class WebDAVProvider extends HttpProvider {
         return this.serverUrl
     }
 
-    async isValid(): Promise<ProviderResult<boolean>> {
+    async isValid(): Promise<Result<boolean>> {
         try {
             const response = await this.request("PROPFIND", this.filePath, {
                 headers: { "Depth": "0" },
@@ -62,7 +62,7 @@ export class WebDAVProvider extends HttpProvider {
         }
     }
 
-    async upload(data: SyncPayload): Promise<ProviderResult<void>> {
+    async upload(data: SyncPayload): Promise<Result<void>> {
         try {
             await this.ensureDirectory()
 
@@ -81,7 +81,7 @@ export class WebDAVProvider extends HttpProvider {
         }
     }
 
-    async download(): Promise<ProviderResult<SyncPayload>> {
+    async download(): Promise<Result<SyncPayload>> {
         try {
             const response = await this.request("GET", this.filePath)
 
@@ -159,7 +159,7 @@ export class WebDAVProvider extends HttpProvider {
     /**
      * WebDAV 错误处理
      */
-    protected handleWebDAVError(status: number): ProviderResult<never> {
+    protected handleWebDAVError(status: number): Result<never> {
         return { success: false, error: this.getErrorMessage(status) }
     }
 

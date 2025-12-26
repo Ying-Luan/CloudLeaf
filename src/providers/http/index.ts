@@ -1,4 +1,4 @@
-import { type ProviderResult } from "~/src/types"
+import { type Result } from "~/src/types"
 import { BaseProvider } from "~/src/providers"
 import { HttpStatusMessage } from "~/src/constants"
 
@@ -84,14 +84,14 @@ export abstract class HttpProvider extends BaseProvider {
    * 统一错误处理
    * @param response HTTP 响应对象
    */
-  protected handleError(response: Response): ProviderResult<never> {
+  protected handleError(response: Response): Result<never> {
     return { success: false, error: this.getHttpErrorMessage(response.status) }
   }
 
   /**
    * 网络异常处理
    */
-  protected handleNetworkError(error: unknown): ProviderResult<never> {
+  protected handleNetworkError(error: unknown): Result<never> {
     if (error instanceof Error) {
       if (error.name === "AbortError") return { success: false, error: "请求超时" }
       return { success: false, error: `网络错误: ${error.message}` }

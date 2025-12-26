@@ -59,6 +59,13 @@ export class WebDAVRegistry {
     }
 
     /**
+     * 清空所有自定义服务商
+     */
+    public static clearCustomVendors(): void {
+        this.customVendors = []
+    }
+
+    /**
      * 获取所有自定义服务商
      */
     public static getCustomVendors(): CustomVendorConfig[] {

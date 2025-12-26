@@ -1,4 +1,4 @@
-import { type SyncPayload, type ProviderResult } from "~/src/types"
+import { type SyncPayload, type Result } from "~/src/types"
 import { HttpProvider } from "~/src/providers"
 import { GIST_ENDPOINTS } from "~/src/constants"
 
@@ -33,18 +33,13 @@ export class GistProvider extends HttpProvider {
         return {}
     }
 
-    async isValid(): Promise<ProviderResult<boolean>> {
+    async isValid(): Promise<Result<boolean>> {
         try {
             // 验证 Gist 是否存在
             const gistResponse = await this.request("GET", `${GIST_ENDPOINTS.GIST_PATH}/${this.gistId}`)
 
             if (!gistResponse.ok) {
                 return { success: true, data: false, error: this.handleError(gistResponse).error }
-            }
-
-            const gistData = await gistResponse.json()
-            if (!gistData.files[this.fileName]) {
-                return { success: true, data: false, error: `文件 ${this.fileName} 不存在` }
             }
 
             // 验证 Token
@@ -55,13 +50,18 @@ export class GistProvider extends HttpProvider {
                 return { success: true, data: false, error: "Token 无效" }
             }
 
+            const gistData = await gistResponse.json()
+            if (!gistData.files[this.fileName]) {
+                return { success: true, data: true }
+            }
+
             return { success: true, data: true }
         } catch (error) {
             return this.handleNetworkError(error)
         }
     }
 
-    async upload(data: SyncPayload): Promise<ProviderResult<void>> {
+    async upload(data: SyncPayload): Promise<Result<void>> {
         try {
             const response = await this.request("PATCH", `${GIST_ENDPOINTS.GIST_PATH}/${this.gistId}`, {
                 headers: {
@@ -86,7 +86,7 @@ export class GistProvider extends HttpProvider {
         }
     }
 
-    async download(): Promise<ProviderResult<SyncPayload>> {
+    async download(): Promise<Result<SyncPayload>> {
         try {
             const response = await this.request("GET", `${GIST_ENDPOINTS.GIST_PATH}/${this.gistId}`)
 
