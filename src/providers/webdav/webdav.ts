@@ -7,27 +7,33 @@ import { WebDAVStatus, WebDAVStatusMessage } from "~/src/constants"
  * L3: WebDAV 协议提供者抽象类
  * 继承 HttpProvider，扩展 WebDAV 特有功能
  */
-export abstract class WebDAVProvider extends HttpProvider {
+export class WebDAVProvider extends HttpProvider {
+    readonly id: string
+    readonly name: string
     protected serverUrl: string
     protected username: string
     protected password: string
     protected filePath: string
 
-    protected get baseUrl(): string {
-        return this.serverUrl
-    }
-
     constructor(
+        id: string,
+        name: string,
         serverUrl: string,
         username: string,
         password: string,
         filePath: string
     ) {
         super()
+        this.id = id
+        this.name = name
         this.serverUrl = this.normalizeUrl(serverUrl)
         this.username = username
         this.password = password
         this.filePath = this.normalizePath(filePath)
+    }
+
+    protected get baseUrl(): string {
+        return this.serverUrl
     }
 
     async isValid(): Promise<ProviderResult<boolean>> {
@@ -120,14 +126,6 @@ export abstract class WebDAVProvider extends HttpProvider {
     }
 
     /**
-     * 获取父目录路径
-     */
-    protected getParentPath(): string {
-        const lastSlash = this.filePath.lastIndexOf("/")
-        return lastSlash > 0 ? this.filePath.substring(0, lastSlash) : "/"
-    }
-
-    /**
      * 获取认证头（Basic Auth）
      */
     protected getAuthHeaders(): Record<string, string> {
@@ -169,13 +167,21 @@ export abstract class WebDAVProvider extends HttpProvider {
      * 确保父目录存在
      */
     protected async ensureDirectory(): Promise<void> {
-        const parentPath = this.getParentPath()
+        const lastSlash = this.filePath.lastIndexOf("/")
+        const parentPath = lastSlash > 0 ? this.filePath.substring(0, lastSlash) : "/"
+
         if (parentPath === "/") return
 
-        try {
-            await this.request("MKCOL", parentPath)
-        } catch {
-            // 忽略错误，让后续操作处理
+        // 逐级创建父目录，忽略已存在或其他错误，由后续操作处理具体失败情况
+        const parts = parentPath.split("/").filter(Boolean)
+        let current = ""
+        for (const part of parts) {
+            current += `/${part}`
+            try {
+                await this.request("MKCOL", current)
+            } catch {
+                // 忽略错误，让后续操作处理
+            }
         }
     }
 }

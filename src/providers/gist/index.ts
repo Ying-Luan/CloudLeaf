@@ -1,5 +1,5 @@
 import { type SyncPayload, type ProviderResult } from "~/src/types"
-import { HttpProvider } from "./http"
+import { HttpProvider } from "~/src/providers"
 import { GIST_ENDPOINTS } from "~/src/constants"
 
 /**
@@ -15,7 +15,7 @@ export class GistProvider extends HttpProvider {
     private gistId: string
     private fileName: string
 
-    constructor(accessToken: string, gistId: string, fileName: string = "CloudLeaf.json") {
+    constructor(accessToken: string, gistId: string, fileName: string) {
         super()
         this.accessToken = accessToken
         this.gistId = gistId
@@ -30,9 +30,7 @@ export class GistProvider extends HttpProvider {
     }
 
     protected getAuthHeaders(): Record<string, string> {
-        return {
-            "Authorization": `Bearer ${this.accessToken}`,
-        }
+        return {}
     }
 
     async isValid(): Promise<ProviderResult<boolean>> {
@@ -50,7 +48,9 @@ export class GistProvider extends HttpProvider {
             }
 
             // 验证 Token
-            const userResponse = await this.request("GET", GIST_ENDPOINTS.USER_PATH)
+            const userResponse = await this.request("GET", GIST_ENDPOINTS.USER_PATH, {
+                headers: { "Authorization": `Bearer ${this.accessToken}`, }
+            })
             if (!userResponse.ok) {
                 return { success: true, data: false, error: "Token 无效" }
             }
@@ -64,6 +64,9 @@ export class GistProvider extends HttpProvider {
     async upload(data: SyncPayload): Promise<ProviderResult<void>> {
         try {
             const response = await this.request("PATCH", `${GIST_ENDPOINTS.GIST_PATH}/${this.gistId}`, {
+                headers: {
+                    "Authorization": `Bearer ${this.accessToken}`,
+                },
                 body: {
                     files: {
                         [this.fileName]: {

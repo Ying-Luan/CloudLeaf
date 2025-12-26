@@ -1,26 +1,6 @@
 import { WebDAVProvider } from "./webdav"
 import { type WebDAVUserConfig, type CustomVendorConfig } from "~/src/types"
 
-/**
- * 具体 WebDAV Provider 实现类
- */
-class ConcreteWebDAVProvider extends WebDAVProvider {
-    readonly id: string
-    readonly name: string
-
-    constructor(
-        id: string,
-        name: string,
-        serverUrl: string,
-        username: string,
-        password: string,
-        filePath: string
-    ) {
-        super(serverUrl, username, password, filePath)
-        this.id = id
-        this.name = name
-    }
-}
 
 /**
  * WebDAV 服务商注册表（静态单例）
@@ -113,7 +93,7 @@ export class WebDAVRegistry {
         // filePath 从用户配置中获取（必填）
         const filePath = config.filePath
 
-        return new ConcreteWebDAVProvider(
+        return new WebDAVProvider(
             vendor.id,
             vendor.name,
             serverUrl,

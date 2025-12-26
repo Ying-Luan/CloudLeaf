@@ -5,4 +5,5 @@ export * from "./base"
 export * from "./http"
 
 // L3: WebDAV 协议层
+export * from './gist'
 export * from "./webdav"

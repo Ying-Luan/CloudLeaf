@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { WebDAVRegistry, GistProvider } from "~src/providers"
 import { getUserConfig, updateUserConfig, loadCustomVendorsFromConfig } from "~src/store"
 import type { UserConfig, WebDAVUserConfig, CustomVendorConfig } from "~src/types"
+import { DEFAULT_FILENAME } from "~src/constants"
 import "./test.css"
 
 function TestPage() {
@@ -17,7 +18,7 @@ function TestPage() {
         serverUrl: "",
         username: "",
         password: "",
-        filePath: "/CloudLeaf/bookmarks.json",
+        filePath: DEFAULT_FILENAME,
     })
 
     // 用户账号表单
@@ -25,14 +26,14 @@ function TestPage() {
         vendorId: "jianguoyun",
         username: "",
         password: "",
-        filePath: "/CloudLeaf/test.json",
+        filePath: DEFAULT_FILENAME,
     })
 
     // Gist 配置表单
     const [gistForm, setGistForm] = useState({
         accessToken: "",
         gistId: "",
-        fileName: "CloudLeaf.json",
+        fileName: DEFAULT_FILENAME,
     })
 
     // === 测试选择 ===
