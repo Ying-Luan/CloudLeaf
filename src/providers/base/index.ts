@@ -11,10 +11,15 @@ import { type SyncPayload, type Result } from "~/src/types"
  * @remarks Defines the contract all providers must implement
  */
 export abstract class BaseProvider {
-    // Unique identifier
+    /**
+     * Unique provider identifier
+     * 
+    */
     abstract readonly id: string
 
-    // Display name
+    /**
+     * Display name
+     */
     abstract readonly name: string
 
     /**

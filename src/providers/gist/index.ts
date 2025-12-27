@@ -13,19 +13,31 @@ import { GIST_ENDPOINTS } from "~/src/constants"
  * @remarks Stores bookmarks as a file in a GitHub Gist
  */
 export class GistProvider extends HttpProvider {
-    // Provider unique identifier
+    /**
+     * Unique provider identifier
+     */
     readonly id = "gist"
-    // Provider display name
+    /**
+     * Provider display name
+     */
     readonly name = "GitHub Gist"
 
-    // GitHub API base URL
+    /**
+     * GitHub API base URL
+     */
     protected readonly baseUrl = GIST_ENDPOINTS.BASE_URL
 
-    // GitHub personal access token
+    /**
+     * GitHub personal access token
+     */
     private accessToken: string
-    // Target Gist ID
+    /**
+     * Target Gist ID
+     */
     private gistId: string
-    // Filename in the Gist
+    /**
+     * Filename in the Gist
+     */
     private fileName: string
 
     /**

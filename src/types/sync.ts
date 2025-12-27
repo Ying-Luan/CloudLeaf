@@ -4,11 +4,17 @@ import { type BookMark } from "."
  * Payload for sync operations between local and cloud
  */
 export interface SyncPayload {
-  // Timestamp of last update in milliseconds
+  /**
+   * Timestamp of last update in milliseconds
+   */
   updatedAt: number
-  // Total count of bookmarks
+  /**
+   * Total count of bookmarks
+   */
   numBookmarks: number
-  // Bookmark tree data
+  /**
+   * Bookmark tree data
+   */
   bookmarks: BookMark[]
 }
 

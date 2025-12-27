@@ -3,13 +3,21 @@
  * @remarks Stored in browser extension storage
  */
 export interface UserConfig {
-  // GitHub Gist configuration
+  /**
+   * GitHub Gist configuration
+   */
   gist?: GistConfig
-  // WebDAV account configurations
+  /**
+   * WebDAV account configurations
+   */
   webDavConfigs?: WebDAVUserConfig[]
-  // Custom cloud vendor metadata
+  /**
+   * Custom cloud vendor metadata
+   */
   customVendors?: CustomVendorConfig[]
-  // Last sync timestamp in milliseconds
+  /**
+   * Last sync timestamp in milliseconds
+   */
   lastSyncAt: number
 }
 
@@ -17,15 +25,25 @@ export interface UserConfig {
  * GitHub Gist provider configuration
  */
 export interface GistConfig {
-  // Whether this provider is enabled
+  /**
+   * Whether this provider is enabled
+   */
   enabled?: boolean
-  // GitHub personal access token
+  /**
+   * GitHub personal access token
+   */
   accessToken: string
-  // Target Gist ID
+  /**
+   * Target Gist ID
+   */
   gistId: string
-  // Filename in the Gist
+  /**
+   * Filename in the Gist
+   */
   fileName?: string
-  // Sync priority, lower value means higher priority
+  /**
+   * Sync priority, lower value means higher priority
+   */
   priority: number
 }
 
@@ -34,19 +52,33 @@ export interface GistConfig {
  * @remarks Only stores user credentials and vendor reference
  */
 export interface WebDAVUserConfig {
-  // Whether this provider is enabled
+  /**
+   * Whether this provider is enabled
+   */
   enabled?: boolean
-  // Vendor ID referencing WebDAVRegistry
+  /**
+   * Vendor ID referencing WebDAVRegistry
+   */
   vendorId?: string
-  // WebDAV username
+  /**
+   * WebDAV username
+   */
   username: string
-  // WebDAV password
+  /**
+   * WebDAV password
+   */
   password: string
-  // Server URL, overrides vendor default if provided
+  /**
+   * Server URL, overrides vendor default if provided
+   */
   serverUrl?: string
-  // File path for bookmark storage
+  /**
+   * File path for bookmark storage
+   */
   filePath: string
-  // Sync priority, lower value means higher priority
+  /**
+   * Sync priority, lower value means higher priority
+   */
   priority: number
 }
 
@@ -55,11 +87,17 @@ export interface WebDAVUserConfig {
  * @remarks Loaded into WebDAVRegistry at startup, contains no user credentials
  */
 export interface CustomVendorConfig {
-  // Unique identifier
+  /**
+   * Unique identifier
+   */
   id: string
-  // Display name
+  /**
+   * Display name
+   */
   name: string
-  // WebDAV server URL
+  /**
+   * WebDAV server URL
+   */
   serverUrl: string
 }
 

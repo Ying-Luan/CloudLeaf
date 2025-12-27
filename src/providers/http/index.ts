@@ -16,17 +16,26 @@ import { HttpStatusMessage } from "~/src/constants"
  * - `PUT` Create or replace resource
  * - `MKCOL` WebDAV create collection
  */
-type Method = "GET" | "PATCH" | "PROPFIND" | "PUT" | "MKCOL"
+type Method =
+  | "GET"
+  | "PATCH"
+  | "PROPFIND"
+  | "PUT"
+  | "MKCOL"
 
 /**
  * Abstract HTTP protocol provider
  * @remarks Encapsulates common HTTP request logic
  */
 export abstract class HttpProvider extends BaseProvider {
-  // Base URL for the server
+  /**
+   * Base URL for the server
+   */
   protected abstract readonly baseUrl: string
 
-  // Request timeout in ms
+  /**
+   * Request timeout in ms
+   */
   protected readonly timeout = 30_000
 
   /**
