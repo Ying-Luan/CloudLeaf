@@ -5,7 +5,8 @@ import Button from "./Button"
 import Select from "./Select"
 import type { UserConfig, WebDAVUserConfig } from "~src/types"
 import { DEFAULT_WEBDAV_FILEPATH } from "~src/constants"
-import { loadCustomVendorsFromConfig } from "~src/store"
+import { loadCustomVendorsFromConfig, getMaxPriority } from "~src/store"
+import { useSaveConfig } from "~src/hooks"
 
 
 interface WebDavSettingsProps {
@@ -20,8 +21,10 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
     username: "",
     password: "",
     filePath: DEFAULT_WEBDAV_FILEPATH,
-    enabled: true
+    enabled: true,
+    priority: Number.MAX_SAFE_INTEGER,
   })
+  const { saving, saveConfig } = useSaveConfig()
 
   useEffect(() => {
     // 每次组件加载时，确保注册自定义厂商
@@ -31,12 +34,14 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
   // 获取所有可用厂商（预置 + 自定义）
   const vendors = WebDAVRegistry.getAllVendors().map(v => ({ label: v.name, value: v.id }))
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!form.username || !form.password) return alert("请填写完整信息")
+    form.priority = await getMaxPriority() + 1
 
     const newWebDavConfigs = [...(config?.webDavConfigs || []), { ...form }]
-    onUpdate({ ...config!, webDavConfigs: newWebDavConfigs })
-
+    const newConfig = { ...config!, webDavConfigs: newWebDavConfigs }
+    onUpdate(newConfig)
+    saveConfig(newConfig)
     setForm({ ...form, username: "", password: "" })
   }
 
@@ -86,6 +91,7 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
         <Button
           label="确认添加 WebDAV 账号"
           onClick={handleAdd}
+          loading={saving}
           className="bg-white border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900"
         />
       </div>

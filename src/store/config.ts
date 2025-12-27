@@ -27,6 +27,20 @@ export async function getUserConfig(): Promise<UserConfig> {
 }
 
 /**
+ * 获取当前最高优先级数字，对应优先级最低
+ * @returns 
+ */
+export async function getMaxPriority() {
+  const config = await getUserConfig()
+  const priorities = [
+    config.gist?.priority,
+    ...config.webDavConfigs.map(acc => acc.priority)
+  ]
+
+  return Math.max(0, ...priorities)
+}
+
+/**
  * 设置用户配置
  */
 export async function setUserConfig(config: UserConfig): Promise<void> {

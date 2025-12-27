@@ -1,51 +1,37 @@
-import { useState } from "react"
-import { GistProvider } from "~src/providers"
 import Button from "./Button"
-import type { GistConfig } from "~src/types"
+import type { GistConfig, UserConfig } from "~src/types"
 import { DEFAULT_FILENAME } from "~src/constants"
 import Input from "./Input"
+import { useSaveConfig } from "~src/hooks"
 
 
-interface GistConfigProps {
-  config: GistConfig | undefined
-  onUpdate: (newConfig: GistConfig | undefined) => void
+interface GistSettingsProps {
+  config: UserConfig | undefined
+  onUpdate: (newConfig: UserConfig | undefined) => void
 }
 
-const GistSettings = ({ config, onUpdate }: GistConfigProps) => {
-  const [testing, setTesting] = useState(false)
+const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
+  const { saving, saveConfig } = useSaveConfig()
+  const gist = config.gist
 
   const handleChange = (field: keyof GistConfig, value: string) => {
+    const newGist: GistConfig = {
+      ...(gist || {
+        accessToken: "",
+        gistId: "",
+        fileName: DEFAULT_FILENAME,
+        enabled: true,
+        priority: 0
+      }),
+      [field]: value,
+    }
+    // TODO: 优先级可能在这里还需要调整
     onUpdate({
-      ...(config || { accessToken: "", gistId: "", fileName: DEFAULT_FILENAME, enabled: true }),
-      [field]: value
+      ...config,
+      gist: newGist,
     })
   }
 
-  const handleTest = async () => {
-    if (!config?.accessToken || !config?.gistId) {
-      alert("请先填写 Access Token 和 Gist ID")
-      return
-    }
-
-    setTesting(true)
-    try {
-      const provider = new GistProvider(
-        config.accessToken,
-        config.gistId,
-        config.fileName
-      )
-      const res = await provider.isValid()
-      if (res.success) {
-        alert(`测试成功！`)
-      } else {
-        alert(`测试失败：${res.error}`)
-      }
-    } catch (e) {
-      alert(`发生异常：${e}`)
-    } finally {
-      setTesting(false)
-    }
-  }
 
   return (
     <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
@@ -72,7 +58,7 @@ const GistSettings = ({ config, onUpdate }: GistConfigProps) => {
       <div className="space-y-5">
         <Input
           label="Access Token"
-          value={config?.accessToken || ""}
+          value={gist?.accessToken || ""}
           onChange={(val) => handleChange("accessToken", val)}
           type="password"
           placeholder="ghp_xxxxxxxxxxxx"
@@ -80,7 +66,7 @@ const GistSettings = ({ config, onUpdate }: GistConfigProps) => {
 
         <Input
           label="Gist ID"
-          value={config?.gistId || ""}
+          value={gist?.gistId || ""}
           onChange={(val) => handleChange("gistId", val)}
           placeholder="填写你的 Gist ID"
         />
@@ -88,16 +74,16 @@ const GistSettings = ({ config, onUpdate }: GistConfigProps) => {
         <Input
           label="存储文件名"
           type="text"
-          value={config?.fileName || ""}
-          onChange={(val) => handleChange("fileName", val)}
+          value={gist?.fileName || ""}
+          onChange={(val) => handleChange("fileName", val || DEFAULT_FILENAME)}
           placeholder={DEFAULT_FILENAME}
         />
 
         <div className="pt-2">
           <Button
-            label="测试并验证连接"
-            loading={testing}
-            onClick={handleTest}
+            label="保存 Gist 设置"
+            loading={saving}
+            onClick={() => saveConfig(config)}
             className="bg-white border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900"
           />
         </div>

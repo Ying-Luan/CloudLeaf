@@ -4,6 +4,7 @@ import Input from "~src/components/Input"
 import Button from "~src/components/Button"
 import type { UserConfig, CustomVendorConfig } from "~src/types"
 import { WebDAVRegistry } from "~src/providers"
+import { useSaveConfig } from "~src/hooks"
 
 
 interface WebDavVendorManagerProps {
@@ -17,6 +18,7 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
     name: "",
     serverUrl: "",
   })
+  const { saving, saveConfig } = useSaveConfig()
 
   useEffect(() => {
     // 每次组件加载时，确保注册自定义厂商
@@ -34,9 +36,9 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
     if (!id || !name || !serverUrl) return alert("请填写完整的厂商信息")
     try {
       const newVendors = addCustomVendorToConfig(config!, vendorForm)
-
-      onUpdate({ ...config!, customVendors: newVendors })
-
+      const newConfig = { ...config!, customVendors: newVendors }
+      onUpdate(newConfig)
+      saveConfig(newConfig)
       setVendorForm({ id: "", name: "", serverUrl: "" })
       alert(`已成功注册云厂商: ${name}`)
     } catch (e) {
@@ -50,8 +52,9 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
 
     try {
       const newVendors = removeCustomVendorFromConfig(config!, id)
-
-      onUpdate({ ...config!, customVendors: newVendors })
+      const newConfig = { ...config!, customVendors: newVendors }
+      onUpdate(newConfig)
+      saveConfig(newConfig)
       alert(`已成功删除云厂商`)
     } catch (e) {
       alert(`删除失败: ${String(e)}`)
@@ -77,8 +80,8 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
               <span className="text-sm font-bold text-slate-700 font-mono">{v.name}</span>
               {/* 根据类型显示不同的 Badge */}
               <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase ${v.type === 'preset'
-                  ? 'bg-blue-100 text-blue-600'
-                  : 'bg-emerald-100 text-emerald-600'
+                ? 'bg-blue-100 text-blue-600'
+                : 'bg-emerald-100 text-emerald-600'
                 }`}>
                 {v.type === 'preset' ? 'Official' : 'Custom'}
               </span>
@@ -89,7 +92,7 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
             {v.type === 'custom' && (
               <button
                 onClick={() => handleDeleteVendor(v.id)}
-                className="absolute top-2 right-12 opacity-0 group-hover:opacity-100 text-[10px] text-red-400 hover:text-red-600 transition-all cursor-pointer font-mono"
+                className="absolute top-3 right-16 opacity-0 group-hover:opacity-100 text-[10px] text-red-400 hover:text-red-600 transition-all cursor-pointer font-mono"
               >
                 [移除]
               </button>
@@ -123,6 +126,7 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
         <Button
           label="保存并注册云厂商"
           onClick={handleAddVendor}
+          loading={saving}
           className="bg-white border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900"
         />
       </div>

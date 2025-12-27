@@ -37,6 +37,8 @@ export class WebDAVRegistry {
 
     /**
      * 添加自定义服务商
+     * @description
+     * 不应被开发者调用，请考虑`~src/store/loader.ts`中的封装函数`addCustomVendorToConfig`
      */
     public static addCustomVendor(vendor: CustomVendorConfig): void {
         // 检查 ID 是否已存在
@@ -48,6 +50,8 @@ export class WebDAVRegistry {
 
     /**
      * 删除自定义服务商
+     * @description
+     * 不应被开发者调用，请考虑`~src/store/loader.ts`中的封装函数`removeCustomVendorFromConfig`
      */
     public static removeCustomVendor(id: string): boolean {
         const index = this.customVendors.findIndex(v => v.id === id)

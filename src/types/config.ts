@@ -20,7 +20,7 @@ export interface GistConfig {
   accessToken: string
   gistId: string
   fileName?: string
-  priority?: number
+  priority: number
 }
 
 /**
@@ -37,7 +37,7 @@ export interface WebDAVUserConfig {
   serverUrl?: string
   filePath: string
   /** 优先级，数值越小优先级越高 */
-  priority?: number
+  priority: number
 }
 
 /**
