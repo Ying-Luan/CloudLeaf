@@ -2,44 +2,74 @@ import packageInfo from "package.json"
 import "./index.css"
 import { useSync } from "~src/hooks"
 import { setBookmarks } from "~src/core/bookmark"
-import Button from "~src/components/Button"
+import { Button } from "~src/components"
 
-
+/**
+ * Popup page component for CloudLeaf extension.
+ *
+ * Provides quick access to upload and download bookmarks, with automatic
+ * conflict detection and resolution prompts.
+ * @returns A JSX element rendering the popup interface
+ */
 function IndexPopup() {
+  // Sync operations and state from useSync hook
   const { loading, error, performUpload, performDownload } = useSync()
+  /**
+   * Extension version from package.json.
+   */
   const version = packageInfo.version
 
+  /**
+   * Open the extension's options page.
+   */
   const openSettings = () => {
     chrome.runtime.openOptionsPage()
   }
 
+  /**
+   * Handle bookmark upload with conflict detection.
+   *
+   * Checks sync status and prompts user if cloud data is newer,
+   * allowing force upload if confirmed.
+   */
   const handleUpload = async () => {
     const result = await performUpload()
     if (!result.success) return
+    // status === 'behind' means cloud data is newer
     if (result.data.status === 'behind') {
       if (confirm("云端数据较新，是否强制上传覆盖？")) {
         await performUpload(true)
         alert("强制上传成功")
       }
+      // status === 'none' means no provider configured
     } else if (result.data.status === 'none') {
       alert("未配置同步提供者，无法上传书签")
-    }
-    else {
+      // Normal case: upload succeeded without conflicts
+    } else {
       await performUpload(true)
       alert("上传成功")
     }
   }
 
+  /**
+   * Handle bookmark download with conflict detection.
+   *
+   * Checks sync status and prompts user if local data is newer,
+   * allowing force download if confirmed.
+   */
   const handleDownload = async () => {
     const result = await performDownload()
     if (!result.success) return
+    // status === 'ahead' means local data is newer
     if (result.data.status === 'ahead') {
       if (confirm("本地数据较新，是否强制下载覆盖？")) {
         await setBookmarks(result.data.payload)
         alert("强制下载成功")
       }
+      // status === 'none' means no provider configured
     } else if (result.data.status === 'none') {
       alert("未配置同步提供者，无法下载书签")
+      // Normal case: download succeeded without conflicts
     } else {
       await setBookmarks(result.data.payload)
       alert("下载成功")
@@ -48,10 +78,15 @@ function IndexPopup() {
 
   return (
     <div className="w-60 p-5 bg-white flex flex-col gap-6">
+      {/* Header */}
       <header className="flex justify-between items-baseline border-b border-slate-100 pb-2">
+        {/* Title */}
         <h2 className="text-xl font-bold text-slate-800 tracking-tight">CloudLeaf</h2>
+
+        {/* Version */}
         <span className="text-sm font-mono text-slate-400 tracking-tight">v{version}</span>
 
+        {/* Settings button */}
         <button
           onClick={openSettings}
           className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all cursor-pointer group"
@@ -69,13 +104,16 @@ function IndexPopup() {
         </button>
       </header>
 
+      {/* Action buttons */}
       <div className="flex flex-col gap-3">
+        {/* Button to upload bookmarks */}
         <Button
           label="上传书签"
           onClick={handleUpload}
           loading={loading}
         />
 
+        {/* Button to download bookmarks */}
         <Button
           label="下载书签"
           onClick={handleDownload}

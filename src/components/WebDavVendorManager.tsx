@@ -1,18 +1,37 @@
 import { useState, useEffect } from "react"
 import { addCustomVendorToConfig, removeCustomVendorFromConfig, loadCustomVendorsFromConfig } from "~src/store"
-import Input from "~src/components/Input"
-import Button from "~src/components/Button"
+import Input from "./Input"
+import Button from "./Button"
 import type { UserConfig, CustomVendorConfig } from "~src/types"
 import { WebDAVRegistry } from "~src/providers"
 import { useSaveConfig } from "~src/hooks"
 
-
+/**
+ * Props for the `WebDavVendorManager` component.
+ *
+ * Represents the current user configuration and an update callback.
+ */
 interface WebDavVendorManagerProps {
+  /**
+   * Current user configuration or `null` when not configured
+   */
   config: UserConfig | null
+  /**
+   * Callback to apply an updated configuration
+   */
   onUpdate: (newConfig: UserConfig) => void
 }
 
+/**
+ * Component for managing custom WebDAV vendor configurations.
+ *
+ * Displays all available vendors (preset + custom) and provides UI
+ * for registering new custom vendors or removing existing ones.
+ * @param props WebDavVendorManager component properties
+ * @returns A JSX element rendering the vendor management interface
+ */
 const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => {
+  // Form state for registering a new custom vendor.
   const [vendorForm, setVendorForm] = useState<CustomVendorConfig>({
     id: "",
     name: "",
@@ -21,16 +40,26 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
   const { saving, saveConfig } = useSaveConfig()
 
   useEffect(() => {
-    // 每次组件加载时，确保注册自定义厂商
+    // Load custom vendors on component mount
     if (config) loadCustomVendorsFromConfig(config)
   }, [config])
 
+  /**
+   * All available vendors with type annotations.
+   *
+   * Combines preset vendors and custom vendors into a single array.
+   */
   const allAvailableVendors = [
     ...WebDAVRegistry.getPresetVendors().map(v => ({ ...v, type: 'preset' })),
     ...WebDAVRegistry.getCustomVendors().map(v => ({ ...v, type: 'custom' }))
   ]
 
-  // 处理添加云厂商
+  /**
+   * Add a new custom vendor to the configuration.
+   *
+   * Validates form inputs, registers the vendor, updates config,
+   * and resets the form on success.
+   */
   const handleAddVendor = () => {
     const { id, name, serverUrl } = vendorForm
     if (!id || !name || !serverUrl) return alert("请填写完整的厂商信息")
@@ -46,10 +75,14 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
     }
   }
 
-  // 处理删除云厂商
+  /**
+   * Remove a custom vendor from the configuration by ID.
+   *
+   * Prompts for confirmation before removing the vendor.
+   * @param id Vendor ID to remove
+   */
   const handleDeleteVendor = (id: string) => {
     if (!confirm("确定删除该厂商？关联的账号可能失效")) return
-
     try {
       const newVendors = removeCustomVendorFromConfig(config!, id)
       const newConfig = { ...config!, customVendors: newVendors }
@@ -63,22 +96,26 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
 
   return (
     <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
-      {/* 标题部分 */}
+      {/* Header */}
       <div className="flex items-center gap-3 pb-4 border-b border-slate-50">
+        {/* Icon container */}
         <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
           <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
+
+        {/* Title */}
         <h3 className="text-lg font-bold text-slate-800 font-mono">自定义云厂商管理</h3>
       </div>
 
+      {/* Vendor list */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {allAvailableVendors.map((v) => (
           <div key={v.id} className="flex flex-col p-3 bg-slate-50 border border-slate-100 rounded-lg group relative">
             <div className="flex justify-between items-start mb-1">
               <span className="text-sm font-bold text-slate-700 font-mono">{v.name}</span>
-              {/* 根据类型显示不同的 Badge */}
+              {/* Badge: preset vs custom */}
               <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase ${v.type === 'preset'
                 ? 'bg-blue-100 text-blue-600'
                 : 'bg-emerald-100 text-emerald-600'
@@ -86,9 +123,11 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
                 {v.type === 'preset' ? 'Official' : 'Custom'}
               </span>
             </div>
+
+            {/* Server URL display */}
             <div className="text-[10px] text-slate-400 font-mono truncate">{v.serverUrl}</div>
 
-            {/* 如果是自定义厂商，显示删除按钮 */}
+            {/* Delete button for custom vendors */}
             {v.type === 'custom' && (
               <button
                 onClick={() => handleDeleteVendor(v.id)}
@@ -101,15 +140,18 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
         ))}
       </div>
 
-      {/* 注册新厂商表单 */}
+      {/* Register new vendor form */}
       <div className="space-y-4 pt-2">
         <div className="grid grid-cols-2 gap-4">
+          {/* Input for the id of new vendor registration */}
           <Input
             label="厂商 ID (唯一)"
             value={vendorForm.id}
             onChange={(val) => setVendorForm({ ...vendorForm, id: val })}
             placeholder="my-server"
           />
+
+          {/* Input for the name of new vendor registration */}
           <Input
             label="显示名称"
             value={vendorForm.name}
@@ -117,12 +159,16 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
             placeholder="我的私有云"
           />
         </div>
+
+        {/* Input for the server URL of new vendor registration */}
         <Input
           label="服务器 WebDAV 地址"
           value={vendorForm.serverUrl}
           onChange={(val) => setVendorForm({ ...vendorForm, serverUrl: val })}
           placeholder="https://dav.example.com/dav"
         />
+
+        {/* Button to save and register the new vendor */}
         <Button
           label="保存并注册云厂商"
           onClick={handleAddVendor}

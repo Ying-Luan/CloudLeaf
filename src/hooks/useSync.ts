@@ -2,11 +2,23 @@ import { useState } from "react"
 import { uploadBookmarks, downloadBookmarks } from "~src/core/sync"
 import { type SyncStatus, type Result, type SyncPayload } from "~src/types"
 
-
+/**
+ * Hook that provides sync actions and state for UI use.
+ * @returns
+ * - `loading`: whether a sync operation is in progress
+ * - `error`: last error message if any
+ * - `performUpload(force?)`: upload local bookmarks to configured providers
+ * - `performDownload()`: download bookmarks from providers
+ */
 export function useSync() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  /**
+   * Perform upload of local bookmarks to cloud providers.
+   * @param force When true, upload even if remote appears newer
+   * @returns Result object containing sync `status` on success or `error` on failure
+   */
   const performUpload = async (force = false): Promise<Result<{ status: SyncStatus }>> => {
     setLoading(true)
     setError(null)
@@ -25,6 +37,10 @@ export function useSync() {
     }
   }
 
+  /**
+   * Perform download from configured providers and return payload if available.
+   * @returns Result object containing `status` and optional `payload` when successful
+   */
   const performDownload = async (): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
     setLoading(true)
     setError(null)

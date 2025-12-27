@@ -8,14 +8,32 @@ import { DEFAULT_WEBDAV_FILEPATH } from "~src/constants"
 import { loadCustomVendorsFromConfig, getMaxPriority } from "~src/store"
 import { useSaveConfig } from "~src/hooks"
 
-
+/**
+ * Props for the `WebDavSettings` component.
+ *
+ * Represents the current user configuration and an update callback.
+ */
 interface WebDavSettingsProps {
+  /**
+   * Current user configuration or `null` when not configured
+   */
   config: UserConfig | null
+  /**
+   * Callback to apply an updated configuration
+   */
   onUpdate: (newConfig: UserConfig) => void
 }
 
+/**
+ * Component for managing WebDAV account configurations.
+ *
+ * Allows users to add new WebDAV accounts by providing vendor, credentials,
+ * and file path information.
+ * @param props WebDavSettings component properties
+ * @returns A JSX element rendering the WebDAV account form
+ */
 const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
-  // 这里的表单状态仅用于“新增账号”
+  // Form state for adding a new WebDAV account.
   const [form, setForm] = useState<WebDAVUserConfig>({
     vendorId: "jianguoyun",
     username: "",
@@ -27,17 +45,24 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
   const { saving, saveConfig } = useSaveConfig()
 
   useEffect(() => {
-    // 每次组件加载时，确保注册自定义厂商
+    // Load custom vendors on component mount
     if (config) loadCustomVendorsFromConfig(config)
   }, [config])
 
-  // 获取所有可用厂商（预置 + 自定义）
+  /**
+   * All available vendors (built-in + custom).
+   */
   const vendors = WebDAVRegistry.getAllVendors().map(v => ({ label: v.name, value: v.id }))
 
+  /**
+   * Add a new WebDAV account to the configuration.
+   *
+   * Validates form inputs, assigns next priority, updates config,
+   * and resets username/password fields.
+   */
   const handleAdd = async () => {
     if (!form.username || !form.password) return alert("请填写完整信息")
     form.priority = await getMaxPriority() + 1
-
     const newWebDavConfigs = [...(config?.webDavConfigs || []), { ...form }]
     const newConfig = { ...config!, webDavConfigs: newWebDavConfigs }
     onUpdate(newConfig)
@@ -47,24 +72,32 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
 
   return (
     <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+      {/* Header */}
       <div className="flex items-center gap-3 pb-4 border-b border-slate-50">
+        {/* Icon container */}
         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
           <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
           </svg>
         </div>
+
+        {/* Title */}
         <h3 className="text-lg font-bold text-slate-800">WebDAV 账号管理</h3>
       </div>
 
-      {/* 新增账号表单 */}
+      {/* Add account form */}
       <div className="p-4 bg-slate-50/50 rounded-xl border border-dashed border-slate-200 space-y-4">
+        {/* Vendor and username inputs */}
         <div className="grid grid-cols-2 gap-4">
+          {/* Vendor select */}
           <Select
             label="选择云厂商"
             value={form.vendorId}
             options={vendors}
             onChange={(val) => setForm({ ...form, vendorId: val })}
           />
+
+          {/* Username input */}
           <Input
             label="用户名"
             value={form.username}
@@ -73,6 +106,7 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
           />
         </div>
 
+        {/* Password and file path inputs */}
         <Input
           label="应用密码"
           value={form.password}
@@ -81,6 +115,7 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
           placeholder="App Password"
         />
 
+        {/* File path input */}
         <Input
           label="存储文件路径(必须位于某一文件夹下)"
           value={form.filePath}
@@ -88,6 +123,7 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
           placeholder={DEFAULT_WEBDAV_FILEPATH}
         />
 
+        {/* Add account button */}
         <Button
           label="确认添加 WebDAV 账号"
           onClick={handleAdd}
