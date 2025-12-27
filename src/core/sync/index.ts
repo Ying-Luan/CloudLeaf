@@ -43,7 +43,7 @@ async function buildProviders() {
 export async function uploadBookmarks(force = false): Promise<Result<{ status: SyncStatus }>> {
   try {
     const { providers } = await buildProviders()
-    if (providers.length === 0) return { success: false, error: "未配置同步提供者" }
+    if (providers.length === 0) return { success: true, data: { status: 'none' } }
 
     const local = await getBookmarks()
 
@@ -90,10 +90,10 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
 /**
  * 下载书签：云端 -> 本地（仅获取数据与状态）
  */
-export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus; payload: SyncPayload }>> {
+export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> {
   try {
     const { providers } = await buildProviders()
-    if (providers.length === 0) return { success: false, error: "未配置同步提供者" }
+    if (providers.length === 0) return { success: true, data: { status: 'none' } }
 
     const local = await getBookmarks()
     const errors: string[] = []

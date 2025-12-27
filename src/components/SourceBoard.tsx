@@ -1,5 +1,6 @@
 import { type SourceItem } from "~src/types"
 import { useState } from "react"
+import { Switch } from "./Switch"
 
 
 interface SourceBoardProps {
@@ -14,12 +15,13 @@ interface SourceBoardProps {
   onMoveDown: (index: number) => void
   index: number
   total: number
+  onUpdateEnabled: (enabled: boolean) => void
 }
 
 /**
  * 显示单个源的信息卡片
  */
-const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, isTesting, saving, onMoveUp, onMoveDown, index, total }: SourceBoardProps) => {
+const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, isTesting, saving, onMoveUp, onMoveDown, index, total, onUpdateEnabled }: SourceBoardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const isGist = source.type === "gist"
 
@@ -44,7 +46,7 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
       className={`flex flex-col rounded-lg overflow-hidden group transition-all font-mono font-bold ${themes[source.type]}`}
     >
       {/* 顶部标题栏 */}
-      <div className="flex items-center justify-between p-3 w-full">
+      <div className="flex items-center justify-between p-3 w-full gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -65,6 +67,12 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
             </span>
           )}
         </div>
+
+        <Switch
+          label=""
+          enabled={source.enabled}
+          onChange={onUpdateEnabled}
+        />
 
         <div className="flex items-center gap-3">
           <div className="flex bg-black/5 rounded p-0.5 gap-1">

@@ -3,7 +3,6 @@ import { type UserConfig } from "~src/types"
 import { type SourceItem } from "~src/types"
 import SourceBoard from "./SourceBoard"
 import { useSaveConfig, useTest } from "~src/hooks"
-import { on } from "events"
 
 
 interface SourcesProps {
@@ -23,14 +22,16 @@ const Sources = ({ config, onUpdate }: SourcesProps) => {
       type: "gist" as const,
       id: "gist",
       label: config!.gist!.fileName,
-      priority: config!.gist!.priority
+      priority: config!.gist!.priority,
+      enabled: config!.gist!.enabled,
     }] : []),
     ...(config?.webDavConfigs?.map((acc, idx) => ({
       type: "webdav" as const,
       id: `webdav-${idx}`,
       label: `${acc.vendorId} / ${acc.username} ${acc.filePath}`,
       priority: acc.priority,
-      rawIndex: idx
+      rawIndex: idx,
+      enabled: acc.enabled,
     })) || [])
   ]
 
@@ -89,6 +90,28 @@ const Sources = ({ config, onUpdate }: SourcesProps) => {
     saveConfig(newConfig, true)
   }
 
+  const onUpdateEnabled = (source: SourceItem, enabled: boolean) => {
+    let newConfig: UserConfig
+    if (source.type === "gist") {
+      newConfig = {
+        ...config,
+        gist: {
+          ...config.gist,
+          enabled
+        }
+      }
+    } else {
+      newConfig = {
+        ...config,
+        webDavConfigs: config.webDavConfigs!.map((acc, idx) =>
+          idx === source.rawIndex ? { ...acc, enabled } : acc
+        )
+      }
+    }
+    onUpdate(newConfig)
+    saveConfig(newConfig, true)
+  }
+
   return (
     <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
       <div className="flex items-center gap-3 pb-2">
@@ -121,6 +144,7 @@ const Sources = ({ config, onUpdate }: SourcesProps) => {
                 onMoveDown={onMoveDown}
                 index={i}
                 total={allSources.length}
+                onUpdateEnabled={(enabled) => onUpdateEnabled(source, enabled)}
               />
             )
           })}

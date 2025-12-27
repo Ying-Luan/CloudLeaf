@@ -4,4 +4,5 @@ export interface SourceItem {
   label: string
   priority: number
   rawIndex?: number
+  enabled: boolean
 }

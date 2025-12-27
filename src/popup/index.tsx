@@ -4,6 +4,7 @@ import { useSync } from "~src/hooks"
 import { setBookmarks } from "~src/core/bookmark"
 import Button from "~src/components/Button"
 
+
 function IndexPopup() {
   const { loading, error, performUpload, performDownload } = useSync()
   const version = packageInfo.version
@@ -20,7 +21,10 @@ function IndexPopup() {
         await performUpload(true)
         alert("强制上传成功")
       }
-    } else {
+    } else if (result.data.status === 'none') {
+      alert("未配置同步提供者，无法上传书签")
+    }
+    else {
       await performUpload(true)
       alert("上传成功")
     }
@@ -34,6 +38,8 @@ function IndexPopup() {
         await setBookmarks(result.data.payload)
         alert("强制下载成功")
       }
+    } else if (result.data.status === 'none') {
+      alert("未配置同步提供者，无法下载书签")
     } else {
       await setBookmarks(result.data.payload)
       alert("下载成功")
