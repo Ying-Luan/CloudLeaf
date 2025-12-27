@@ -1,19 +1,39 @@
 import Button from "./Button"
+import Input from "./Input"
 import type { GistConfig, UserConfig } from "~src/types"
 import { DEFAULT_FILENAME } from "~src/constants"
-import Input from "./Input"
 import { useSaveConfig } from "~src/hooks"
 
-
+/**
+ * Props for the `GistSettings` component.
+ *
+ * Represents current user configuration and update callback.
+ */
 interface GistSettingsProps {
+  /**
+   * Current user configuration or `undefined` when not set
+   */
   config: UserConfig | undefined
+  /**
+   * Callback invoked with updated configuration (or `undefined` to reset)
+   */
   onUpdate: (newConfig: UserConfig | undefined) => void
 }
 
+/**
+ * Gist settings component.
+ * @param props Gist settings properties
+ * @returns A JSX element rendering Gist settings inputs and save button
+ */
 const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
   const { saving, saveConfig } = useSaveConfig()
   const gist = config.gist
 
+  /**
+   * Handle changes to a specific Gist configuration field.
+   * @param field Field name in `GistConfig` to update
+   * @param value New value for the specified field
+   */
   const handleChange = (field: keyof GistConfig, value: string) => {
     const newGist: GistConfig = {
       ...(gist || {
@@ -25,17 +45,17 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
       }),
       [field]: value,
     }
-    // TODO: 优先级可能在这里还需要调整
+    // TODO: Priority may require adjustment here
     onUpdate({
       ...config,
       gist: newGist,
     })
   }
 
-
   return (
     <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-50">
+        {/* Header with GitHub icon and title */}
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
             <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -45,6 +65,7 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
           <h3 className="text-lg font-bold text-slate-800">GitHub Gist 配置</h3>
         </div>
 
+        {/* Button to reset configuration */}
         {config && (
           <button
             onClick={() => onUpdate(undefined)}
@@ -55,6 +76,8 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
         )}
       </div>
 
+      {/* Gist configuration inputs */}
+      {/* Input for Access Token */}
       <div className="space-y-5">
         <Input
           label="Access Token"
@@ -64,6 +87,7 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
           placeholder="ghp_xxxxxxxxxxxx"
         />
 
+        {/* Input for Gist ID */}
         <Input
           label="Gist ID"
           value={gist?.gistId || ""}
@@ -71,6 +95,7 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
           placeholder="填写你的 Gist ID"
         />
 
+        {/* Input for Filename */}
         <Input
           label="存储文件名"
           type="text"
@@ -79,6 +104,7 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
           placeholder={DEFAULT_FILENAME}
         />
 
+        {/* Save configuration button */}
         <div className="pt-2">
           <Button
             label="保存 Gist 设置"

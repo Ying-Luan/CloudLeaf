@@ -2,19 +2,32 @@ import { useState } from "react"
 import { GistProvider, WebDAVRegistry } from "~src/providers"
 import { type UserConfig } from "~src/types"
 
-
 /**
- * Hook 用于测试同步源的连接状态
+ * Hook for testing connectivity to configured sync providers.
+ * @returns
+ * - `testingMap`: record of testing states per provider id
+ * - `testGist(config)`: validate Gist provider settings
+ * - `testWebDav(config, index)`: validate a WebDAV account by index
  */
 export const useTest = () => {
-  // 记录每个源的加载状态，key 可以是 'gist' 或 'webdav-index'
+  // map of provider id -> whether it's currently being tested
   const [testingMap, setTestingMap] = useState<Record<string, boolean>>({})
 
-  // 设置特定源的测试状态
+  /**
+   * Set testing state for a single provider id.
+   * @param id Provider identifier (e.g. 'gist' or 'webdav-0')
+   * @param isTesting Whether the provider is currently being tested
+   */
   const setItemTesting = (id: string, isTesting: boolean) => {
     setTestingMap(prev => ({ ...prev, [id]: isTesting }))
   }
 
+  /**
+   * Test Gist provider configuration by attempting to validate credentials.
+   * 
+   * Shows an alert with the result and updates `testingMap` during the check.
+   * @param config User configuration containing `gist` settings
+   */
   const testGist = async (config: UserConfig) => {
     if (!config?.gist) return
     const id = "gist"
@@ -34,6 +47,13 @@ export const useTest = () => {
     }
   }
 
+  /**
+   * Test a WebDAV account configuration by index in `config.webDavConfigs`.
+   * 
+   * Shows an alert with the result and updates `testingMap` during the check.
+   * @param config User configuration containing `webDavConfigs`
+   * @param index Index of the WebDAV account to test
+   */
   const testWebDav = async (config: UserConfig, index: number) => {
     const acc = config?.webDavConfigs?.[index]
     if (!acc) return

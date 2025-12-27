@@ -111,7 +111,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
 /**
  * Download bookmarks: cloud -> local
  * @returns 
- * - sync status 
+ * - sync status
  * - sync payload if applicable
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
  * @see {@link ~src/hooks/useSync.ts useSync}
