@@ -13,9 +13,13 @@ import { getBookmarks, setBookmarks } from "~/src/core/bookmark"
  * @remarks Wraps browser bookmark API as a unified provider interface
  */
 export class LocalProvider extends BaseProvider {
-    // Provider unique identifier
+    /**
+     * Provider unique identifier
+     */
     readonly id = "local"
-    // Provider display name
+    /**
+     * Provider display name
+     */
     readonly name = "Local Browser"
 
     /**
