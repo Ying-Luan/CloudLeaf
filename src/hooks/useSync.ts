@@ -25,7 +25,7 @@ export function useSync() {
     }
   }
 
-  const performDownload = async (): Promise<Result<{ status: SyncStatus; payload: SyncPayload }>> => {
+  const performDownload = async (): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
     setLoading(true)
     setError(null)
     try {
