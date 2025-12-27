@@ -1,20 +1,21 @@
 /**
- * HTTP 协议状态码（RFC 7231）
+ * HTTP protocol status codes (RFC 7231)
+ * @readonly
  */
 export const HttpStatus = {
-    // 成功
+    // --- Success ---
     OK: 200,
     CREATED: 201,
     NO_CONTENT: 204,
 
-    // 客户端错误
+    // --- Client Errors ---
     BAD_REQUEST: 400,
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
     NOT_FOUND: 404,
     METHOD_NOT_ALLOWED: 405,
 
-    // 服务端错误
+    // --- Server Errors ---
     INTERNAL_SERVER_ERROR: 500,
     BAD_GATEWAY: 502,
     SERVICE_UNAVAILABLE: 503,
@@ -22,26 +23,27 @@ export const HttpStatus = {
 } as const
 
 /**
- * WebDAV 协议扩展状态码（RFC 4918）
- * 仅包含 WebDAV 特有的状态码，不包含 HTTP 通用状态码
+ * WebDAV protocol extended status codes (RFC 4918)
+ * @remarks Only includes WebDAV-specific codes, not general HTTP codes
+ * @readonly
  */
 export const WebDAVStatus = {
-    // WebDAV 成功状态码
+    // --- WebDAV Success ---
     MULTI_STATUS: 207,
 
-    // WebDAV 客户端错误
+    // --- WebDAV Client Errors ---
     CONFLICT: 409,
     PRECONDITION_FAILED: 412,
     UNSUPPORTED_MEDIA_TYPE: 415,
     LOCKED: 423,
 
-    // WebDAV 服务端错误
+    // --- WebDAV Server Errors ---
     INSUFFICIENT_STORAGE: 507,
 } as const
 
-
 /**
- * HTTP 状态码对应的中文错误消息
+ * HTTP status code to error message
+ * @readonly
  */
 export const HttpStatusMessage: Record<number, string> = {
     [HttpStatus.BAD_REQUEST]: "请求格式错误",
@@ -56,7 +58,8 @@ export const HttpStatusMessage: Record<number, string> = {
 }
 
 /**
- * WebDAV 扩展状态码对应的中文错误消息
+ * WebDAV extended status code to error message
+ * @readonly
  */
 export const WebDAVStatusMessage: Record<number, string> = {
     [WebDAVStatus.MULTI_STATUS]: "多状态响应",
