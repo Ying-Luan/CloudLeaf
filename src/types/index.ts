@@ -1,3 +1,9 @@
+/**
+ * Type definitions module
+ * @module types
+ * @packageDocumentation
+ */
+
 export * from "./common"
 export * from "./sync"
 export * from "./config"

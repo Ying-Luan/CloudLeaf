@@ -1,15 +1,17 @@
 import { WebDAVRegistry } from "~/src/providers"
-import type { UserConfig, CustomVendorConfig } from "~/src/types"
+import { type UserConfig, type CustomVendorConfig } from "~/src/types"
 
 /**
- * 从 UserConfig 加载自定义云厂商到注册表
- * 应在应用启动时调用 ？ 使用时即调入
+ * Load custom vendors from UserConfig into WebDAVRegistry
+ * @param config User configuration
+ * @remarks Should be called at app startup
  */
 export function loadCustomVendorsFromConfig(config: UserConfig): void {
     if (!config.customVendors || config.customVendors.length === 0) {
         return
     }
 
+    // --- Clear existing to prevent duplicates ---
     WebDAVRegistry.clearCustomVendors()
 
     for (const vendor of config.customVendors) {
@@ -20,44 +22,49 @@ export function loadCustomVendorsFromConfig(config: UserConfig): void {
                 serverUrl: vendor.serverUrl,
             })
         } catch (error) {
-            // 跳过已存在的云厂商
-            console.warn(`加载云厂商 ${vendor.id} 失败:`, error)
+            console.warn(`Failed to load vendor ${vendor.id}:`, error)
         }
     }
 }
 
 /**
- * 添加自定义云厂商并同步到 UserConfig
- * @returns 更新后的 customVendors 列表
+ * Add custom vendor and sync to UserConfig
+ * @param currentConfig Current user config
+ * @param vendor Vendor metadata to add
+ * @returns Updated customVendors array
+ * @remarks Also registers to WebDAVRegistry
  */
 export function addCustomVendorToConfig(
     currentConfig: UserConfig,
     vendor: CustomVendorConfig
 ): CustomVendorConfig[] {
-    // 添加到注册表
+    // --- Register to WebDAVRegistry ---
     WebDAVRegistry.addCustomVendor({
         id: vendor.id,
         name: vendor.name,
         serverUrl: vendor.serverUrl,
     })
 
-    // 更新配置
+    // --- Update config ---
     const customVendors = currentConfig.customVendors || []
     return [...customVendors, vendor]
 }
 
 /**
- * 删除自定义云厂商并同步到 UserConfig
- * @returns 更新后的 customVendors 列表
+ * Remove custom vendor and sync to UserConfig
+ * @param currentConfig Current user config
+ * @param vendorId Vendor ID to remove
+ * @returns Updated customVendors array
+ * @remarks Also removes from WebDAVRegistry
  */
 export function removeCustomVendorFromConfig(
     currentConfig: UserConfig,
     vendorId: string
 ): CustomVendorConfig[] {
-    // 从注册表删除
+    // --- Remove from WebDAVRegistry ---
     WebDAVRegistry.removeCustomVendor(vendorId)
 
-    // 更新配置
+    // --- Update config ---
     const customVendors = currentConfig.customVendors || []
     return customVendors.filter(v => v.id !== vendorId)
 }

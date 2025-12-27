@@ -1,14 +1,23 @@
 import { Storage } from "@plasmohq/storage"
 import { type UserConfig, DEFAULT_USER_CONFIG } from "~/src/types"
 
+/**
+ * Storage key for user configuration
+ * @readonly
+ */
 const CONFIG_KEY = "userConfig"
 
+/**
+ * Plasmo storage instance for browser extension
+ * @readonly
+ */
 export const storage = new Storage({
   area: "local",
 })
 
 /**
- * 获取用户配置
+ * Retrieve user configuration from storage
+ * @returns User config with defaults applied
  */
 export async function getUserConfig(): Promise<UserConfig> {
   const config = await storage.get<UserConfig>(CONFIG_KEY)
@@ -17,7 +26,7 @@ export async function getUserConfig(): Promise<UserConfig> {
     return { ...DEFAULT_USER_CONFIG }
   }
 
-  // 合并默认值，确保结构完整
+  // --- Merge with defaults ---
   return {
     gist: config.gist,
     webDavConfigs: config.webDavConfigs || [],
@@ -27,10 +36,11 @@ export async function getUserConfig(): Promise<UserConfig> {
 }
 
 /**
- * 获取当前最高优先级数字，对应优先级最低
- * @returns 
+ * Get the highest priority number across all sources
+ * @returns Maximum priority value (higher = lower priority)
+ * @remarks Used when adding new sources
  */
-export async function getMaxPriority() {
+export async function getMaxPriority(): Promise<number> {
   const config = await getUserConfig()
   const priorities = [
     config.gist?.priority,
@@ -41,14 +51,17 @@ export async function getMaxPriority() {
 }
 
 /**
- * 设置用户配置
+ * Replace entire user configuration
+ * @param config Complete config to save
  */
 export async function setUserConfig(config: UserConfig): Promise<void> {
   await storage.set(CONFIG_KEY, config)
 }
 
 /**
- * 更新部分用户配置
+ * Partially update user configuration
+ * @param updates Partial config to merge
+ * @returns Merged configuration
  */
 export async function updateUserConfig(updates: Partial<UserConfig>): Promise<UserConfig> {
   const current = await getUserConfig()
@@ -58,7 +71,7 @@ export async function updateUserConfig(updates: Partial<UserConfig>): Promise<Us
 }
 
 /**
- * 清空用户配置
+ * Clear all user configuration
  */
 export async function clearUserConfig(): Promise<void> {
   await storage.remove(CONFIG_KEY)

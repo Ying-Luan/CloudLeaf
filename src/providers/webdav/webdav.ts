@@ -4,17 +4,33 @@ import { HttpStatus } from "~/src/constants"
 import { WebDAVStatus, WebDAVStatusMessage } from "~/src/constants"
 
 /**
- * L3: WebDAV 协议提供者抽象类
- * 继承 HttpProvider，扩展 WebDAV 特有功能
+ * WebDAV protocol storage provider
+ * @remarks Extends HttpProvider with WebDAV-specific functionality
  */
 export class WebDAVProvider extends HttpProvider {
+    // Provider unique identifier
     readonly id: string
+    // Provider display name
     readonly name: string
+
+    // WebDAV server URL
     protected serverUrl: string
+    // WebDAV username
     protected username: string
+    // WebDAV password
     protected password: string
+    // File path for bookmark storage
     protected filePath: string
 
+    /**
+     * Create a new WebDAVProvider instance
+     * @param id Provider unique identifier
+     * @param name Provider display name
+     * @param serverUrl WebDAV server URL
+     * @param username WebDAV username
+     * @param password WebDAV password
+     * @param filePath File path for bookmark storage
+     */
     constructor(
         id: string,
         name: string,
@@ -36,6 +52,10 @@ export class WebDAVProvider extends HttpProvider {
         return this.serverUrl
     }
 
+    /**
+     * Validate WebDAV configuration and connection
+     * @returns Whether configuration is valid
+     */
     async isValid(): Promise<Result<boolean>> {
         try {
             const response = await this.request("PROPFIND", this.filePath, {
@@ -44,14 +64,17 @@ export class WebDAVProvider extends HttpProvider {
 
             const { status } = response
 
+            // --- File exists ---
             if (status === WebDAVStatus.MULTI_STATUS) {
                 return { success: true, data: true }
             }
 
+            // --- File not found or conflict is OK ---
             if (status === HttpStatus.NOT_FOUND || status === WebDAVStatus.CONFLICT) {
                 return { success: true, data: true }
             }
 
+            // --- Auth failure ---
             if (status === HttpStatus.UNAUTHORIZED) {
                 return { success: true, data: false, error: this.getErrorMessage(status) }
             }
@@ -62,8 +85,14 @@ export class WebDAVProvider extends HttpProvider {
         }
     }
 
+    /**
+     * Upload bookmarks to WebDAV server
+     * @param data Bookmark payload
+     * @returns Success or error result
+     */
     async upload(data: SyncPayload): Promise<Result<void>> {
         try {
+            // --- Ensure parent directory exists ---
             await this.ensureDirectory()
 
             const response = await this.request("PUT", this.filePath, {
@@ -81,6 +110,10 @@ export class WebDAVProvider extends HttpProvider {
         }
     }
 
+    /**
+     * Download bookmarks from WebDAV server
+     * @returns Bookmark payload
+     */
     async download(): Promise<Result<SyncPayload>> {
         try {
             const response = await this.request("GET", this.filePath)
@@ -88,7 +121,7 @@ export class WebDAVProvider extends HttpProvider {
             const { status } = response
 
             if (status === HttpStatus.NOT_FOUND) {
-                return { success: false, error: "文件不存在：请先上传书签" }
+                return { success: false, error: "File not found: please upload first" }
             }
 
             if (!this.isSuccess(status)) {
@@ -97,14 +130,15 @@ export class WebDAVProvider extends HttpProvider {
 
             const content = await response.text()
 
+            // --- Parse JSON ---
             try {
                 const data = JSON.parse(content) as SyncPayload
                 if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
-                    return { success: false, error: "文件格式错误：缺少 bookmarks 字段" }
+                    return { success: false, error: "Invalid file format: missing bookmarks" }
                 }
                 return { success: true, data }
             } catch {
-                return { success: false, error: "文件格式错误：无法解析 JSON" }
+                return { success: false, error: "Invalid file format: cannot parse JSON" }
             }
         } catch (error) {
             return this.handleNetworkError(error)
@@ -112,21 +146,26 @@ export class WebDAVProvider extends HttpProvider {
     }
 
     /**
-     * 标准化 URL（移除末尾斜杠）
+     * Normalize URL by removing trailing slash
+     * @param url URL to normalize
+     * @returns Normalized URL
      */
     private normalizeUrl(url: string): string {
         return url.endsWith("/") ? url.slice(0, -1) : url
     }
 
     /**
-     * 标准化路径（确保以 / 开头）
+     * Normalize path by ensuring leading slash
+     * @param path Path to normalize
+     * @returns Normalized path
      */
     private normalizePath(path: string): string {
         return path.startsWith("/") ? path : `/${path}`
     }
 
     /**
-     * 获取认证头（Basic Auth）
+     * Get authentication headers (Basic Auth)
+     * @returns Headers with Basic Auth credentials
      */
     protected getAuthHeaders(): Record<string, string> {
         const credentials = btoa(`${this.username}:${this.password}`)
@@ -136,35 +175,43 @@ export class WebDAVProvider extends HttpProvider {
     }
 
     /**
-     * 重写基础请求头（WebDAV 不需要默认的 Content-Type）
+     * Override base headers
+     * @returns Empty headers (WebDAV doesn't need default Content-Type)
      */
     protected getBaseHeaders(): Record<string, string> {
         return {}
     }
 
     /**
-     * 获取错误消息（优先使用 WebDAV 消息，回退到 HTTP 消息）
+     * Get error message by status code
+     * @param status HTTP/WebDAV status code
+     * @returns Human-readable error message
      */
     protected getErrorMessage(status: number): string {
         return WebDAVStatusMessage[status] || this.getHttpErrorMessage(status)
     }
 
     /**
-     * 判断是否为成功状态码
+     * Check if status code indicates success
+     * @param status HTTP status code
+     * @returns Whether status is in 2xx range
      */
     protected isSuccess(status: number): boolean {
         return status >= 200 && status < 300
     }
 
     /**
-     * WebDAV 错误处理
+     * Handle WebDAV-specific errors
+     * @param status HTTP/WebDAV status code
+     * @returns Error result
      */
     protected handleWebDAVError(status: number): Result<never> {
         return { success: false, error: this.getErrorMessage(status) }
     }
 
     /**
-     * 确保父目录存在
+     * Ensure parent directory exists
+     * @remarks Creates directories recursively using MKCOL
      */
     protected async ensureDirectory(): Promise<void> {
         const lastSlash = this.filePath.lastIndexOf("/")
@@ -172,7 +219,7 @@ export class WebDAVProvider extends HttpProvider {
 
         if (parentPath === "/") return
 
-        // 逐级创建父目录，忽略已存在或其他错误，由后续操作处理具体失败情况
+        // --- Create parent directories recursively ---
         const parts = parentPath.split("/").filter(Boolean)
         let current = ""
         for (const part of parts) {
@@ -180,7 +227,7 @@ export class WebDAVProvider extends HttpProvider {
             try {
                 await this.request("MKCOL", current)
             } catch {
-                // 忽略错误，让后续操作处理
+                // ignore errors
             }
         }
     }

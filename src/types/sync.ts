@@ -1,17 +1,26 @@
 import { type BookMark } from "."
 
-
 /**
- * 同步数据的负载接口
+ * Payload for sync operations between local and cloud
  */
 export interface SyncPayload {
+  // Timestamp of last update in milliseconds
   updatedAt: number
+  // Total count of bookmarks
   numBookmarks: number
+  // Bookmark tree data
   bookmarks: BookMark[]
 }
 
+/**
+ * Sync status between local and cloud
+ * - `ahead` Local is newer than cloud
+ * - `behind` Cloud is newer than local
+ * - `synced` Both sides are in sync
+ * - `none` No sync data available
+ */
 export type SyncStatus =
-  | 'ahead'      // 本地较新
-  | 'behind'     // 云端较新
-  | 'synced'     // 两端一致
-  | 'none'       // 无数据
+  | 'ahead'
+  | 'behind'
+  | 'synced'
+  | 'none'
