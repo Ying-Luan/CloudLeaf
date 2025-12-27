@@ -1,61 +1,71 @@
 /**
- * 用户总配置（持久化）
+ * User configuration for persistence
+ * @remarks Stored in browser extension storage
  */
 export interface UserConfig {
-  /** Gist 配置 */
+  // GitHub Gist configuration
   gist?: GistConfig
-  /** WebDAV 账号配置列表 */
+  // WebDAV account configurations
   webDavConfigs?: WebDAVUserConfig[]
-  /** 自定义云厂商元数据列表 */
+  // Custom cloud vendor metadata
   customVendors?: CustomVendorConfig[]
-  /** 上次同步时间 */
+  // Last sync timestamp in milliseconds
   lastSyncAt: number
 }
 
 /**
- * GitHub Gist 配置
+ * GitHub Gist provider configuration
  */
 export interface GistConfig {
+  // Whether this provider is enabled
   enabled?: boolean
+  // GitHub personal access token
   accessToken: string
+  // Target Gist ID
   gistId: string
+  // Filename in the Gist
   fileName?: string
+  // Sync priority, lower value means higher priority
   priority: number
 }
 
 /**
- * WebDAV 用户账号配置
- * 只存储用户凭据和关联的云厂商 ID
+ * WebDAV user account configuration
+ * @remarks Only stores user credentials and vendor reference
  */
 export interface WebDAVUserConfig {
-  /** 是否启用 */
+  // Whether this provider is enabled
   enabled?: boolean
-  /** 云厂商 ID（关联到 WebDAVRegistry） */
+  // Vendor ID referencing WebDAVRegistry
   vendorId?: string
+  // WebDAV username
   username: string
+  // WebDAV password
   password: string
+  // Server URL, overrides vendor default if provided
   serverUrl?: string
+  // File path for bookmark storage
   filePath: string
-  /** 优先级，数值越小优先级越高 */
+  // Sync priority, lower value means higher priority
   priority: number
 }
 
 /**
- * 自定义云厂商元数据配置
- * 启动时会加载到 WebDAVRegistry
- * 只包含服务商信息，不包含用户特定配置
+ * Custom cloud vendor metadata
+ * @remarks Loaded into WebDAVRegistry at startup, contains no user credentials
  */
 export interface CustomVendorConfig {
-  /** 唯一标识 */
+  // Unique identifier
   id: string
-  /** 显示名称 */
+  // Display name
   name: string
-  /** 服务器地址 */
+  // WebDAV server URL
   serverUrl: string
 }
 
 /**
- * 默认用户配置
+ * Default user configuration
+ * @readonly
  */
 export const DEFAULT_USER_CONFIG: UserConfig = {
   gist: undefined,
