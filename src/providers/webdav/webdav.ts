@@ -24,12 +24,12 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Create a new WebDAVProvider instance
-     * @param id provider unique identifier
-     * @param name provider display name
+     * @param id Provider unique identifier
+     * @param name Provider display name
      * @param serverUrl WebDAV server URL
      * @param username WebDAV username
      * @param password WebDAV password
-     * @param filePath file path for bookmark storage
+     * @param filePath File path for bookmark storage
      */
     constructor(
         id: string,
@@ -54,7 +54,7 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Validate WebDAV configuration and connection
-     * @returns whether configuration is valid
+     * @returns Whether configuration is valid
      */
     async isValid(): Promise<Result<boolean>> {
         try {
@@ -87,8 +87,8 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Upload bookmarks to WebDAV server
-     * @param data bookmark payload
-     * @returns success or error result
+     * @param data Bookmark payload
+     * @returns Success or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
         try {
@@ -112,7 +112,7 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Download bookmarks from WebDAV server
-     * @returns bookmark payload
+     * @returns Bookmark payload
      */
     async download(): Promise<Result<SyncPayload>> {
         try {
@@ -148,7 +148,7 @@ export class WebDAVProvider extends HttpProvider {
     /**
      * Normalize URL by removing trailing slash
      * @param url URL to normalize
-     * @returns normalized URL
+     * @returns Normalized URL
      */
     private normalizeUrl(url: string): string {
         return url.endsWith("/") ? url.slice(0, -1) : url
@@ -156,8 +156,8 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Normalize path by ensuring leading slash
-     * @param path path to normalize
-     * @returns normalized path
+     * @param path Path to normalize
+     * @returns Normalized path
      */
     private normalizePath(path: string): string {
         return path.startsWith("/") ? path : `/${path}`
@@ -165,7 +165,7 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Get authentication headers (Basic Auth)
-     * @returns headers with Basic Auth credentials
+     * @returns Headers with Basic Auth credentials
      */
     protected getAuthHeaders(): Record<string, string> {
         const credentials = btoa(`${this.username}:${this.password}`)
@@ -176,7 +176,7 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Override base headers
-     * @returns empty headers (WebDAV doesn't need default Content-Type)
+     * @returns Empty headers (WebDAV doesn't need default Content-Type)
      */
     protected getBaseHeaders(): Record<string, string> {
         return {}
@@ -185,7 +185,7 @@ export class WebDAVProvider extends HttpProvider {
     /**
      * Get error message by status code
      * @param status HTTP/WebDAV status code
-     * @returns human-readable error message
+     * @returns Human-readable error message
      */
     protected getErrorMessage(status: number): string {
         return WebDAVStatusMessage[status] || this.getHttpErrorMessage(status)
@@ -194,7 +194,7 @@ export class WebDAVProvider extends HttpProvider {
     /**
      * Check if status code indicates success
      * @param status HTTP status code
-     * @returns whether status is in 2xx range
+     * @returns Whether status is in 2xx range
      */
     protected isSuccess(status: number): boolean {
         return status >= 200 && status < 300
@@ -203,7 +203,7 @@ export class WebDAVProvider extends HttpProvider {
     /**
      * Handle WebDAV-specific errors
      * @param status HTTP/WebDAV status code
-     * @returns error result
+     * @returns Error result
      */
     protected handleWebDAVError(status: number): Result<never> {
         return { success: false, error: this.getErrorMessage(status) }

@@ -2,6 +2,7 @@
  * UI representation of a sync source for settings display
  * @remarks
  * Used in Sources component to render and manage sync providers.
+ *
  * Combines both Gist and WebDAV configs into a unified list for priority ordering.
  */
 export interface SourceItem {

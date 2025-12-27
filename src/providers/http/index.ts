@@ -10,10 +10,10 @@ import { HttpStatusMessage } from "~/src/constants"
 
 /**
  * HTTP method types
- * - `GET` retrieve resource
- * - `PATCH` partial update
+ * - `GET` Retrieve resource
+ * - `PATCH` Partial update
  * - `PROPFIND` WebDAV property retrieval
- * - `PUT` create or replace resource
+ * - `PUT` Create or replace resource
  * - `MKCOL` WebDAV create collection
  */
 type Method = "GET" | "PATCH" | "PROPFIND" | "PUT" | "MKCOL"
@@ -31,14 +31,14 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Get authentication headers
-   * @returns headers with auth credentials
+   * @returns Headers with auth credentials
    * @remarks Must be implemented by subclasses
    */
   protected abstract getAuthHeaders(): Record<string, string>
 
   /**
    * Get base request headers
-   * @returns default headers
+   * @returns Default headers
    */
   protected getBaseHeaders(): Record<string, string> {
     return {
@@ -48,7 +48,7 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Merge all request headers
-   * @returns combined base and auth headers
+   * @returns Combined base and auth headers
    */
   protected getAllHeaders(): Record<string, string> {
     return {
@@ -60,9 +60,9 @@ export abstract class HttpProvider extends BaseProvider {
   /**
    * Send HTTP request
    * @param method HTTP method
-   * @param path request path
-   * @param options optional config (body, headers)
-   * @returns fetch response
+   * @param path Request path
+   * @param options Optional config (body, headers)
+   * @returns Fetch response
    */
   protected async request(
     method: Method,
@@ -96,7 +96,7 @@ export abstract class HttpProvider extends BaseProvider {
   /**
    * Get HTTP error message by status code
    * @param status HTTP status code
-   * @returns human-readable error message
+   * @returns Human-readable error message
    */
   protected getHttpErrorMessage(status: number): string {
     return HttpStatusMessage[status] || `Request failed: ${status}`
@@ -105,7 +105,7 @@ export abstract class HttpProvider extends BaseProvider {
   /**
    * Handle HTTP error response
    * @param response HTTP response object
-   * @returns error result
+   * @returns Error result
    */
   protected handleError(response: Response): Result<never> {
     return { success: false, error: this.getHttpErrorMessage(response.status) }
@@ -113,8 +113,8 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Handle network exceptions
-   * @param error caught error object
-   * @returns error result
+   * @param error Caught error object
+   * @returns Error result
    */
   protected handleNetworkError(error: unknown): Result<never> {
     if (error instanceof Error) {

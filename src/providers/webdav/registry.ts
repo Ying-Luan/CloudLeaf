@@ -23,7 +23,7 @@ export class WebDAVRegistry {
 
     /**
      * Get all vendors (preset + custom)
-     * @returns combined vendor list
+     * @returns Combined vendor list
      */
     public static getAllVendors(): CustomVendorConfig[] {
         return [...this.presetVendors, ...this.customVendors]
@@ -31,8 +31,8 @@ export class WebDAVRegistry {
 
     /**
      * Get vendor by ID
-     * @param id vendor ID
-     * @returns vendor config or undefined
+     * @param id Vendor ID
+     * @returns Vendor config or undefined
      */
     public static getVendor(id: string): CustomVendorConfig | undefined {
         return this.getAllVendors().find(v => v.id === id)
@@ -40,7 +40,7 @@ export class WebDAVRegistry {
 
     /**
      * Add custom vendor
-     * @param vendor vendor config to add
+     * @param vendor Vendor config to add
      * @remarks Use `addCustomVendorToConfig` from store/loader.ts instead
      */
     public static addCustomVendor(vendor: CustomVendorConfig): void {
@@ -53,8 +53,8 @@ export class WebDAVRegistry {
 
     /**
      * Remove custom vendor
-     * @param id vendor ID to remove
-     * @returns whether removal was successful
+     * @param id Vendor ID to remove
+     * @returns Whether removal was successful
      * @remarks Use `removeCustomVendorFromConfig` from store/loader.ts instead
      */
     public static removeCustomVendor(id: string): boolean {
@@ -75,7 +75,7 @@ export class WebDAVRegistry {
 
     /**
      * Get all custom vendors
-     * @returns custom vendors array copy
+     * @returns Custom vendors array copy
      */
     public static getCustomVendors(): CustomVendorConfig[] {
         return [...this.customVendors]
@@ -83,7 +83,7 @@ export class WebDAVRegistry {
 
     /**
      * Get all preset vendors
-     * @returns preset vendors array copy
+     * @returns Preset vendors array copy
      */
     public static getPresetVendors(): CustomVendorConfig[] {
         return [...this.presetVendors]
@@ -91,9 +91,9 @@ export class WebDAVRegistry {
 
     /**
      * Create WebDAV provider instance
-     * @param vendorId vendor ID to use
-     * @param config user configuration
-     * @returns configured WebDAVProvider instance
+     * @param vendorId Vendor ID to use
+     * @param config User configuration
+     * @returns Configured WebDAVProvider instance
      */
     public static createProvider(
         vendorId: string,

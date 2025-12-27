@@ -31,8 +31,8 @@ export class GistProvider extends HttpProvider {
     /**
      * Create a new GistProvider instance
      * @param accessToken GitHub personal access token
-     * @param gistId target Gist ID
-     * @param fileName filename to store bookmarks
+     * @param gistId Target Gist ID
+     * @param fileName Filename to store bookmarks
      */
     constructor(accessToken: string, gistId: string, fileName: string) {
         super()
@@ -43,7 +43,7 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Get base headers for GitHub API
-     * @returns headers with GitHub API version
+     * @returns Headers with GitHub API version
      */
     protected getBaseHeaders(): Record<string, string> {
         return {
@@ -54,7 +54,7 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Get authentication headers
-     * @returns empty object (auth passed per-request)
+     * @returns Empty object (auth passed per-request)
      */
     protected getAuthHeaders(): Record<string, string> {
         return {}
@@ -62,7 +62,7 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Validate Gist configuration and access token
-     * @returns whether configuration is valid
+     * @returns Whether configuration is valid
      */
     async isValid(): Promise<Result<boolean>> {
         try {
@@ -94,8 +94,8 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Upload bookmarks to Gist
-     * @param data bookmark payload
-     * @returns success or error result
+     * @param data Bookmark payload
+     * @returns Success or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
         try {
@@ -124,7 +124,7 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Download bookmarks from Gist
-     * @returns bookmark payload
+     * @returns Bookmark payload
      */
     async download(): Promise<Result<SyncPayload>> {
         try {
