@@ -1,20 +1,39 @@
+/**
+ * GitHub Gist provider module
+ * @module providers/gist
+ * @packageDocumentation
+ */
+
 import { type SyncPayload, type Result } from "~/src/types"
 import { HttpProvider } from "~/src/providers"
 import { GIST_ENDPOINTS } from "~/src/constants"
 
 /**
- * GitHub Gist 存储提供者
+ * GitHub Gist storage provider
+ * @remarks Stores bookmarks as a file in a GitHub Gist
  */
 export class GistProvider extends HttpProvider {
+    // Provider unique identifier
     readonly id = "gist"
+    // Provider display name
     readonly name = "GitHub Gist"
 
+    // GitHub API base URL
     protected readonly baseUrl = GIST_ENDPOINTS.BASE_URL
 
+    // GitHub personal access token
     private accessToken: string
+    // Target Gist ID
     private gistId: string
+    // Filename in the Gist
     private fileName: string
 
+    /**
+     * Create a new GistProvider instance
+     * @param accessToken GitHub personal access token
+     * @param gistId target Gist ID
+     * @param fileName filename to store bookmarks
+     */
     constructor(accessToken: string, gistId: string, fileName: string) {
         super()
         this.accessToken = accessToken
@@ -22,6 +41,10 @@ export class GistProvider extends HttpProvider {
         this.fileName = fileName
     }
 
+    /**
+     * Get base headers for GitHub API
+     * @returns headers with GitHub API version
+     */
     protected getBaseHeaders(): Record<string, string> {
         return {
             "Accept": "application/vnd.github+json",
@@ -29,25 +52,33 @@ export class GistProvider extends HttpProvider {
         }
     }
 
+    /**
+     * Get authentication headers
+     * @returns empty object (auth passed per-request)
+     */
     protected getAuthHeaders(): Record<string, string> {
         return {}
     }
 
+    /**
+     * Validate Gist configuration and access token
+     * @returns whether configuration is valid
+     */
     async isValid(): Promise<Result<boolean>> {
         try {
-            // 验证 Gist 是否存在
+            // --- Validate Gist exists ---
             const gistResponse = await this.request("GET", `${GIST_ENDPOINTS.GIST_PATH}/${this.gistId}`)
 
             if (!gistResponse.ok) {
                 return { success: true, data: false, error: this.handleError(gistResponse).error }
             }
 
-            // 验证 Token
+            // --- Validate access token ---
             const userResponse = await this.request("GET", GIST_ENDPOINTS.USER_PATH, {
                 headers: { "Authorization": `Bearer ${this.accessToken}`, }
             })
             if (!userResponse.ok) {
-                return { success: true, data: false, error: "Token 无效" }
+                return { success: true, data: false, error: "Invalid token" }
             }
 
             const gistData = await gistResponse.json()
@@ -61,6 +92,11 @@ export class GistProvider extends HttpProvider {
         }
     }
 
+    /**
+     * Upload bookmarks to Gist
+     * @param data bookmark payload
+     * @returns success or error result
+     */
     async upload(data: SyncPayload): Promise<Result<void>> {
         try {
             const response = await this.request("PATCH", `${GIST_ENDPOINTS.GIST_PATH}/${this.gistId}`, {
@@ -86,6 +122,10 @@ export class GistProvider extends HttpProvider {
         }
     }
 
+    /**
+     * Download bookmarks from Gist
+     * @returns bookmark payload
+     */
     async download(): Promise<Result<SyncPayload>> {
         try {
             const response = await this.request("GET", `${GIST_ENDPOINTS.GIST_PATH}/${this.gistId}`)
@@ -98,7 +138,7 @@ export class GistProvider extends HttpProvider {
             const file = gistData.files[this.fileName]
 
             if (!file) {
-                return { success: false, error: `文件 ${this.fileName} 不存在` }
+                return { success: false, error: `File ${this.fileName} not found` }
             }
 
             const payload = JSON.parse(file.content) as SyncPayload

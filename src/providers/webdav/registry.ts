@@ -1,12 +1,12 @@
 import { WebDAVProvider } from "./webdav"
 import { type WebDAVUserConfig, type CustomVendorConfig } from "~/src/types"
 
-
 /**
- * WebDAV 服务商注册表（静态单例）
+ * WebDAV vendor registry (static singleton)
+ * @remarks Manages preset and custom vendors, provides factory method
  */
 export class WebDAVRegistry {
-    /** 预置服务商（不可修改） */
+    // Preset vendors (read-only)
     private static readonly presetVendors: CustomVendorConfig[] = [
         {
             id: "jianguoyun",
@@ -15,43 +15,47 @@ export class WebDAVRegistry {
         },
     ]
 
-    /** 自定义服务商（可动态添加/删除） */
+    // Custom vendors (dynamic)
     private static customVendors: CustomVendorConfig[] = []
 
-    // 禁止实例化
+    // Prevent instantiation
     private constructor() { }
 
     /**
-     * 获取所有服务商（预置 + 自定义）
+     * Get all vendors (preset + custom)
+     * @returns combined vendor list
      */
     public static getAllVendors(): CustomVendorConfig[] {
         return [...this.presetVendors, ...this.customVendors]
     }
 
     /**
-     * 根据 ID 获取服务商
+     * Get vendor by ID
+     * @param id vendor ID
+     * @returns vendor config or undefined
      */
     public static getVendor(id: string): CustomVendorConfig | undefined {
         return this.getAllVendors().find(v => v.id === id)
     }
 
     /**
-     * 添加自定义服务商
-     * @description
-     * 不应被开发者调用，请考虑`~src/store/loader.ts`中的封装函数`addCustomVendorToConfig`
+     * Add custom vendor
+     * @param vendor vendor config to add
+     * @remarks Use `addCustomVendorToConfig` from store/loader.ts instead
      */
     public static addCustomVendor(vendor: CustomVendorConfig): void {
-        // 检查 ID 是否已存在
+        // --- Check if ID exists ---
         if (this.getVendor(vendor.id)) {
-            throw new Error(`服务商 ID "${vendor.id}" 已存在`)
+            throw new Error(`Vendor ID "${vendor.id}" already exists`)
         }
         this.customVendors.push(vendor)
     }
 
     /**
-     * 删除自定义服务商
-     * @description
-     * 不应被开发者调用，请考虑`~src/store/loader.ts`中的封装函数`removeCustomVendorFromConfig`
+     * Remove custom vendor
+     * @param id vendor ID to remove
+     * @returns whether removal was successful
+     * @remarks Use `removeCustomVendorFromConfig` from store/loader.ts instead
      */
     public static removeCustomVendor(id: string): boolean {
         const index = this.customVendors.findIndex(v => v.id === id)
@@ -63,28 +67,33 @@ export class WebDAVRegistry {
     }
 
     /**
-     * 清空所有自定义服务商
+     * Clear all custom vendors
      */
     public static clearCustomVendors(): void {
         this.customVendors = []
     }
 
     /**
-     * 获取所有自定义服务商
+     * Get all custom vendors
+     * @returns custom vendors array copy
      */
     public static getCustomVendors(): CustomVendorConfig[] {
         return [...this.customVendors]
     }
 
     /**
-     * 获取所有预置服务商
+     * Get all preset vendors
+     * @returns preset vendors array copy
      */
     public static getPresetVendors(): CustomVendorConfig[] {
         return [...this.presetVendors]
     }
 
     /**
-     * 创建 WebDAV Provider 实例
+     * Create WebDAV provider instance
+     * @param vendorId vendor ID to use
+     * @param config user configuration
+     * @returns configured WebDAVProvider instance
      */
     public static createProvider(
         vendorId: string,
@@ -93,15 +102,14 @@ export class WebDAVRegistry {
         const vendor = this.getVendor(vendorId)
 
         if (!vendor) {
-            throw new Error(`未知的 WebDAV 服务商: ${vendorId}`)
+            throw new Error(`Unknown WebDAV vendor: ${vendorId}`)
         }
 
         const serverUrl = config.serverUrl || vendor.serverUrl
         if (!serverUrl) {
-            throw new Error(`服务商 ${vendor.name} 需要提供 serverUrl`)
+            throw new Error(`Vendor ${vendor.name} requires serverUrl`)
         }
 
-        // filePath 从用户配置中获取（必填）
         const filePath = config.filePath
 
         return new WebDAVProvider(

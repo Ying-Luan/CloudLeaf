@@ -1,25 +1,44 @@
+/**
+ * HTTP provider module
+ * @module providers/http
+ * @packageDocumentation
+ */
+
 import { type Result } from "~/src/types"
 import { BaseProvider } from "~/src/providers"
 import { HttpStatusMessage } from "~/src/constants"
 
+/**
+ * HTTP method types
+ * - `GET` retrieve resource
+ * - `PATCH` partial update
+ * - `PROPFIND` WebDAV property retrieval
+ * - `PUT` create or replace resource
+ * - `MKCOL` WebDAV create collection
+ */
 type Method = "GET" | "PATCH" | "PROPFIND" | "PUT" | "MKCOL"
 
 /**
- * L2: HTTP 协议提供者抽象类
- * 封装 HTTP 请求通用逻辑
+ * Abstract HTTP protocol provider
+ * @remarks Encapsulates common HTTP request logic
  */
 export abstract class HttpProvider extends BaseProvider {
-  /** 服务器基础 URL */
+  // Base URL for the server
   protected abstract readonly baseUrl: string
+
+  // Request timeout in ms
   protected readonly timeout = 30_000
 
   /**
-   * 获取认证请求头（子类实现）
+   * Get authentication headers
+   * @returns headers with auth credentials
+   * @remarks Must be implemented by subclasses
    */
   protected abstract getAuthHeaders(): Record<string, string>
 
   /**
-   * 获取基础请求头
+   * Get base request headers
+   * @returns default headers
    */
   protected getBaseHeaders(): Record<string, string> {
     return {
@@ -28,7 +47,8 @@ export abstract class HttpProvider extends BaseProvider {
   }
 
   /**
-   * 合并所有请求头
+   * Merge all request headers
+   * @returns combined base and auth headers
    */
   protected getAllHeaders(): Record<string, string> {
     return {
@@ -38,10 +58,11 @@ export abstract class HttpProvider extends BaseProvider {
   }
 
   /**
-   * 发起 HTTP 请求
-   * @param method HTTP 方法
-   * @param path 请求路径
-   * @param options 可选配置：body 数据、自定义 headers
+   * Send HTTP request
+   * @param method HTTP method
+   * @param path request path
+   * @param options optional config (body, headers)
+   * @returns fetch response
    */
   protected async request(
     method: Method,
@@ -64,7 +85,7 @@ export abstract class HttpProvider extends BaseProvider {
         },
         body: options?.body ? JSON.stringify(options.body) : undefined,
         signal: controller.signal,
-        credentials: 'omit', // 禁止浏览器弹出认证窗口
+        credentials: 'omit',
       })
       return response
     } finally {
@@ -73,29 +94,33 @@ export abstract class HttpProvider extends BaseProvider {
   }
 
   /**
-   * 获取 HTTP 错误消息
-   * @param status HTTP 状态码
+   * Get HTTP error message by status code
+   * @param status HTTP status code
+   * @returns human-readable error message
    */
   protected getHttpErrorMessage(status: number): string {
-    return HttpStatusMessage[status] || `请求失败: ${status}`
+    return HttpStatusMessage[status] || `Request failed: ${status}`
   }
 
   /**
-   * 统一错误处理
-   * @param response HTTP 响应对象
+   * Handle HTTP error response
+   * @param response HTTP response object
+   * @returns error result
    */
   protected handleError(response: Response): Result<never> {
     return { success: false, error: this.getHttpErrorMessage(response.status) }
   }
 
   /**
-   * 网络异常处理
+   * Handle network exceptions
+   * @param error caught error object
+   * @returns error result
    */
   protected handleNetworkError(error: unknown): Result<never> {
     if (error instanceof Error) {
-      if (error.name === "AbortError") return { success: false, error: "请求超时" }
-      return { success: false, error: `网络错误: ${error.message}` }
+      if (error.name === "AbortError") return { success: false, error: "Request timeout" }
+      return { success: false, error: `Network error: ${error.message}` }
     }
-    return { success: false, error: "未知网络错误" }
+    return { success: false, error: "Unknown network error" }
   }
 }

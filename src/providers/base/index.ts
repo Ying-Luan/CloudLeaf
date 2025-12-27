@@ -1,29 +1,37 @@
+/**
+ * Base provider module
+ * @module providers/base
+ * @packageDocumentation
+ */
+
 import { type SyncPayload, type Result } from "~/src/types"
 
 /**
- * L1: 存储提供者基类
- * 定义所有 Provider 必须实现的接口契约
+ * Abstract base class for storage providers
+ * @remarks Defines the contract all providers must implement
  */
 export abstract class BaseProvider {
-    /** 唯一标识符 */
+    // Unique identifier
     abstract readonly id: string
 
-    /** 显示名称 */
+    // Display name
     abstract readonly name: string
 
     /**
-     * 验证配置是否有效
+     * Validate provider configuration
+     * @returns Whether configuration is valid
      */
     abstract isValid(): Promise<Result<boolean>>
 
     /**
-     * 上传书签到云端
-     * @param data 书签数据
+     * Upload bookmarks to cloud
+     * @param data Bookmark payload
      */
     abstract upload(data: SyncPayload): Promise<Result<void>>
 
     /**
-     * 从云端下载书签
+     * Download bookmarks from cloud
+     * @returns Bookmark payload
      */
     abstract download(): Promise<Result<SyncPayload>>
 }
