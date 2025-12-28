@@ -23,6 +23,7 @@ export function useSync() {
     setLoading(true)
     setError(null)
     try {
+      if (process.env.NODE_ENV === 'development') console.log(`[hooks/useSync] In performUpload, starting upload when force = ${force}`)
       const res = await uploadBookmarks(force)
       if (!res.success) {
         setError(res.error || "上传失败")
@@ -92,8 +93,7 @@ export function useSync() {
       const res = await importBookmarks()
       if (!res.success) {
         setError(res.error || "导入失败")
-        if (process.env.NODE_ENV === 'development')
-          console.error("[hooks/useSync] In performImport, Import failed:", res.error)
+        if (process.env.NODE_ENV === 'development') console.error("[hooks/useSync] In performImport, Import failed:", res.error)
       }
       return res
     } catch (e) {

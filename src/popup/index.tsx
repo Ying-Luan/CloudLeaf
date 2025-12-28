@@ -33,8 +33,12 @@ function IndexPopup() {
    * allowing force upload if confirmed.
    */
   const handleUpload = async () => {
+    if (process.env.NODE_ENV === 'development') console.log("[popup] Starting upload...")
     const result = await performUpload()
-    if (!result.success) return
+    if (!result.success) {
+      alert("上传失败")
+      return
+    }
     // status === 'behind' means cloud data is newer
     if (result.data.status === 'behind') {
       if (confirm("云端数据较新，是否强制上传覆盖？")) {
@@ -59,7 +63,10 @@ function IndexPopup() {
    */
   const handleDownload = async () => {
     const result = await performDownload()
-    if (!result.success) return
+    if (!result.success) {
+      alert("下载失败")
+      return
+    }
     // status === 'ahead' means local data is newer
     if (result.data.status === 'ahead') {
       if (confirm("本地数据较新，是否强制下载覆盖？")) {
@@ -81,7 +88,10 @@ function IndexPopup() {
    */
   const handleExport = async () => {
     const result = await performExport()
-    if (!result.success) return
+    if (!result.success) {
+      alert("导出失败")
+      return
+    }
     alert("导出成功")
   }
 
@@ -96,6 +106,7 @@ function IndexPopup() {
     if (!result.success) {
       if (process.env.NODE_ENV === 'development')
         console.error("[popup/index] Import failed:", result.error)
+      alert("导入失败")
       return
     }
     if (result.data.status === 'ahead') {

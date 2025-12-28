@@ -95,6 +95,9 @@ export class WebDAVProvider extends HttpProvider {
             // --- Ensure parent directory exists ---
             await this.ensureDirectory()
 
+            if (process.env.NODE_ENV === "development") {
+                console.log(`[providers/webdav] Start uploading to ${this.name}...`)
+            }
             const response = await this.request("PUT", this.filePath, {
                 body: data,
                 headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -206,6 +209,7 @@ export class WebDAVProvider extends HttpProvider {
      * @returns Error result
      */
     protected handleWebDAVError(status: number): Result<never> {
+        if (process.env.NODE_ENV === "development") console.error(`[providers/webdav] WebDAV error: ${status} - ${this.getErrorMessage(status)}`)
         return { success: false, error: this.getErrorMessage(status) }
     }
 

@@ -60,6 +60,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
     // --- Check if any cloud is newer ---
     if (!force) {
       for (const item of providers) {
+        if (process.env.NODE_ENV === "development") console.log(`[core/sync/cloud] Start uploading to ${item.provider.name} when force = ${force}`)
         const res = await item.provider.download()
         if (res.success && res.data) {
           if (getSyncStatus(local, res.data) === 'behind') {
@@ -67,6 +68,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
           }
         }
       }
+      return { success: true, data: { status: 'synced' } }
     }
 
     // --- Proceed to upload to all providers ---
@@ -74,12 +76,15 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
     let successCount = 0
     for (const item of providers) {
       if (process.env.NODE_ENV === "development") {
-        console.log(`Start uploading to ${item.provider.name}...`)
+        console.log(`[core/sync/cloud] Start uploading to ${item.provider.name} when force = ${force}`)
       }
       const res = await item.provider.upload(local)
       if (res.success) {
         successCount++
       } else {
+        if (process.env.NODE_ENV === "development") {
+          console.error(`[core/sync/cloud] Upload to ${item.provider.name} failed`)
+        }
         errors.push(`${item.provider.name}: ${res.error || "上传失败"}`)
       }
     }
@@ -114,6 +119,9 @@ export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus, 
     const errors: string[] = []
 
     for (const item of providers) {
+      if (process.env.NODE_ENV === "development") {
+        console.log(`[core/sync/cloud] Start downloading from ${item.provider.name}...`)
+      }
       const res = await item.provider.download()
       if (res.success && res.data) {
         const cloud = res.data

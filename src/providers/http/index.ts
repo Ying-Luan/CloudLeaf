@@ -126,6 +126,9 @@ export abstract class HttpProvider extends BaseProvider {
    * @returns Error result
    */
   protected handleNetworkError(error: unknown): Result<never> {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[providers/http] Network error")
+    }
     if (error instanceof Error) {
       if (error.name === "AbortError") return { success: false, error: "Request timeout" }
       return { success: false, error: `Network error: ${error.message}` }
