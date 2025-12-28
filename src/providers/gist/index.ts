@@ -125,6 +125,7 @@ export class GistProvider extends HttpProvider {
             })
 
             if (!response.ok) {
+                if (process.env.NODE_ENV === "development") console.error("Gist upload failed")
                 return this.handleError(response)
             }
 

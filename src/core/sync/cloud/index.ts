@@ -66,6 +66,9 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
           if (getSyncStatus(local, res.data) === 'behind') {
             return { success: true, data: { status: 'behind' } }
           }
+        } else {
+          if (process.env.NODE_ENV === "development") console.error(`[core/sync/cloud] Download from ${item.provider.name} failed during upload check`)
+          return { success: false, error: `Failed to check sync status from ${item.provider.name}: ${res.error || "下载失败"}` }
         }
       }
       return { success: true, data: { status: 'synced' } }

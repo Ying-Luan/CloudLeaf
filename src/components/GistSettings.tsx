@@ -52,6 +52,13 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
     })
   }
 
+  const handleReset = () => {
+    onUpdate({
+      ...config,
+      gist: undefined,
+    })
+  }
+
   return (
     <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-50">
@@ -68,7 +75,7 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
         {/* Button to reset configuration */}
         {config && (
           <button
-            onClick={() => onUpdate(undefined)}
+            onClick={handleReset}
             className="text-xs text-red-400 hover:text-red-600 transition-colors"
           >
             重置配置
