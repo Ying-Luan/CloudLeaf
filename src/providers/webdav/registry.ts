@@ -42,6 +42,7 @@ export class WebDAVRegistry {
      * Add custom vendor
      * @param vendor Vendor config to add
      * @remarks Use `addCustomVendorToConfig` from store/loader.ts instead
+     * @see {@link ~src/store/loader.ts addCustomVendorToConfig}
      */
     public static addCustomVendor(vendor: CustomVendorConfig): void {
         // --- Check if ID exists ---
@@ -56,6 +57,7 @@ export class WebDAVRegistry {
      * @param id Vendor ID to remove
      * @returns Whether removal was successful
      * @remarks Use `removeCustomVendorFromConfig` from store/loader.ts instead
+     * @see {@link ~src/store/loader.ts removeCustomVendorFromConfig}
      */
     public static removeCustomVendor(id: string): boolean {
         const index = this.customVendors.findIndex(v => v.id === id)

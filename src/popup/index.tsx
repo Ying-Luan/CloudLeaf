@@ -13,7 +13,7 @@ import { Button } from "~src/components"
  */
 function IndexPopup() {
   // Sync operations and state from useSync hook
-  const { loading, error, performUpload, performDownload } = useSync()
+  const { loading, error, performUpload, performDownload, performExport, performImport } = useSync()
   /**
    * Extension version from package.json.
    */
@@ -76,6 +76,39 @@ function IndexPopup() {
     }
   }
 
+  /**
+   * Handle bookmark export to local file.
+   */
+  const handleExport = async () => {
+    const result = await performExport()
+    if (!result.success) return
+    alert("导出成功")
+  }
+
+  /**
+   * Handle bookmark import from local file.
+   * 
+   * Checks sync status and prompts user if local data is newer,
+   * allowing force import if confirmed.
+   */
+  const handleImport = async () => {
+    const result = await performImport()
+    if (!result.success) {
+      if (process.env.NODE_ENV === 'development')
+        console.error("[popup/index] Import failed:", result.error)
+      return
+    }
+    if (result.data.status === 'ahead') {
+      if (confirm("本地数据较新，是否强制导入覆盖？")) {
+        await setBookmarks(result.data.payload)
+        alert("强制导入成功")
+      }
+    } else {
+      await setBookmarks(result.data.payload)
+      alert("导入成功")
+    }
+  }
+
   return (
     <div className="w-60 p-5 bg-white flex flex-col gap-6">
       {/* Header */}
@@ -119,6 +152,23 @@ function IndexPopup() {
           onClick={handleDownload}
           loading={loading}
         />
+
+        {/* Buttons to export and import bookmarks */}
+        <div className="flex gap-3">
+          {/* Button to export bookmarks */}
+          <Button
+            label="导出书签"
+            onClick={handleExport}
+            loading={loading}
+          />
+
+          {/* Button to import bookmarks */}
+          <Button
+            label="导入书签"
+            onClick={handleImport}
+            loading={loading}
+          />
+        </div>
       </div>
     </div>
   )

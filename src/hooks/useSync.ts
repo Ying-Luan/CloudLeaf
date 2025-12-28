@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { uploadBookmarks, downloadBookmarks } from "~src/core/sync"
+import { uploadBookmarks, downloadBookmarks, exportBookmarks, importBookmarks } from "~src/core/sync"
 import { type SyncStatus, type Result, type SyncPayload } from "~src/types"
 
 /**
@@ -59,10 +59,58 @@ export function useSync() {
     }
   }
 
+  /**
+   * Perform export of bookmarks to a local file.
+   * @returns Result object containing sync `status` on success or `error` on failure
+   */
+  const performExport = async (): Promise<Result<{ status: SyncStatus }>> => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await exportBookmarks()
+      if (!res.success) {
+        setError(res.error || "导出失败")
+      }
+      return res
+    } catch (e) {
+      const msg = String(e)
+      setError(msg)
+      return { success: false, error: msg }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /**
+   * Perform import of bookmarks from a local file.
+   * @returns Result object containing `status` and optional `payload` when importing from a local file
+   */
+  const performImport = async (): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await importBookmarks()
+      if (!res.success) {
+        setError(res.error || "导入失败")
+        if (process.env.NODE_ENV === 'development')
+          console.error("[hooks/useSync] In performImport, Import failed:", res.error)
+      }
+      return res
+    } catch (e) {
+      const msg = String(e)
+      setError(msg)
+      return { success: false, error: msg }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return {
     loading,
     error,
     performUpload,
     performDownload,
+    performExport,
+    performImport
   }
 }

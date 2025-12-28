@@ -13,7 +13,6 @@ import { type SyncPayload, type Result } from "~/src/types"
 export abstract class BaseProvider {
     /**
      * Unique provider identifier
-     * 
     */
     abstract readonly id: string
 

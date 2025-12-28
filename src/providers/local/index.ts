@@ -1,26 +1,26 @@
 /**
- * Local browser provider module
+ * Local file provider module
  * @module providers/local
  * @packageDocumentation
  */
 
 import { type SyncPayload, type Result } from "~/src/types"
 import { BaseProvider } from "~/src/providers"
-import { getBookmarks, setBookmarks } from "~/src/core/bookmark"
+import { DEFAULT_FILENAME } from "~src/constants"
 
 /**
- * Local browser bookmark provider
- * @remarks Wraps browser bookmark API as a unified provider interface
+ * Local file provider
+ * @remarks Orchestrates native browser save/open dialogs for JSON sync payloads.
  */
 export class LocalProvider extends BaseProvider {
     /**
-     * Provider unique identifier
+     * Unique provider identifier
      */
-    readonly id = "local"
+    readonly id = "local_file"
     /**
-     * Provider display name
+     * Display name
      */
-    readonly name = "Local Browser"
+    readonly name = "Local File"
 
     /**
      * Validate local provider (always valid)
@@ -31,35 +31,79 @@ export class LocalProvider extends BaseProvider {
     }
 
     /**
-     * Upload bookmarks to browser (save to local)
-     * @param data Bookmark payload to save
+     * Trigger Browser Download to save data as a local file
+     * 
+     * browser -> local file
+     * @param data Bookmark payload
      * @returns Success or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
         try {
-            await setBookmarks(data)
+            const json = JSON.stringify(data)
+            const blob = new Blob([json], { type: "application/json" })
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = DEFAULT_FILENAME
+
+            // Trigger download
+            document.body.appendChild(a)
+            a.click()
+
+            // Clean up
+            document.body.removeChild(a)
+            URL.revokeObjectURL(url)
+
             return { success: true }
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "Failed to save bookmarks"
+                error: error instanceof Error ? error.message : "Failed to download bookmarks"
             }
         }
     }
 
     /**
-     * Download bookmarks from browser (read from local)
-     * @returns Current browser bookmarks as SyncPayload
+     * Trigger File Picker to get data from a local file
+     * 
+     * local file -> browser
+     * @returns Bookmark payload from local file
      */
     async download(): Promise<Result<SyncPayload>> {
-        try {
-            const payload = await getBookmarks()
-            return { success: true, data: payload }
-        } catch (error) {
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : "Failed to read bookmarks"
+        return new Promise((resolve) => {
+            // Create file input element
+            const input = document.createElement("input")
+            input.type = "file"
+            input.accept = "application/json"
+
+            // Handle file selection
+            input.onchange = async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0]
+                if (!file) {
+                    resolve({ success: false, error: "No file selected" })
+                    return
+                }
+
+                try {
+                    const text = await file.text()
+                    const data = JSON.parse(text) as SyncPayload
+                    if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
+                        resolve({ success: false, error: "Invalid bookmark data in file" })
+                        return
+                    }
+                    resolve({ success: true, data })
+                } catch (error) {
+                    resolve({ success: false, error: "Failed to read or parse the file" })
+                }
             }
-        }
+
+            // Handle cancelation
+            input.oncancel = () => {
+                resolve({ success: false, error: "File selection canceled" })
+            }
+
+            // click -> file -> onchange or oncancel
+            input.click()
+        })
     }
 }
