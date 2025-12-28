@@ -39,6 +39,7 @@
   "manifest": {
     "permissions": [
       "bookmarks",
+      "sidePanel",
       "storage"
     ],
     "host_permissions": [

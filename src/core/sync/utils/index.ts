@@ -8,7 +8,7 @@ import { type SyncStatus } from "~src/types"
  * @returns the sync status: `'ahead'`, `'behind'`, or `'synced'`
  */
 export function getSyncStatus(local: SyncPayload, remote: SyncPayload): SyncStatus {
-  if (local.updatedAt > remote.updatedAt) return 'ahead';
-  if (local.updatedAt < remote.updatedAt) return 'behind';
-  return 'synced';
+  if (local.updatedAt > remote.updatedAt) return 'ahead'
+  if (local.updatedAt < remote.updatedAt) return 'behind'
+  return 'synced'
 }
