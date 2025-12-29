@@ -6,7 +6,7 @@
 
 import { type SyncPayload, type Result } from "~/src/types"
 import { HttpProvider } from "~/src/providers"
-import { GIST_ENDPOINTS } from "~/src/constants"
+import { GIST_ENDPOINTS, HttpStatus } from "~/src/constants"
 
 /**
  * GitHub Gist storage provider
@@ -95,7 +95,7 @@ export class GistProvider extends HttpProvider {
 
             const gistData = await gistResponse.json()
             if (!gistData.files[this.fileName]) {
-                return { ok: true, data: true }
+                return { ok: true, data: true, status: HttpStatus.NOT_FOUND }
             }
 
             return { ok: true, data: true }
@@ -151,7 +151,7 @@ export class GistProvider extends HttpProvider {
             const file = gistData.files[this.fileName]
 
             if (!file) {
-                return { ok: false, error: `File ${this.fileName} not found` }
+                return { ok: false, status: HttpStatus.NOT_FOUND, error: `File ${this.fileName} not found` }
             }
 
             const payload = JSON.parse(file.content) as SyncPayload
