@@ -1,5 +1,5 @@
-import React from "react"
-import { type UserConfig, type SourceItem } from "~src/types"
+import React, { useState } from "react"
+import { type UserConfig, type SourceItem, type Editor } from "~src/types"
 import SourceBoard from "./SourceBoard"
 import { useSaveConfig, useTest } from "~src/hooks"
 
@@ -17,6 +17,10 @@ interface SourcesProps {
    * Callback to apply an updated configuration
    */
   onUpdate: (newConfig: UserConfig) => void
+  /**
+   * Open editor panel below for add/edit
+   */
+  onOpenEditor: (opts: Editor) => void
 }
 
 /**
@@ -27,10 +31,11 @@ interface SourcesProps {
  * @param props Sources component properties
  * @returns A JSX element rendering the sources list
  */
-const Sources = ({ config, onUpdate }: SourcesProps) => {
+const Sources = ({ config, onUpdate, onOpenEditor }: SourcesProps) => {
   // Hook state and helpers for saving and testing providers
   const { saving, saveConfig } = useSaveConfig()
   const { testingMap, testGist, testWebDav } = useTest()
+  const [showAddChooser, setShowAddChooser] = useState(false)
 
   // Determine if any sources are configured
   const hasGist = !!config?.gist?.accessToken
@@ -205,11 +210,48 @@ const Sources = ({ config, onUpdate }: SourcesProps) => {
                 index={i}
                 total={allSources.length}
                 onUpdateEnabled={(enabled) => onUpdateEnabled(source, enabled)}
+                onEdit={() => onOpenEditor({ mode: "edit", type: source.type, index: source.rawIndex })}
               />
             )
           })}
         </div>
       )}
+
+      {/* Add new source area */}
+      <div className="pt-2">
+        <div className="flex items-center gap-3">
+          <button
+            className="px-3 py-2 text-[12px] rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono"
+            onClick={() => setShowAddChooser(v => !v)}
+          >
+            新增同步源
+          </button>
+
+          {showAddChooser && (
+            <div className="flex items-center gap-2">
+              <button
+                className={`px-2 py-1 text-[12px] rounded-md border font-mono ${hasGist ? "opacity-40 cursor-not-allowed" : "hover:bg-slate-900 hover:text-white border-slate-200"}`}
+                disabled={hasGist}
+                onClick={() => {
+                  onOpenEditor({ mode: "add", type: "gist" })
+                  setShowAddChooser(false)
+                }}
+              >
+                Gist
+              </button>
+              <button
+                className="px-2 py-1 text-[12px] rounded-md border font-mono hover:bg-slate-900 hover:text-white border-slate-200"
+                onClick={() => {
+                  onOpenEditor({ mode: "add", type: "webdav" })
+                  setShowAddChooser(false)
+                }}
+              >
+                WebDAV
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </section>
   )
 }

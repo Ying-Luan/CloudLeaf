@@ -62,6 +62,7 @@ export async function setUserConfig(config: UserConfig): Promise<void> {
  * Partially update user configuration
  * @param updates Partial config to merge
  * @returns Merged configuration
+ * @remarks This function will store the updated configuration
  */
 export async function updateUserConfig(updates: Partial<UserConfig>): Promise<UserConfig> {
   const current = await getUserConfig()

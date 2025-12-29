@@ -56,6 +56,10 @@ interface SourceBoardProps {
    * Update enabled state for this source
   */
   onUpdateEnabled: (enabled: boolean) => void
+  /**
+   * Trigger edit of this source (opens settings panel below)
+   */
+  onEdit: () => void
 }
 
 /**
@@ -63,7 +67,7 @@ interface SourceBoardProps {
  * @param props Source board properties
  * @returns A JSX element rendering the source board
  */
-const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, isTesting, saving, onMoveUp, onMoveDown, index, total, onUpdateEnabled }: SourceBoardProps) => {
+const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, isTesting, saving, onMoveUp, onMoveDown, index, total, onUpdateEnabled, onEdit }: SourceBoardProps) => {
   // Local state for expanded/collapsed panel
   const [isExpanded, setIsExpanded] = useState(false)
   const isGist = source.type === "gist"
@@ -186,6 +190,14 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
                   }`}
               >
                 {isTesting ? "正在连接..." : "验证连接状态"}
+              </button>
+
+              {/* Button to edit source */}
+              <button
+                onClick={onEdit}
+                className={`px-4 py-2 rounded-md text-[11px] transition-all cursor-pointer font-bold ${isGist ? "bg-white/10 hover:bg-white/20 text-white" : "bg-white text-blue-700 border border-blue-200 hover:bg-blue-50"}`}
+              >
+                修改
               </button>
 
               {/* Button to remove source */}

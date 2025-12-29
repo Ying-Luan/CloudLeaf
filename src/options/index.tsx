@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { getUserConfig } from "~src/store"
 import { GistSettings, Sources, WebDavSettings, WebDavVendorManager } from "~src/components"
-import type { UserConfig } from "~src/types"
+import { type UserConfig, type Editor } from "~src/types"
 import "./index.css"
 
 /**
@@ -14,6 +14,7 @@ import "./index.css"
 function OptionsPage() {
   const [config, setConfig] = useState<UserConfig | null>(null)
   const [loading, setLoading] = useState(true)
+  const [editor, setEditor] = useState<null | Editor>(null)
 
   useEffect(() => {
     // Load user configuration on mount
@@ -40,22 +41,31 @@ function OptionsPage() {
           <Sources
             config={config}
             onUpdate={setConfig}
+            onOpenEditor={(opts) => setEditor(opts)}
           />
 
-          {/* Gist configuration section */}
-          <GistSettings
-            config={config}
-            onUpdate={setConfig}
-          />
+          {/* Inline editor panel: Gist or WebDAV */}
+          {editor?.type === "gist" && (
+            <GistSettings
+              config={config ?? undefined}
+              onUpdate={(c) => setConfig(c ?? null)}
+              onClose={() => setEditor(null)}
+            />
+          )}
+
+          {/* WebDAV account editor/add section (conditional) */}
+          {editor?.type === "webdav" && (
+            <WebDavSettings
+              config={config}
+              onUpdate={setConfig}
+              mode={editor.mode}
+              editingIndex={editor.index ?? null}
+              onClose={() => setEditor(null)}
+            />
+          )}
 
           {/* WebDAV vendor management section */}
           <WebDavVendorManager
-            config={config}
-            onUpdate={setConfig}
-          />
-
-          {/* WebDAV account configuration section */}
-          <WebDavSettings
             config={config}
             onUpdate={setConfig}
           />

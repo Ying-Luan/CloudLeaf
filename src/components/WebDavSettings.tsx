@@ -22,6 +22,18 @@ interface WebDavSettingsProps {
    * Callback to apply an updated configuration
    */
   onUpdate: (newConfig: UserConfig) => void
+  /**
+   * Edit mode or add mode (default: add)
+   */
+  mode?: "add" | "edit"
+  /**
+   * When editing, the index in webDavConfigs to edit
+   */
+  editingIndex?: number | null
+  /**
+   * Close the WebDAV settings panel
+   */
+  onClose: () => void
 }
 
 /**
@@ -32,7 +44,7 @@ interface WebDavSettingsProps {
  * @param props WebDavSettings component properties
  * @returns A JSX element rendering the WebDAV account form
  */
-const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
+const WebDavSettings = ({ config, onUpdate, mode = "add", editingIndex = null, onClose }: WebDavSettingsProps) => {
   // Form state for adding a new WebDAV account.
   const [form, setForm] = useState<WebDAVUserConfig>({
     vendorId: "jianguoyun",
@@ -49,6 +61,26 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
     if (config) loadCustomVendorsFromConfig(config)
   }, [config])
 
+  // initial form
+  useEffect(() => {
+    if (!config) return
+    if (mode === "edit" && editingIndex != null && editingIndex >= 0) {
+      const existing = config.webDavConfigs?.[editingIndex]
+      if (existing) {
+        setForm({ ...existing })
+      }
+    } else {
+      setForm({
+        vendorId: "jianguoyun",
+        username: "",
+        password: "",
+        filePath: DEFAULT_WEBDAV_FILEPATH,
+        enabled: true,
+        priority: Number.MAX_SAFE_INTEGER,
+      })
+    }
+  }, [])
+
   /**
    * All available vendors (built-in + custom).
    */
@@ -60,29 +92,43 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
    * Validates form inputs, assigns next priority, updates config,
    * and resets username/password fields.
    */
-  const handleAdd = async () => {
+  const handleSubmit = async () => {
     if (!form.username || !form.password) return alert("请填写完整信息")
-    form.priority = await getMaxPriority() + 1
-    const newWebDavConfigs = [...(config?.webDavConfigs || []), { ...form }]
-    const newConfig = { ...config!, webDavConfigs: newWebDavConfigs }
-    onUpdate(newConfig)
-    saveConfig(newConfig)
-    setForm({ ...form, username: "", password: "" })
+    if (mode === "add") {
+      const priority = await getMaxPriority() + 1
+      const newWebDavConfigs = [...(config?.webDavConfigs || []), { ...form, priority }]
+      const newConfig = { ...config!, webDavConfigs: newWebDavConfigs }
+      onUpdate(newConfig)
+      saveConfig(newConfig)
+      onClose()
+    } else {
+      if (editingIndex == null || editingIndex < 0) return
+      const list = [...(config?.webDavConfigs || [])]
+      list[editingIndex] = { ...form, priority: list[editingIndex].priority }
+      const newConfig = { ...config!, webDavConfigs: list }
+      onUpdate(newConfig)
+      saveConfig(newConfig)
+      onClose()
+    }
   }
 
   return (
     <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3 pb-4 border-b border-slate-50">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-50">
         {/* Icon container */}
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-          </svg>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+            </svg>
+          </div>
+          {/* Title */}
+          <h3 className="text-lg font-bold text-slate-800">{mode === "edit" ? "编辑 WebDAV 账号" : "WebDAV 账号管理"}</h3>
         </div>
 
-        {/* Title */}
-        <h3 className="text-lg font-bold text-slate-800">WebDAV 账号管理</h3>
+        {/* Button to close the settings panel */}
+        <button onClick={onClose} className="text-xs text-slate-400 hover:text-slate-600">取消</button>
       </div>
 
       {/* Add account form */}
@@ -125,8 +171,8 @@ const WebDavSettings = ({ config, onUpdate }: WebDavSettingsProps) => {
 
         {/* Add account button */}
         <Button
-          label="确认添加 WebDAV 账号"
-          onClick={handleAdd}
+          label={mode === "edit" ? "保存修改" : "确认添加 WebDAV 账号"}
+          onClick={handleSubmit}
           loading={saving}
           className="bg-white border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900"
         />

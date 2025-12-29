@@ -31,3 +31,21 @@ export interface SourceItem {
    */
   enabled: boolean
 }
+
+/**
+ * Editor state for opening the inline editor panel
+ */
+export interface Editor {
+  /**
+   * Edit mode
+   */
+  mode: "add" | "edit",
+  /**
+   * Provider type to edit
+   */
+  type: "gist" | "webdav",
+  /**
+   * Index of the item to edit (for edit mode and webdav only)
+   */
+  index?: number,
+}

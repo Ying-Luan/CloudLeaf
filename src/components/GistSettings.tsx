@@ -3,6 +3,7 @@ import Input from "./Input"
 import type { GistConfig, UserConfig } from "~src/types"
 import { DEFAULT_FILENAME } from "~src/constants"
 import { useSaveConfig } from "~src/hooks"
+import { useEffect, useState } from "react"
 
 /**
  * Props for the `GistSettings` component.
@@ -18,6 +19,10 @@ interface GistSettingsProps {
    * Callback invoked with updated configuration (or `undefined` to reset)
    */
   onUpdate: (newConfig: UserConfig | undefined) => void
+  /**
+   * Close the Gist settings panel
+   */
+  onClose: () => void
 }
 
 /**
@@ -25,9 +30,13 @@ interface GistSettingsProps {
  * @param props Gist settings properties
  * @returns A JSX element rendering Gist settings inputs and save button
  */
-const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
+const GistSettings = ({ config, onUpdate, onClose }: GistSettingsProps) => {
   const { saving, saveConfig } = useSaveConfig()
-  const gist = config.gist
+  const [gist, setGist] = useState<GistConfig | null>(null)
+
+  useEffect(() => {
+    setGist(config?.gist || null)
+  }, [])
 
   /**
    * Handle changes to a specific Gist configuration field.
@@ -45,11 +54,8 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
       }),
       [field]: value,
     }
+    setGist(newGist)
     // TODO: Priority may require adjustment here
-    onUpdate({
-      ...config,
-      gist: newGist,
-    })
   }
 
   const handleReset = () => {
@@ -72,15 +78,26 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
           <h3 className="text-lg font-bold text-slate-800">GitHub Gist 配置</h3>
         </div>
 
-        {/* Button to reset configuration */}
-        {config && (
+        {/* Buttons to cancel editing and reset configuration */}
+        <div className="flex items-center gap-3">
+          {/* Button to cancel editing */}
           <button
-            onClick={handleReset}
-            className="text-xs text-red-400 hover:text-red-600 transition-colors"
+            onClick={onClose}
+            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
           >
-            重置配置
+            取消
           </button>
-        )}
+
+          {/* Button to reset Gist configuration */}
+          {config && (
+            <button
+              onClick={handleReset}
+              className="text-xs text-red-400 hover:text-red-600 transition-colors"
+            >
+              重置配置
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Gist configuration inputs */}
@@ -116,7 +133,7 @@ const GistSettings = ({ config, onUpdate }: GistSettingsProps) => {
           <Button
             label="保存 Gist 设置"
             loading={saving}
-            onClick={() => saveConfig(config)}
+            onClick={() => { onUpdate({ ...config, gist }); saveConfig({ ...config, gist }); onClose() }}
             className="bg-white border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900"
           />
         </div>
