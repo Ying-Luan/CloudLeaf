@@ -82,7 +82,7 @@ export class GistProvider extends HttpProvider {
             const gistResponse = await this.request("GET", `${GIST_ENDPOINTS.GIST_PATH}/${this.gistId}`)
 
             if (!gistResponse.ok) {
-                return { success: true, data: false, error: this.handleError(gistResponse).error }
+                return { ok: true, data: false, error: this.handleError(gistResponse).error }
             }
 
             // --- Validate access token ---
@@ -90,15 +90,15 @@ export class GistProvider extends HttpProvider {
                 headers: { "Authorization": `Bearer ${this.accessToken}`, }
             })
             if (!userResponse.ok) {
-                return { success: true, data: false, error: "Invalid token" }
+                return { ok: true, data: false, error: "Invalid token" }
             }
 
             const gistData = await gistResponse.json()
             if (!gistData.files[this.fileName]) {
-                return { success: true, data: true }
+                return { ok: true, data: true }
             }
 
-            return { success: true, data: true }
+            return { ok: true, data: true }
         } catch (error) {
             return this.handleNetworkError(error)
         }
@@ -107,7 +107,7 @@ export class GistProvider extends HttpProvider {
     /**
      * Upload bookmarks to Gist
      * @param data Bookmark payload
-     * @returns Success or error result
+     * @returns Ok or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
         try {
@@ -129,7 +129,7 @@ export class GistProvider extends HttpProvider {
                 return this.handleError(response)
             }
 
-            return { success: true }
+            return { ok: true }
         } catch (error) {
             return this.handleNetworkError(error)
         }
@@ -151,11 +151,11 @@ export class GistProvider extends HttpProvider {
             const file = gistData.files[this.fileName]
 
             if (!file) {
-                return { success: false, error: `File ${this.fileName} not found` }
+                return { ok: false, error: `File ${this.fileName} not found` }
             }
 
             const payload = JSON.parse(file.content) as SyncPayload
-            return { success: true, data: payload }
+            return { ok: true, data: payload }
         } catch (error) {
             return this.handleNetworkError(error)
         }

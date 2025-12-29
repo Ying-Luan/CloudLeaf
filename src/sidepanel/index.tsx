@@ -20,7 +20,7 @@ function SidePanel() {
     setLoading(true)
     setError(null)
     const res = await downloadBookmarks()
-    if (res.success) {
+    if (res.ok) {
       setData(res.data.payload)
     } else {
       setError(res.error || "Unknown error")

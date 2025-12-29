@@ -7,7 +7,7 @@
 import { getBookmarks } from "~/src/core/bookmark"
 import { getUserConfig, updateUserConfig, loadCustomVendorsFromConfig } from "~/src/store"
 import { WebDAVRegistry, GistProvider, BaseProvider } from "~/src/providers"
-import { DEFAULT_FILENAME } from "~/src/constants"
+import { DEFAULT_FILENAME, HttpStatus, WebDAVStatus } from "~/src/constants"
 import { type Result, type SyncPayload, type SyncStatus } from "~/src/types"
 import { getSyncStatus } from "~/src/core/sync/utils"
 
@@ -54,7 +54,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
   try {
     const { providers } = await buildProviders()
     // no providers configured
-    if (providers.length === 0) return { success: true, data: { status: 'none' } }
+    if (providers.length === 0) return { ok: true, data: { status: 'none' } }
     const local = await getBookmarks()
 
     // --- Check if any cloud is newer ---
@@ -62,32 +62,30 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
       for (const item of providers) {
         if (process.env.NODE_ENV === "development") console.log(`[core/sync/cloud] Start uploading to ${item.provider.name} when force = ${force}`)
         const res = await item.provider.download()
-        if (res.success && res.data) {
+        if (res.ok && res.data) {
           if (getSyncStatus(local, res.data) === 'behind') {
-            return { success: true, data: { status: 'behind' } }
+            return { ok: true, data: { status: 'behind' } }
           }
         } else {
+          // If file or folder not found, continue to upload
+          if (res.status === HttpStatus.NOT_FOUND || res.status === WebDAVStatus.CONFLICT) return { ok: true, data: { status: 'synced' } }
           if (process.env.NODE_ENV === "development") console.error(`[core/sync/cloud] Download from ${item.provider.name} failed during upload check`)
-          return { success: false, error: `Failed to check sync status from ${item.provider.name}: ${res.error || "下载失败"}` }
+          return { ok: false, error: `Failed to check sync status from ${item.provider.name}: ${res.error || "下载失败"}` }
         }
       }
-      return { success: true, data: { status: 'synced' } }
+      return { ok: true, data: { status: 'synced' } }
     }
 
     // --- Proceed to upload to all providers ---
     const errors: string[] = []
     let successCount = 0
     for (const item of providers) {
-      if (process.env.NODE_ENV === "development") {
-        console.log(`[core/sync/cloud] Start uploading to ${item.provider.name} when force = ${force}`)
-      }
+      if (process.env.NODE_ENV === "development") console.log(`[core/sync/cloud] Start uploading to ${item.provider.name} when force = ${force}`)
       const res = await item.provider.upload(local)
-      if (res.success) {
+      if (res.ok) {
         successCount++
       } else {
-        if (process.env.NODE_ENV === "development") {
-          console.error(`[core/sync/cloud] Upload to ${item.provider.name} failed`)
-        }
+        if (process.env.NODE_ENV === "development") console.error(`[core/sync/cloud] Upload to ${item.provider.name} failed`)
         errors.push(`${item.provider.name}: ${res.error || "上传失败"}`)
       }
     }
@@ -95,13 +93,13 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
     // success!
     if (successCount > 0) {
       await updateUserConfig({ lastSyncAt: Date.now() })
-      return { success: true, data: { status: 'synced' } }
+      return { ok: true, data: { status: 'synced' } }
     }
 
     // fail or error
-    return { success: false, error: errors.join("\n") || "所有提供者上传失败" }
+    return { ok: false, error: errors.join("\n") || "所有提供者上传失败" }
   } catch (error) {
-    return { success: false, error: String(error) }
+    return { ok: false, error: String(error) }
   }
 }
 
@@ -117,7 +115,7 @@ export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus, 
   try {
     const { providers } = await buildProviders()
     // no providers configured
-    if (providers.length === 0) return { success: true, data: { status: 'none' } }
+    if (providers.length === 0) return { ok: true, data: { status: 'none' } }
     const local = await getBookmarks()
     const errors: string[] = []
 
@@ -126,16 +124,16 @@ export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus, 
         console.log(`[core/sync/cloud] Start downloading from ${item.provider.name}...`)
       }
       const res = await item.provider.download()
-      if (res.success && res.data) {
+      if (res.ok && res.data) {
         const cloud = res.data
         const status = getSyncStatus(local, cloud)
-        return { success: true, data: { status, payload: cloud } }
+        return { ok: true, data: { status, payload: cloud } }
       }
       errors.push(`${item.provider.name}: ${res.error || "下载失败"}`)
     }
 
-    return { success: false, error: errors.join("\n") || "无可用同步源数据" }
+    return { ok: false, error: errors.join("\n") || "无可用同步源数据" }
   } catch (error) {
-    return { success: false, error: String(error) }
+    return { ok: false, error: String(error) }
   }
 }

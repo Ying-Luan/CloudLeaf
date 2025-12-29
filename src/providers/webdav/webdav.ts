@@ -66,20 +66,20 @@ export class WebDAVProvider extends HttpProvider {
 
             // --- File exists ---
             if (status === WebDAVStatus.MULTI_STATUS) {
-                return { success: true, data: true }
+                return { ok: true, data: true, status }
             }
 
             // --- File not found or conflict is OK ---
             if (status === HttpStatus.NOT_FOUND || status === WebDAVStatus.CONFLICT) {
-                return { success: true, data: true }
+                return { ok: true, data: true, status }
             }
 
             // --- Auth failure ---
             if (status === HttpStatus.UNAUTHORIZED) {
-                return { success: true, data: false, error: this.getErrorMessage(status) }
+                return { ok: true, data: false, status, error: this.getErrorMessage(status) }
             }
 
-            return { success: true, data: false, error: this.getErrorMessage(status) }
+            return { ok: true, data: false, status, error: this.getErrorMessage(status) }
         } catch (error) {
             return this.handleNetworkError(error)
         }
@@ -88,23 +88,21 @@ export class WebDAVProvider extends HttpProvider {
     /**
      * Upload bookmarks to WebDAV server
      * @param data Bookmark payload
-     * @returns Success or error result
+     * @returns Ok or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
         try {
             // --- Ensure parent directory exists ---
             await this.ensureDirectory()
 
-            if (process.env.NODE_ENV === "development") {
-                console.log(`[providers/webdav] Start uploading to ${this.name}...`)
-            }
+            if (process.env.NODE_ENV === "development") console.log(`[providers/webdav] Start uploading to ${this.name}...`)
             const response = await this.request("PUT", this.filePath, {
                 body: data,
                 headers: { "Content-Type": "application/json; charset=utf-8" },
             })
 
             if (this.isSuccess(response.status)) {
-                return { success: true }
+                return { ok: true, status: response.status }
             }
 
             return this.handleWebDAVError(response.status)
@@ -124,7 +122,7 @@ export class WebDAVProvider extends HttpProvider {
             const { status } = response
 
             if (status === HttpStatus.NOT_FOUND) {
-                return { success: false, error: "File not found: please upload first" }
+                return { ok: false, status, error: "File not found: please upload first" }
             }
 
             if (!this.isSuccess(status)) {
@@ -137,11 +135,11 @@ export class WebDAVProvider extends HttpProvider {
             try {
                 const data = JSON.parse(content) as SyncPayload
                 if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
-                    return { success: false, error: "Invalid file format: missing bookmarks" }
+                    return { ok: false, error: "Invalid file format: missing bookmarks" }
                 }
-                return { success: true, data }
+                return { ok: true, data }
             } catch {
-                return { success: false, error: "Invalid file format: cannot parse JSON" }
+                return { ok: false, error: "Invalid file format: cannot parse JSON" }
             }
         } catch (error) {
             return this.handleNetworkError(error)
@@ -210,7 +208,7 @@ export class WebDAVProvider extends HttpProvider {
      */
     protected handleWebDAVError(status: number): Result<never> {
         if (process.env.NODE_ENV === "development") console.error(`[providers/webdav] WebDAV error: ${status} - ${this.getErrorMessage(status)}`)
-        return { success: false, error: this.getErrorMessage(status) }
+        return { ok: false, status, error: this.getErrorMessage(status) }
     }
 
     /**

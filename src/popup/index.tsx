@@ -35,7 +35,7 @@ function IndexPopup() {
   const handleUpload = async () => {
     if (process.env.NODE_ENV === 'development') console.log("[popup] Starting upload...")
     const result = await performUpload()
-    if (!result.success) {
+    if (!result.ok) {
       alert("上传失败")
       return
     }
@@ -63,7 +63,7 @@ function IndexPopup() {
    */
   const handleDownload = async () => {
     const result = await performDownload()
-    if (!result.success) {
+    if (!result.ok) {
       alert("下载失败")
       return
     }
@@ -88,7 +88,7 @@ function IndexPopup() {
    */
   const handleExport = async () => {
     const result = await performExport()
-    if (!result.success) {
+    if (!result.ok) {
       alert("导出失败")
       return
     }
@@ -103,7 +103,7 @@ function IndexPopup() {
    */
   const handleImport = async () => {
     const result = await performImport()
-    if (!result.success) {
+    if (!result.ok) {
       if (process.env.NODE_ENV === 'development')
         console.error("[popup/index] Import failed:", result.error)
       alert("导入失败")

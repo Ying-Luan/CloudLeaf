@@ -22,12 +22,12 @@ export async function exportBookmarks(): Promise<Result<{ status: SyncStatus }>>
     const data = await getBookmarks()
     const res = await provider.upload(data)
 
-    if (!res.success)
-      return { success: false, error: res.error || "Export failed" }
+    if (!res.ok)
+      return { ok: false, error: res.error || "Export failed" }
 
-    return { success: true, data: { status: 'synced' } }
+    return { ok: true, data: { status: 'synced' } }
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : "Export failed" }
+    return { ok: false, error: error instanceof Error ? error.message : "Export failed" }
   }
 }
 
@@ -42,9 +42,9 @@ export async function importBookmarks(): Promise<Result<{ status: SyncStatus, pa
     const res = await provider.download()
     if (process.env.NODE_ENV === 'development')
       console.log("[core/sync/local] Successfully downloaded file from localProvider")
-    if (!res.success || !res.data) {
+    if (!res.ok || !res.data) {
       return {
-        success: false,
+        ok: false,
         error: res.error || "Import failed"
       }
     }
@@ -52,8 +52,8 @@ export async function importBookmarks(): Promise<Result<{ status: SyncStatus, pa
     const file = res.data
     const browser = await getBookmarks()
     const status = getSyncStatus(browser, file)
-    return { success: true, data: { status, payload: file } }
+    return { ok: true, data: { status, payload: file } }
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : "Import failed" }
+    return { ok: false, error: error instanceof Error ? error.message : "Import failed" }
   }
 }

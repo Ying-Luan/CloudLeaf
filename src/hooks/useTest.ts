@@ -39,7 +39,7 @@ export const useTest = () => {
         config.gist.fileName
       )
       const res = await provider.isValid()
-      alert(res.success && res.data ? "Gist 连接正常" : `Gist 连接失败: ${res.error}`)
+      alert(res.ok && res.data ? "Gist 连接正常" : `Gist 连接失败: ${res.error}`)
     } catch (e) {
       alert(`发生异常: ${e}`)
     } finally {
@@ -62,7 +62,7 @@ export const useTest = () => {
     try {
       const provider = WebDAVRegistry.createProvider(acc.vendorId, acc)
       const res = await provider.isValid()
-      alert(res.success && res.data ? `WebDAV [${acc.username}] 连接正常` : `WebDAV 连接失败: ${res.error}`)
+      alert(res.ok && res.data ? `WebDAV [${acc.username}] 连接正常` : `WebDAV 连接失败: ${res.error}`)
     } catch (e) {
       alert(`发生异常: ${e}`)
     } finally {

@@ -20,8 +20,8 @@ function LocalProviderTest() {
     const testDownload = async () => {
         const local = new LocalProvider()
         const result = await local.download()
-        addLog(`download: success=${result.success}, error=${result.error || 'none'}`)
-        if (result.success && result.data) {
+        addLog(`download: ok=${result.ok}, error=${result.error || 'none'}`)
+        if (result.ok && result.data) {
             setPayload(result.data)
             addLog(`  bookmarks: ${result.data.numBookmarks}, updatedAt: ${new Date(result.data.updatedAt).toLocaleString()}`)
         }
@@ -34,14 +34,14 @@ function LocalProviderTest() {
         }
         const local = new LocalProvider()
         const result = await local.upload(payload)
-        addLog(`upload: success=${result.success}, error=${result.error || 'none'}`)
+        addLog(`upload: ok=${result.ok}, error=${result.error || 'none'}`)
     }
 
     // --- Download to device (export as JSON file) ---
     const downloadToDevice = async () => {
         const local = new LocalProvider()
         const result = await local.download()
-        if (!result.success || !result.data) {
+        if (!result.ok || !result.data) {
             addLog(`Export failed: ${result.error || 'unknown error'}`)
             return
         }
@@ -85,7 +85,7 @@ function LocalProviderTest() {
             if (confirm(`Import ${data.numBookmarks} bookmarks to browser? This will replace all current bookmarks.`)) {
                 const local = new LocalProvider()
                 const result = await local.upload(data)
-                addLog(`Upload to browser: success=${result.success}, error=${result.error || 'none'}`)
+                addLog(`Upload to browser: ok=${result.ok}, error=${result.error || 'none'}`)
             }
         } catch (error) {
             addLog(`Error parsing file: ${error instanceof Error ? error.message : 'unknown'}`)

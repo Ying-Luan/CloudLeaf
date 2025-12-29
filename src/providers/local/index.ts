@@ -27,7 +27,7 @@ export class LocalProvider extends BaseProvider {
      * @returns Always true since local storage is always available
      */
     async isValid(): Promise<Result<boolean>> {
-        return { success: true, data: true }
+        return { ok: true, data: true }
     }
 
     /**
@@ -35,7 +35,7 @@ export class LocalProvider extends BaseProvider {
      * 
      * browser -> local file
      * @param data Bookmark payload
-     * @returns Success or error result
+     * @returns Ok or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
         try {
@@ -54,10 +54,10 @@ export class LocalProvider extends BaseProvider {
             document.body.removeChild(a)
             URL.revokeObjectURL(url)
 
-            return { success: true }
+            return { ok: true }
         } catch (error) {
             return {
-                success: false,
+                ok: false,
                 error: error instanceof Error ? error.message : "Failed to download bookmarks"
             }
         }
@@ -80,7 +80,7 @@ export class LocalProvider extends BaseProvider {
             input.onchange = async (e) => {
                 const file = (e.target as HTMLInputElement).files?.[0]
                 if (!file) {
-                    resolve({ success: false, error: "No file selected" })
+                    resolve({ ok: false, error: "No file selected" })
                     return
                 }
 
@@ -88,18 +88,18 @@ export class LocalProvider extends BaseProvider {
                     const text = await file.text()
                     const data = JSON.parse(text) as SyncPayload
                     if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
-                        resolve({ success: false, error: "Invalid bookmark data in file" })
+                        resolve({ ok: false, error: "Invalid bookmark data in file" })
                         return
                     }
-                    resolve({ success: true, data })
+                    resolve({ ok: true, data })
                 } catch (error) {
-                    resolve({ success: false, error: "Failed to read or parse the file" })
+                    resolve({ ok: false, error: "Failed to read or parse the file" })
                 }
             }
 
             // Handle cancelation
             input.oncancel = () => {
-                resolve({ success: false, error: "File selection canceled" })
+                resolve({ ok: false, error: "File selection canceled" })
             }
 
             // click -> file -> onchange or oncancel

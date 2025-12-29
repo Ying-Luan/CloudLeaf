@@ -117,7 +117,7 @@ export abstract class HttpProvider extends BaseProvider {
    * @returns Error result
    */
   protected handleError(response: Response): Result<never> {
-    return { success: false, error: this.getHttpErrorMessage(response.status) }
+    return { ok: false, status: response.status, error: this.getHttpErrorMessage(response.status) }
   }
 
   /**
@@ -130,9 +130,9 @@ export abstract class HttpProvider extends BaseProvider {
       console.error("[providers/http] Network error")
     }
     if (error instanceof Error) {
-      if (error.name === "AbortError") return { success: false, error: "Request timeout" }
-      return { success: false, error: `Network error: ${error.message}` }
+      if (error.name === "AbortError") return { ok: false, error: "Request timeout" }
+      return { ok: false, error: `Network error: ${error.message}` }
     }
-    return { success: false, error: "Unknown network error" }
+    return { ok: false, error: "Unknown network error" }
   }
 }

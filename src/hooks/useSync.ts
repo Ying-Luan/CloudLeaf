@@ -25,14 +25,14 @@ export function useSync() {
     try {
       if (process.env.NODE_ENV === 'development') console.log(`[hooks/useSync] In performUpload, starting upload when force = ${force}`)
       const res = await uploadBookmarks(force)
-      if (!res.success) {
+      if (!res.ok) {
         setError(res.error || "上传失败")
       }
       return res
     } catch (e) {
       const msg = String(e)
       setError(msg)
-      return { success: false, error: msg }
+      return { ok: false, error: msg }
     } finally {
       setLoading(false)
     }
@@ -47,14 +47,14 @@ export function useSync() {
     setError(null)
     try {
       const res = await downloadBookmarks()
-      if (!res.success) {
+      if (!res.ok) {
         setError(res.error || "下载失败")
       }
       return res
     } catch (e) {
       const msg = String(e)
       setError(msg)
-      return { success: false, error: msg }
+      return { ok: false, error: msg }
     } finally {
       setLoading(false)
     }
@@ -69,14 +69,14 @@ export function useSync() {
     setError(null)
     try {
       const res = await exportBookmarks()
-      if (!res.success) {
+      if (!res.ok) {
         setError(res.error || "导出失败")
       }
       return res
     } catch (e) {
       const msg = String(e)
       setError(msg)
-      return { success: false, error: msg }
+      return { ok: false, error: msg }
     } finally {
       setLoading(false)
     }
@@ -91,7 +91,7 @@ export function useSync() {
     setError(null)
     try {
       const res = await importBookmarks()
-      if (!res.success) {
+      if (!res.ok) {
         setError(res.error || "导入失败")
         if (process.env.NODE_ENV === 'development') console.error("[hooks/useSync] In performImport, Import failed:", res.error)
       }
@@ -99,7 +99,7 @@ export function useSync() {
     } catch (e) {
       const msg = String(e)
       setError(msg)
-      return { success: false, error: msg }
+      return { ok: false, error: msg }
     } finally {
       setLoading(false)
     }
