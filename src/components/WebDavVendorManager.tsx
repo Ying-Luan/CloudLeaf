@@ -1,26 +1,16 @@
 import { useState, useEffect } from "react"
-import { addCustomVendorToConfig, removeCustomVendorFromConfig, loadCustomVendorsFromConfig } from "~src/store"
+import { addCustomVendorToConfig, removeCustomVendorFromConfig, loadCustomVendorsFromConfig, useSettingsStore } from "~src/store"
 import Input from "./Input"
 import Button from "./Button"
-import type { UserConfig, CustomVendorConfig } from "~src/types"
+import type { CustomVendorConfig } from "~src/types"
 import { WebDAVRegistry } from "~src/providers"
-import { useSaveConfig } from "~src/hooks"
 
 /**
  * Props for the `WebDavVendorManager` component.
  *
  * Represents the current user configuration and an update callback.
  */
-interface WebDavVendorManagerProps {
-  /**
-   * Current user configuration or `null` when not configured
-   */
-  config: UserConfig | null
-  /**
-   * Callback to apply an updated configuration
-   */
-  onUpdate: (newConfig: UserConfig) => void
-}
+interface WebDavVendorManagerProps { }
 
 /**
  * Component for managing custom WebDAV vendor configurations.
@@ -30,15 +20,17 @@ interface WebDavVendorManagerProps {
  * @param props WebDavVendorManager component properties
  * @returns A JSX element rendering the vendor management interface
  */
-const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => {
+const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
+  const config = useSettingsStore(state => state.config)
+  const saving = useSettingsStore(state => state.saving)
+  const updateConfig = useSettingsStore(state => state.updateConfig)
+  const persistConfig = useSettingsStore(state => state.persistConfig)
   // Form state for registering a new custom vendor.
   const [vendorForm, setVendorForm] = useState<CustomVendorConfig>({
     id: "",
     name: "",
     serverUrl: "",
   })
-  const { saving, saveConfig } = useSaveConfig()
-
   useEffect(() => {
     // Load custom vendors on component mount
     if (config) loadCustomVendorsFromConfig(config)
@@ -64,10 +56,12 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
     const { id, name, serverUrl } = vendorForm
     if (!id || !name || !serverUrl) return alert("请填写完整的厂商信息")
     try {
-      const newVendors = addCustomVendorToConfig(config!, vendorForm)
-      const newConfig = { ...config!, customVendors: newVendors }
-      onUpdate(newConfig)
-      saveConfig(newConfig)
+      const current = useSettingsStore.getState().config
+      const newVendors = addCustomVendorToConfig(current, vendorForm)
+      updateConfig(draft => {
+        draft.customVendors = newVendors
+      })
+      persistConfig()
       setVendorForm({ id: "", name: "", serverUrl: "" })
       alert(`已成功注册云厂商: ${name}`)
     } catch (e) {
@@ -84,10 +78,12 @@ const WebDavVendorManager = ({ config, onUpdate }: WebDavVendorManagerProps) => 
   const handleDeleteVendor = (id: string) => {
     if (!confirm("确定删除该厂商？关联的账号可能失效")) return
     try {
-      const newVendors = removeCustomVendorFromConfig(config!, id)
-      const newConfig = { ...config!, customVendors: newVendors }
-      onUpdate(newConfig)
-      saveConfig(newConfig)
+      const current = useSettingsStore.getState().config
+      const newVendors = removeCustomVendorFromConfig(current, id)
+      updateConfig(draft => {
+        draft.customVendors = newVendors
+      })
+      persistConfig()
       alert(`已成功删除云厂商`)
     } catch (e) {
       alert(`删除失败: ${String(e)}`)

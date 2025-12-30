@@ -3,10 +3,9 @@ import { WebDAVRegistry } from "~src/providers"
 import Input from "./Input"
 import Button from "./Button"
 import Select from "./Select"
-import type { UserConfig, WebDAVUserConfig } from "~src/types"
+import type { WebDAVUserConfig } from "~src/types"
 import { DEFAULT_WEBDAV_FILEPATH } from "~src/constants"
-import { loadCustomVendorsFromConfig, getMaxPriority } from "~src/store"
-import { useSaveConfig } from "~src/hooks"
+import { loadCustomVendorsFromConfig, useSettingsStore } from "~src/store"
 
 /**
  * Props for the `WebDavSettings` component.
@@ -14,14 +13,6 @@ import { useSaveConfig } from "~src/hooks"
  * Represents the current user configuration and an update callback.
  */
 interface WebDavSettingsProps {
-  /**
-   * Current user configuration or `null` when not configured
-   */
-  config: UserConfig | null
-  /**
-   * Callback to apply an updated configuration
-   */
-  onUpdate: (newConfig: UserConfig) => void
   /**
    * Edit mode or add mode (default: add)
    */
@@ -44,7 +35,14 @@ interface WebDavSettingsProps {
  * @param props WebDavSettings component properties
  * @returns A JSX element rendering the WebDAV account form
  */
-const WebDavSettings = ({ config, onUpdate, mode = "add", editingIndex = null, onClose }: WebDavSettingsProps) => {
+const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSettingsProps) => {
+  // Store state & actions
+  const config = useSettingsStore(state => state.config)
+  const saving = useSettingsStore(state => state.saving)
+  const updateConfig = useSettingsStore(state => state.updateConfig)
+  const persistConfig = useSettingsStore(state => state.persistConfig)
+  const getNextPriority = useSettingsStore(state => state.getNextPriority)
+
   // Form state for adding a new WebDAV account.
   const [form, setForm] = useState<WebDAVUserConfig>({
     vendorId: "jianguoyun",
@@ -54,7 +52,6 @@ const WebDavSettings = ({ config, onUpdate, mode = "add", editingIndex = null, o
     enabled: true,
     priority: Number.MAX_SAFE_INTEGER,
   })
-  const { saving, saveConfig } = useSaveConfig()
 
   useEffect(() => {
     // Load custom vendors on component mount
@@ -95,19 +92,20 @@ const WebDavSettings = ({ config, onUpdate, mode = "add", editingIndex = null, o
   const handleSubmit = async () => {
     if (!form.username || !form.password) return alert("请填写完整信息")
     if (mode === "add") {
-      const priority = await getMaxPriority() + 1
-      const newWebDavConfigs = [...(config?.webDavConfigs || []), { ...form, priority }]
-      const newConfig = { ...config!, webDavConfigs: newWebDavConfigs }
-      onUpdate(newConfig)
-      saveConfig(newConfig)
+      const priority = await getNextPriority()
+      updateConfig(draft => {
+        draft.webDavConfigs.push({ ...form, priority })
+      })
+      persistConfig()
       onClose()
     } else {
       if (editingIndex == null || editingIndex < 0) return
-      const list = [...(config?.webDavConfigs || [])]
-      list[editingIndex] = { ...form, priority: list[editingIndex].priority }
-      const newConfig = { ...config!, webDavConfigs: list }
-      onUpdate(newConfig)
-      saveConfig(newConfig)
+      updateConfig(draft => {
+        const list = draft.webDavConfigs
+        if (!list[editingIndex]) return
+        list[editingIndex] = { ...form, priority: list[editingIndex].priority }
+      })
+      persistConfig()
       onClose()
     }
   }

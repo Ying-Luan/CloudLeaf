@@ -5,7 +5,7 @@
  */
 
 import { getBookmarks } from "~/src/core/bookmark"
-import { getUserConfig, updateUserConfig, loadCustomVendorsFromConfig } from "~/src/store"
+import { getUserConfig, loadCustomVendorsFromConfig } from "~/src/store"
 import { WebDAVRegistry, GistProvider, BaseProvider } from "~/src/providers"
 import { DEFAULT_FILENAME, HttpStatus, WebDAVStatus } from "~/src/constants"
 import { type Result, type SyncPayload, type SyncStatus } from "~/src/types"
@@ -92,7 +92,6 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
 
     // success!
     if (successCount > 0) {
-      await updateUserConfig({ lastSyncAt: Date.now() })
       return { ok: true, data: { status: 'synced' } }
     }
 

@@ -5,7 +5,6 @@
  */
 
 import { type BookMark, type SyncPayload } from "~/src/types"
-import { updateUserConfig } from "~src/store"
 
 /**
  * maximum timestamp among all bookmark folders
@@ -96,7 +95,6 @@ async function createBookmarkNodes(parentId: string, nodes: BookMark[]): Promise
  * 
  * Clears existing user folders (preserving system root folders) and recreates nodes from `payload.bookmarks`.
  * @param payload Sync payload containing the bookmark tree to set
- * @remarks This mutates the browser bookmarks and updates `lastSyncAt` in user config.
  */
 export async function setBookmarks(payload: SyncPayload): Promise<void> {
   const tree = await chrome.bookmarks.getTree()
@@ -123,9 +121,4 @@ export async function setBookmarks(payload: SyncPayload): Promise<void> {
   if (other && other.children) await createBookmarkNodes('2', other.children)
   if (mobile && mobile.children) await createBookmarkNodes('3', mobile.children)
   if (rest && rest.length > 0) await createBookmarkNodes(root.id, rest)
-
-  // update last sync time
-  await updateUserConfig({
-    lastSyncAt: Date.now()
-  })
 }

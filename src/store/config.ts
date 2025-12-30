@@ -31,14 +31,17 @@ export async function getUserConfig(): Promise<UserConfig> {
     gist: config.gist,
     webDavConfigs: config.webDavConfigs || [],
     customVendors: config.customVendors || [],
-    lastSyncAt: config.lastSyncAt || 0,
   }
 }
 
 /**
  * Get the highest priority number across all sources
  * @returns Maximum priority value (higher = lower priority)
- * @remarks Used when adding new sources
+ * @remarks
+ * Used when adding new sources
+ * 
+ * Not intended for direct use. For frontend integration, please refer to the function below
+ * @see {@link ~src/store/settings.ts useSettingsStore(state => state.getNextPriority)}
  */
 export async function getMaxPriority(): Promise<number> {
   const config = await getUserConfig()
@@ -53,22 +56,11 @@ export async function getMaxPriority(): Promise<number> {
 /**
  * Replace entire user configuration
  * @param config Complete config to save
+ * @remarks Not intended for direct use. For frontend integration, please refer to the function below
+ * @see {@link ~src/store/settings.ts useSettingsStore(state => state.persistConfig)}
  */
 export async function setUserConfig(config: UserConfig): Promise<void> {
   await storage.set(CONFIG_KEY, config)
-}
-
-/**
- * Partially update user configuration
- * @param updates Partial config to merge
- * @returns Merged configuration
- * @remarks This function will store the updated configuration
- */
-export async function updateUserConfig(updates: Partial<UserConfig>): Promise<UserConfig> {
-  const current = await getUserConfig()
-  const updated = { ...current, ...updates }
-  await setUserConfig(updated)
-  return updated
 }
 
 /**

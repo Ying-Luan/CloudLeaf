@@ -1,24 +1,15 @@
 import Button from "./Button"
 import Input from "./Input"
-import type { GistConfig, UserConfig } from "~src/types"
+import type { GistConfig } from "~src/types"
 import { DEFAULT_FILENAME } from "~src/constants"
-import { useSaveConfig } from "~src/hooks"
+import { useSettingsStore } from "~src/store"
 import { useEffect, useState } from "react"
+import { produce } from "immer"
 
 /**
  * Props for the `GistSettings` component.
- *
- * Represents current user configuration and update callback.
  */
 interface GistSettingsProps {
-  /**
-   * Current user configuration or `undefined` when not set
-   */
-  config: UserConfig | undefined
-  /**
-   * Callback invoked with updated configuration (or `undefined` to reset)
-   */
-  onUpdate: (newConfig: UserConfig | undefined) => void
   /**
    * Close the Gist settings panel
    */
@@ -27,42 +18,63 @@ interface GistSettingsProps {
 
 /**
  * Gist settings component.
+ * 
+ * Uses Zustand store for state management - no more props drilling!
  * @param props Gist settings properties
  * @returns A JSX element rendering Gist settings inputs and save button
  */
-const GistSettings = ({ config, onUpdate, onClose }: GistSettingsProps) => {
-  const { saving, saveConfig } = useSaveConfig()
+const GistSettings = ({ onClose }: GistSettingsProps) => {
+  // Get config and actions from store
+  const config = useSettingsStore((state) => state.config)
+  const saving = useSettingsStore((state) => state.saving)
+  const updateConfig = useSettingsStore((state) => state.updateConfig)
+  const persistConfig = useSettingsStore((state) => state.persistConfig)
+
+  // Local form state
   const [gist, setGist] = useState<GistConfig | null>(null)
+
+  // Default Gist config for new entries
+  const DEFAULT_GIST: GistConfig = {
+    accessToken: "",
+    gistId: "",
+    fileName: DEFAULT_FILENAME,
+    enabled: true,
+    priority: 0
+  }
 
   useEffect(() => {
     setGist(config?.gist || null)
   }, [])
 
   /**
-   * Handle changes to a specific Gist configuration field.
+   * Handle changes to a specific Gist configuration field using Immer.
    * @param field Field name in `GistConfig` to update
    * @param value New value for the specified field
    */
-  const handleChange = (field: keyof GistConfig, value: string) => {
-    const newGist: GistConfig = {
-      ...(gist || {
-        accessToken: "",
-        gistId: "",
-        fileName: DEFAULT_FILENAME,
-        enabled: true,
-        priority: 0
-      }),
-      [field]: value,
-    }
-    setGist(newGist)
-    // TODO: Priority may require adjustment here
+  const handleChange = (field: keyof GistConfig, value: string | boolean | number) => {
+    setGist(current => produce(current || DEFAULT_GIST, (draft: GistConfig) => {
+      (draft[field] as any) = value
+    }))
   }
 
+  /**
+   * Reset Gist configuration
+   */
   const handleReset = () => {
-    onUpdate({
-      ...config,
-      gist: undefined,
+    updateConfig(draft => {
+      draft.gist = undefined
     })
+  }
+
+  /**
+   * Save Gist configuration to store
+   */
+  const handleSave = async () => {
+    updateConfig(draft => {
+      draft.gist = gist || undefined
+    })
+    persistConfig()
+    onClose()
   }
 
   return (
@@ -133,7 +145,7 @@ const GistSettings = ({ config, onUpdate, onClose }: GistSettingsProps) => {
           <Button
             label="保存 Gist 设置"
             loading={saving}
-            onClick={() => { onUpdate({ ...config, gist }); saveConfig({ ...config, gist }); onClose() }}
+            onClick={handleSave}
             className="bg-white border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900"
           />
         </div>

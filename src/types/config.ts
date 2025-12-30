@@ -15,10 +15,6 @@ export interface UserConfig {
    * Custom cloud vendor metadata
    */
   customVendors?: CustomVendorConfig[]
-  /**
-   * Last sync timestamp in milliseconds
-   */
-  lastSyncAt: number
 }
 
 /**
@@ -109,5 +105,4 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   gist: undefined,
   webDavConfigs: [],
   customVendors: [],
-  lastSyncAt: 0,
 }

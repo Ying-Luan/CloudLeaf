@@ -1,22 +1,13 @@
 import React, { useState } from "react"
-import { type UserConfig, type SourceItem, type Editor } from "~src/types"
+import { type SourceItem, type Editor } from "~src/types"
+import { useSettingsStore } from "~src/store/settings"
 import SourceBoard from "./SourceBoard"
-import { useSaveConfig, useTest } from "~src/hooks"
+import { useTest } from "~src/hooks"
 
 /**
  * Props for the `Sources` component.
- *
- * Represents the current user configuration and an update callback.
  */
 interface SourcesProps {
-  /**
-   * Current user configuration or `null` when not configured
-   */
-  config: UserConfig | null
-  /**
-   * Callback to apply an updated configuration
-   */
-  onUpdate: (newConfig: UserConfig) => void
   /**
    * Open editor panel below for add/edit
    */
@@ -28,12 +19,19 @@ interface SourcesProps {
  *
  * Renders Gist and WebDAV entries, and provides controls to test, remove,
  * reorder and toggle each source.
+ * 
+ * Uses Zustand store for state management - no more props drilling!
  * @param props Sources component properties
  * @returns A JSX element rendering the sources list
  */
-const Sources = ({ config, onUpdate, onOpenEditor }: SourcesProps) => {
+const Sources = ({ onOpenEditor }: SourcesProps) => {
+  // Get config from store
+  const config = useSettingsStore((state) => state.config)
+  const saving = useSettingsStore((state) => state.saving)
+  const updateConfig = useSettingsStore((state) => state.updateConfig)
+  const persistConfig = useSettingsStore((state) => state.persistConfig)
+
   // Hook state and helpers for saving and testing providers
-  const { saving, saveConfig } = useSaveConfig()
   const { testingMap, testGist, testWebDav } = useTest()
   const [showAddChooser, setShowAddChooser] = useState(false)
 
@@ -68,9 +66,10 @@ const Sources = ({ config, onUpdate, onOpenEditor }: SourcesProps) => {
    */
   const removeGist = () => {
     if (!confirm("确定移除 GitHub Gist 配置吗？")) return
-    const newConfig = { ...config!, gist: undefined }
-    onUpdate(newConfig)
-    saveConfig(newConfig)
+    updateConfig(draft => {
+      draft.gist = undefined
+    })
+    persistConfig()
   }
 
   /**
@@ -79,39 +78,10 @@ const Sources = ({ config, onUpdate, onOpenEditor }: SourcesProps) => {
    */
   const removeWebDav = (index: number) => {
     if (!confirm("确定移除该 WebDAV 账号吗？")) return
-    const newConfigs = [...(config?.webDavConfigs || [])]
-    newConfigs.splice(index, 1)
-    const newConfig = { ...config!, webDavConfigs: newConfigs }
-    onUpdate(newConfig)
-    saveConfig(newConfig)
-  }
-
-  /**
-   * Update priority for a given source within the provided config.
-   * @param oldConfig Existing user configuration
-   * @param source Source item to update
-   * @param newPriority New priority value to set
-   * @returns Updated user configuration with modified source priority
-   */
-  const updateSourcePriority = (oldConfig: UserConfig, source: SourceItem, newPriority: number): UserConfig => {
-    // gist
-    if (source.type === "gist") {
-      return {
-        ...oldConfig,
-        gist: {
-          ...oldConfig.gist,
-          priority: newPriority
-        }
-      }
-      // webdav
-    } else {
-      return {
-        ...oldConfig,
-        webDavConfigs: oldConfig.webDavConfigs!.map((acc, idx) =>
-          idx === source.rawIndex ? { ...acc, priority: newPriority } : acc
-        )
-      }
-    }
+    updateConfig(draft => {
+      draft.webDavConfigs!.splice(index, 1)
+    })
+    persistConfig()
   }
 
   /**
@@ -122,10 +92,21 @@ const Sources = ({ config, onUpdate, onOpenEditor }: SourcesProps) => {
     const source = allSources[index]
     const targetSource = allSources[index - 1]
     const targetPriority = targetSource.priority
-    let newConfig = updateSourcePriority(config, source, targetPriority)
-    newConfig = updateSourcePriority(newConfig, targetSource, targetPriority + 1)
-    onUpdate(newConfig)
-    saveConfig(newConfig, true)
+
+    updateConfig(draft => {
+      // source
+      if (source.type === "gist")
+        draft.gist!.priority = targetPriority
+      else
+        draft.webDavConfigs[source.rawIndex!].priority = targetPriority
+
+      // targetSource
+      if (targetSource.type === "gist")
+        draft.gist!.priority = targetPriority + 1
+      else
+        draft.webDavConfigs[targetSource.rawIndex!].priority = targetPriority + 1
+    })
+    persistConfig(true)
   }
 
   /**
@@ -136,10 +117,21 @@ const Sources = ({ config, onUpdate, onOpenEditor }: SourcesProps) => {
     const source = allSources[index]
     const targetSource = allSources[index + 1]
     const targetPriority = targetSource.priority
-    let newConfig = updateSourcePriority(config, source, targetPriority)
-    newConfig = updateSourcePriority(newConfig, targetSource, targetPriority - 1)
-    onUpdate(newConfig)
-    saveConfig(newConfig, true)
+
+    updateConfig(draft => {
+      // source
+      if (source.type === "gist")
+        draft.gist!.priority = targetPriority
+      else
+        draft.webDavConfigs[source.rawIndex!].priority = targetPriority
+
+      // targetSource
+      if (targetSource.type === "gist")
+        draft.gist!.priority = targetPriority - 1
+      else
+        draft.webDavConfigs[targetSource.rawIndex!].priority = targetPriority - 1
+    })
+    persistConfig(true)
   }
 
   /**
@@ -148,27 +140,13 @@ const Sources = ({ config, onUpdate, onOpenEditor }: SourcesProps) => {
    * @param enabled New enabled state
    */
   const onUpdateEnabled = (source: SourceItem, enabled: boolean) => {
-    let newConfig: UserConfig
-    // gist
-    if (source.type === "gist") {
-      newConfig = {
-        ...config,
-        gist: {
-          ...config.gist,
-          enabled
-        }
-      }
-      // webdav
-    } else {
-      newConfig = {
-        ...config,
-        webDavConfigs: config.webDavConfigs!.map((acc, idx) =>
-          idx === source.rawIndex ? { ...acc, enabled } : acc
-        )
-      }
-    }
-    onUpdate(newConfig)
-    saveConfig(newConfig, true)
+    updateConfig(draft => {
+      if (source.type === "gist")
+        draft.gist!.enabled = enabled
+      else
+        draft.webDavConfigs[source.rawIndex!].enabled = enabled
+    })
+    persistConfig(true)
   }
 
   return (
