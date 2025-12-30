@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { immer } from "zustand/middleware/immer"
-import { type UserConfig, DEFAULT_USER_CONFIG } from "~src/types"
+import { type UserConfig, DEFAULT_USER_CONFIG, type GistConfig, type WebDAVUserConfig } from "~src/types"
 import { getUserConfig, setUserConfig, getMaxPriority } from "./config"
 
 /**
@@ -35,7 +35,7 @@ interface SettingsState {
   loadConfig: () => Promise<void>
   /**
    * Update configuration in memory using Immer draft (does not persist to storage)
-   * 
+   * @param updater updater function that receives a draft of UserConfig
    * @example
    * ```ts
    * updateConfig(draft => {
@@ -45,6 +45,28 @@ interface SettingsState {
    * ```
    */
   updateConfig: (updater: (draft: UserConfig) => void) => void
+  /**
+   * Update Gist configuration in memory using Immer draft (does not persist to storage)
+   * @param updater updater function that receives a draft of GistConfig
+   *  @example
+   * ```ts
+   * updateGistConfig(draft => {
+   *  draft.enabled = true
+   * })
+   * ```
+   */
+  updateGistConfig: (updater: (draft: GistConfig) => void) => void
+  /**
+   * Update WebDAV configuration in memory using Immer draft (does not persist to storage)
+   * @param updater updater function that receives a draft of WebDAVUserConfig[]
+   * @example
+   * ```ts
+   * updateWebDavConfigs(draft => {
+   *  draft.slice(0, 1)
+   * })
+   * ```
+   */
+  updateWebDavConfigs: (updater: (draft: WebDAVUserConfig[]) => void) => void
   /** 
    * Persist current state to storage
    * Call this when user clicks save button
@@ -76,7 +98,7 @@ export const useSettingsStore = create<SettingsState>()(
 
     /**
      * Update configuration in memory using Immer draft (does not persist to storage)
-     * 
+     * @param updater updater function that receives a draft of UserConfig
      * @example
      * ```ts
      * updateConfig(draft => {
@@ -88,6 +110,38 @@ export const useSettingsStore = create<SettingsState>()(
     updateConfig: (updater: (draft: UserConfig) => void) => {
       set((state) => {
         updater(state.config)
+      })
+    },
+
+    /**
+     * Update Gist configuration in memory using Immer draft (does not persist to storage)
+     * @param updater updater function that receives a draft of GistConfig
+     * @example
+     * ```ts
+     * updateGistConfig(draft => {
+     *  draft.enabled = true
+     * })
+     * ```
+     */
+    updateGistConfig: (updater: (draft: GistConfig) => void) => {
+      set((state) => {
+        updater(state.config.gist!)
+      })
+    },
+
+    /**
+     * Update WebDAV configuration in memory using Immer draft (does not persist to storage)
+     * @param updater updater function that receives a draft of WebDAVUserConfig
+     * @example
+     * ```ts
+     * updateWebDavConfigs(draft => {
+     *  draft.enabled = false
+     * })
+     * ```
+     */
+    updateWebDavConfigs: (updater: (draft: WebDAVUserConfig[]) => void) => {
+      set((state) => {
+        updater(state.config.webDavConfigs!)
       })
     },
 

@@ -1,6 +1,7 @@
 import { WebDAVRegistry } from "~/src/providers"
 import { type UserConfig, type CustomVendorConfig } from "~/src/types"
 
+// TODO: consider changing config type from UserConfig to CustomVendorConfig[] for a clearer frontend surface; needs further analysis
 /**
  * Load custom vendors from UserConfig into WebDAVRegistry
  * @param config User configuration

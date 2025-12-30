@@ -37,9 +37,9 @@ interface WebDavSettingsProps {
  */
 const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSettingsProps) => {
   // Store state & actions
-  const config = useSettingsStore(state => state.config)
+  const webDavConfigs = useSettingsStore(state => (state.config.webDavConfigs))
   const saving = useSettingsStore(state => state.saving)
-  const updateConfig = useSettingsStore(state => state.updateConfig)
+  const updateWebDavConfigs = useSettingsStore(state => state.updateWebDavConfigs)
   const persistConfig = useSettingsStore(state => state.persistConfig)
   const getNextPriority = useSettingsStore(state => state.getNextPriority)
 
@@ -53,16 +53,24 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
     priority: Number.MAX_SAFE_INTEGER,
   })
 
+  // Load custom vendors from config on mount and when config changes
   useEffect(() => {
-    // Load custom vendors on component mount
-    if (config) loadCustomVendorsFromConfig(config)
-  }, [config])
+    const initial = useSettingsStore.getState().config
+    if (initial) loadCustomVendorsFromConfig(initial)
+
+    const unsub = useSettingsStore.subscribe((state, prev) => {
+      if (state.config !== prev.config && state.config) {
+        loadCustomVendorsFromConfig(state.config)
+      }
+    })
+    return unsub
+  }, [])
 
   // initial form
   useEffect(() => {
-    if (!config) return
+    if (!webDavConfigs) return
     if (mode === "edit" && editingIndex != null && editingIndex >= 0) {
-      const existing = config.webDavConfigs?.[editingIndex]
+      const existing = webDavConfigs[editingIndex]
       if (existing) {
         setForm({ ...existing })
       }
@@ -93,17 +101,16 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
     if (!form.username || !form.password) return alert("请填写完整信息")
     if (mode === "add") {
       const priority = await getNextPriority()
-      updateConfig(draft => {
-        draft.webDavConfigs.push({ ...form, priority })
+      updateWebDavConfigs(draft => {
+        draft.push({ ...form, priority })
       })
       persistConfig()
       onClose()
     } else {
       if (editingIndex == null || editingIndex < 0) return
-      updateConfig(draft => {
-        const list = draft.webDavConfigs
-        if (!list[editingIndex]) return
-        list[editingIndex] = { ...form, priority: list[editingIndex].priority }
+      updateWebDavConfigs(draft => {
+        if (!draft[editingIndex]) return
+        draft[editingIndex] = { ...form, priority: draft[editingIndex].priority }
       })
       persistConfig()
       onClose()

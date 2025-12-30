@@ -25,9 +25,9 @@ interface GistSettingsProps {
  */
 const GistSettings = ({ onClose }: GistSettingsProps) => {
   // Get config and actions from store
-  const config = useSettingsStore((state) => state.config)
+  const gistConfig = useSettingsStore((state) => state.config?.gist)
   const saving = useSettingsStore((state) => state.saving)
-  const updateConfig = useSettingsStore((state) => state.updateConfig)
+  const updateGistConfig = useSettingsStore((state) => state.updateGistConfig)
   const persistConfig = useSettingsStore((state) => state.persistConfig)
 
   // Local form state
@@ -43,7 +43,7 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
   }
 
   useEffect(() => {
-    setGist(config?.gist || null)
+    setGist(gistConfig || null)
   }, [])
 
   /**
@@ -61,17 +61,15 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
    * Reset Gist configuration
    */
   const handleReset = () => {
-    updateConfig(draft => {
-      draft.gist = undefined
-    })
+    updateGistConfig(draft => { draft = undefined })
   }
 
   /**
    * Save Gist configuration to store
    */
   const handleSave = async () => {
-    updateConfig(draft => {
-      draft.gist = gist || undefined
+    updateGistConfig(draft => {
+      draft = gist || undefined
     })
     persistConfig()
     onClose()
@@ -101,7 +99,7 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
           </button>
 
           {/* Button to reset Gist configuration */}
-          {config && (
+          {gistConfig && (
             <button
               onClick={handleReset}
               className="text-xs text-red-400 hover:text-red-600 transition-colors"
