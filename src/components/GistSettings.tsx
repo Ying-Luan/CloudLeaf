@@ -60,13 +60,7 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
   /**
    * Reset Gist configuration
    */
-  const handleReset = () => {
-    updateConfig(draft => {
-      draft.gist = undefined
-    })
-    persistConfig()
-    onClose()
-  }
+  const handleReset = () => { setGist(null) }
 
   /**
    * Save Gist configuration to store
@@ -104,7 +98,7 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
           </button>
 
           {/* Button to reset Gist configuration */}
-          {gistConfig && (
+          {gist && (
             <button
               onClick={handleReset}
               className="text-xs text-red-400 hover:text-red-600 transition-colors"
