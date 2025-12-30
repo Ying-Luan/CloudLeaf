@@ -135,7 +135,7 @@ export class WebDAVProvider extends HttpProvider {
             try {
                 const data = JSON.parse(content) as SyncPayload
                 if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
-                    return { ok: false, error: "Invalid file format: missing bookmarks" }
+                    return { ok: false, error: "Invalid file format: missing bookmarks field" }
                 }
                 return { ok: true, data }
             } catch {

@@ -155,6 +155,9 @@ export class GistProvider extends HttpProvider {
             }
 
             const payload = JSON.parse(file.content) as SyncPayload
+            if (!payload.bookmarks || !Array.isArray(payload.bookmarks)) {
+                return { ok: false, error: "Invalid file format: missing bookmarks field" }
+            }
             return { ok: true, data: payload }
         } catch (error) {
             return this.handleNetworkError(error)

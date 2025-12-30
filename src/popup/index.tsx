@@ -36,7 +36,7 @@ function IndexPopup() {
     if (process.env.NODE_ENV === 'development') console.log("[popup] Starting upload...")
     const result = await performUpload()
     if (!result.ok) {
-      alert("上传失败")
+      alert(`上传失败: ${result.error || "未知错误"}`)
       return
     }
     // status === 'behind' means cloud data is newer
@@ -64,7 +64,7 @@ function IndexPopup() {
   const handleDownload = async () => {
     const result = await performDownload()
     if (!result.ok) {
-      alert("下载失败")
+      alert(`下载失败: ${result.error || "未知错误"}`)
       return
     }
     // status === 'ahead' means local data is newer
@@ -89,7 +89,7 @@ function IndexPopup() {
   const handleExport = async () => {
     const result = await performExport()
     if (!result.ok) {
-      alert("导出失败")
+      alert(`导出失败: ${result.error || "未知错误"}`)
       return
     }
     alert("导出成功")
@@ -106,7 +106,7 @@ function IndexPopup() {
     if (!result.ok) {
       if (process.env.NODE_ENV === 'development')
         console.error("[popup/index] Import failed:", result.error)
-      alert("导入失败")
+      alert(`导入失败: ${result.error || "未知错误"}`)
       return
     }
     if (result.data.status === 'ahead') {
