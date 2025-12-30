@@ -4,7 +4,6 @@ import type { GistConfig } from "~src/types"
 import { DEFAULT_FILENAME } from "~src/constants"
 import { useSettingsStore } from "~src/store"
 import { useEffect, useState } from "react"
-import { produce } from "immer"
 
 /**
  * Props for the `GistSettings` component.
@@ -27,7 +26,7 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
   // Get config and actions from store
   const gistConfig = useSettingsStore((state) => state.config?.gist)
   const saving = useSettingsStore((state) => state.saving)
-  const updateGistConfig = useSettingsStore((state) => state.updateGistConfig)
+  const updateConfig = useSettingsStore((state) => state.updateConfig)
   const persistConfig = useSettingsStore((state) => state.persistConfig)
 
   // Local form state
@@ -47,13 +46,14 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
   }, [])
 
   /**
-   * Handle changes to a specific Gist configuration field using Immer.
+   * Handle changes to a specific Gist configuration field.
    * @param field Field name in `GistConfig` to update
    * @param value New value for the specified field
    */
   const handleChange = (field: keyof GistConfig, value: string | boolean | number) => {
-    setGist(current => produce(current || DEFAULT_GIST, (draft: GistConfig) => {
-      (draft[field] as any) = value
+    setGist(current => ({
+      ...(current || DEFAULT_GIST),
+      [field]: value
     }))
   }
 
@@ -61,17 +61,22 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
    * Reset Gist configuration
    */
   const handleReset = () => {
-    updateGistConfig(draft => { draft = undefined })
+    updateConfig(draft => {
+      draft.gist = undefined
+    })
+    persistConfig()
+    onClose()
   }
 
   /**
    * Save Gist configuration to store
    */
   const handleSave = async () => {
-    updateGistConfig(draft => {
-      draft = gist || undefined
+    if (!gist) return
+    updateConfig(draft => {
+      draft.gist = gist
     })
-    persistConfig()
+    await persistConfig()
     onClose()
   }
 
