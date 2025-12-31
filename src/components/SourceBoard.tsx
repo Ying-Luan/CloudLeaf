@@ -1,6 +1,7 @@
 import { type SourceItem } from "~src/types"
 import { useState } from "react"
 import { Switch } from "./Switch"
+import { messages } from "~/src/i18n"
 
 /**
  * Props for the `SourceBoard` component.
@@ -189,7 +190,7 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
                 className={`flex-1 py-2 rounded-md text-[11px] transition-all cursor-pointer font-bold ${isGist ? "bg-white/10 hover:bg-white/20 text-white" : "bg-blue-600 text-white hover:bg-blue-700"
                   }`}
               >
-                {isTesting ? "正在连接..." : "验证连接状态"}
+                {isTesting ? messages.ui.connecting() : messages.ui.verifyConnection()}
               </button>
 
               {/* Button to edit source */}
@@ -197,7 +198,7 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
                 onClick={onEdit}
                 className={`px-4 py-2 rounded-md text-[11px] transition-all cursor-pointer font-bold ${isGist ? "bg-white/10 hover:bg-white/20 text-white" : "bg-white text-blue-700 border border-blue-200 hover:bg-blue-50"}`}
               >
-                修改
+                {messages.ui.edit()}
               </button>
 
               {/* Button to remove source */}
@@ -207,7 +208,7 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
                 className={`px-4 py-2 rounded-md text-[11px] transition-all cursor-pointer font-bold ${isGist ? "bg-red-500/20 hover:bg-red-500 text-white" : "text-red-500 hover:bg-red-50 hover:text-red-600"
                   }`}
               >
-                移除
+                {messages.ui.remove()}
               </button>
             </div>
           </div>

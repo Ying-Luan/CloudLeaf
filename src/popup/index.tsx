@@ -3,6 +3,7 @@ import "./index.css"
 import { useSync } from "~src/hooks"
 import { setBookmarks } from "~src/core/bookmark"
 import { Button } from "~src/components"
+import { messages } from "~/src/i18n"
 
 /**
  * Popup page component for CloudLeaf extension.
@@ -36,22 +37,22 @@ function IndexPopup() {
     if (process.env.NODE_ENV === 'development') console.log("[popup] Starting upload...")
     const result = await performUpload()
     if (!result.ok) {
-      alert(`上传失败: ${result.error || "未知错误"}`)
+      alert(messages.alert.uploadFailed(result.error || messages.error.unknownError()))
       return
     }
     // status === 'behind' means cloud data is newer
     if (result.data.status === 'behind') {
-      if (confirm("云端数据较新，是否强制上传覆盖？")) {
+      if (confirm(messages.confirm.forceUpload())) {
         await performUpload(true)
-        alert("强制上传成功")
+        alert(messages.alert.forceUploadSuccess())
       }
       // status === 'none' means no provider configured
     } else if (result.data.status === 'none') {
-      alert("未配置同步提供者，无法上传书签")
+      alert(messages.alert.noProvider())
       // Normal case: upload succeeded without conflicts
     } else {
       await performUpload(true)
-      alert("上传成功")
+      alert(messages.alert.uploadSuccess())
     }
   }
 
@@ -64,22 +65,22 @@ function IndexPopup() {
   const handleDownload = async () => {
     const result = await performDownload()
     if (!result.ok) {
-      alert(`下载失败: ${result.error || "未知错误"}`)
+      alert(messages.alert.downloadFailed(result.error || messages.error.unknownError()))
       return
     }
     // status === 'ahead' means local data is newer
     if (result.data.status === 'ahead') {
-      if (confirm("本地数据较新，是否强制下载覆盖？")) {
+      if (confirm(messages.confirm.forceDownload())) {
         await setBookmarks(result.data.payload)
-        alert("强制下载成功")
+        alert(messages.alert.forceDownloadSuccess())
       }
       // status === 'none' means no provider configured
     } else if (result.data.status === 'none') {
-      alert("未配置同步提供者，无法下载书签")
+      alert(messages.alert.noProvider())
       // Normal case: download succeeded without conflicts
     } else {
       await setBookmarks(result.data.payload)
-      alert("下载成功")
+      alert(messages.alert.downloadSuccess())
     }
   }
 
@@ -89,10 +90,10 @@ function IndexPopup() {
   const handleExport = async () => {
     const result = await performExport()
     if (!result.ok) {
-      alert(`导出失败: ${result.error || "未知错误"}`)
+      alert(messages.alert.exportFailed(result.error || messages.error.unknownError()))
       return
     }
-    alert("导出成功")
+    alert(messages.alert.exportSuccess())
   }
 
   /**
@@ -106,17 +107,17 @@ function IndexPopup() {
     if (!result.ok) {
       if (process.env.NODE_ENV === 'development')
         console.error("[popup/index] Import failed:", result.error)
-      alert(`导入失败: ${result.error || "未知错误"}`)
+      alert(messages.alert.importFailed(result.error || messages.error.unknownError()))
       return
     }
     if (result.data.status === 'ahead') {
-      if (confirm("本地数据较新，是否强制导入覆盖？")) {
+      if (confirm(messages.confirm.forceImport())) {
         await setBookmarks(result.data.payload)
-        alert("强制导入成功")
+        alert(messages.alert.forceImportSuccess())
       }
     } else {
       await setBookmarks(result.data.payload)
-      alert("导入成功")
+      alert(messages.alert.importSuccess())
     }
   }
 
@@ -148,7 +149,7 @@ function IndexPopup() {
           <button
             onClick={handleOpenPreview}
             className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
-            title="预览云端书签"
+            title={messages.ui.previewCloud()}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -160,7 +161,7 @@ function IndexPopup() {
           <button
             onClick={openSettings}
             className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all cursor-pointer group"
-            title="打开设置"
+            title={messages.ui.openSettings()}
           >
             <svg
               className="w-4 h-4 transition-transform group-hover:rotate-90 duration-300"
@@ -179,14 +180,14 @@ function IndexPopup() {
       <div className="flex flex-col gap-3">
         {/* Button to upload bookmarks */}
         <Button
-          label="上传书签"
+          label={messages.ui.uploadBookmarks()}
           onClick={handleUpload}
           loading={loading}
         />
 
         {/* Button to download bookmarks */}
         <Button
-          label="下载书签"
+          label={messages.ui.downloadBookmarks()}
           onClick={handleDownload}
           loading={loading}
         />
@@ -195,14 +196,14 @@ function IndexPopup() {
         <div className="flex gap-3">
           {/* Button to export bookmarks */}
           <Button
-            label="导出书签"
+            label={messages.ui.exportBookmarks()}
             onClick={handleExport}
             loading={loading}
           />
 
           {/* Button to import bookmarks */}
           <Button
-            label="导入书签"
+            label={messages.ui.importBookmarks()}
             onClick={handleImport}
             loading={loading}
           />

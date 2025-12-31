@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useSettingsStore } from "~src/store"
 import { GistSettings, Sources, WebDavSettings, WebDavVendorManager } from "~src/components"
 import { type Editor } from "~src/types"
+import { messages } from "~/src/i18n"
 import "./index.css"
 
 /**
@@ -27,14 +28,14 @@ function OptionsPage() {
   }, [loadConfig])
 
   // Loading state UI
-  if (initializing) return <div className="p-20 text-slate-400">正在加载...</div>
+  if (initializing) return <div className="p-20 text-slate-400">{messages.ui.loading()}</div>
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Page header */}
         <header>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">CloudLeaf 设置</h1>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{messages.ui.settingsTitle()}</h1>
         </header>
 
         {/* Main content sections */}

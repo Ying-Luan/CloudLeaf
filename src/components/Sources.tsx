@@ -3,6 +3,7 @@ import { type SourceItem, type Editor } from "~src/types"
 import { useSettingsStore } from "~src/store/settings"
 import SourceBoard from "./SourceBoard"
 import { useTest } from "~src/hooks"
+import { messages } from "~/src/i18n"
 
 /**
  * Props for the `Sources` component.
@@ -65,7 +66,7 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
    * Remove Gist configuration after user confirmation.
    */
   const removeGist = () => {
-    if (!confirm("确定移除 GitHub Gist 配置吗？")) return
+    if (!confirm(messages.confirm.removeGist())) return
     updateConfig(draft => {
       draft.gist = undefined
     })
@@ -77,7 +78,7 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
    * @param index Index of the WebDAV account to remove
    */
   const removeWebDav = (index: number) => {
-    if (!confirm("确定移除该 WebDAV 账号吗？")) return
+    if (!confirm(messages.confirm.removeWebdav())) return
     updateConfig(draft => {
       draft.webDavConfigs!.splice(index, 1)
     })
@@ -160,14 +161,14 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
           </svg>
         </div>
         {/* Title */}
-        <h3 className="text-lg font-bold text-slate-800 font-mono tracking-tight">已启用的同步源</h3>
+        <h3 className="text-lg font-bold text-slate-800 font-mono tracking-tight">{messages.ui.enabledSources()}</h3>
       </div>
 
       {/* Content */}
       {!hasSources ? (
         /* Empty state */
         <div className="py-8 text-center border-2 border-dashed border-slate-100 rounded-xl">
-          <p className="text-slate-400 text-sm font-mono">暂未配置任何同步源</p>
+          <p className="text-slate-400 text-sm font-mono">{messages.ui.noSources()}</p>
         </div>
         /* Not empty state */
       ) : (
@@ -202,7 +203,7 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
             className="px-3 py-2 text-[12px] rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono"
             onClick={() => setShowAddChooser(v => !v)}
           >
-            新增同步源
+            {messages.ui.addSource()}
           </button>
 
           {showAddChooser && (

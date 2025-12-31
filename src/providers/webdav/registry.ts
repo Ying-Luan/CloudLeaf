@@ -1,5 +1,6 @@
 import { WebDAVProvider } from "./webdav"
 import { type WebDAVUserConfig, type CustomVendorConfig } from "~/src/types"
+import { t } from "~/src/i18n"
 
 /**
  * WebDAV vendor registry (static singleton)
@@ -26,7 +27,12 @@ export class WebDAVRegistry {
      * @returns Combined vendor list
      */
     public static getAllVendors(): CustomVendorConfig[] {
-        return [...this.presetVendors, ...this.customVendors]
+        // Apply i18n to preset vendor names
+        const localizedPresets = this.presetVendors.map(v => ({
+            ...v,
+            name: v.id === "jianguoyun" ? t("vendor_jianguoyun") : v.name
+        }))
+        return [...localizedPresets, ...this.customVendors]
     }
 
     /**
@@ -88,7 +94,10 @@ export class WebDAVRegistry {
      * @returns Preset vendors array copy
      */
     public static getPresetVendors(): CustomVendorConfig[] {
-        return [...this.presetVendors]
+        return this.presetVendors.map(v => ({
+            ...v,
+            name: v.id === "jianguoyun" ? t("vendor_jianguoyun") : v.name
+        }))
     }
 
     /**

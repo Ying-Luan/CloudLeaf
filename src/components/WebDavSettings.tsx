@@ -6,6 +6,7 @@ import Select from "./Select"
 import type { WebDAVUserConfig } from "~src/types"
 import { DEFAULT_WEBDAV_FILEPATH } from "~src/constants"
 import { loadCustomVendorsFromConfig, useSettingsStore } from "~src/store"
+import { messages } from "~/src/i18n"
 
 /**
  * Props for the `WebDavSettings` component.
@@ -98,7 +99,7 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
    * and resets username/password fields.
    */
   const handleSubmit = async () => {
-    if (!form.username || !form.password) return alert("请填写完整信息")
+    if (!form.username || !form.password) return alert(messages.alert.incompleteInfo())
     if (mode === "add") {
       const priority = await getNextPriority()
       updateWebDavConfigs(draft => {
@@ -129,11 +130,11 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
             </svg>
           </div>
           {/* Title */}
-          <h3 className="text-lg font-bold text-slate-800">{mode === "edit" ? "编辑 WebDAV 账号" : "WebDAV 账号管理"}</h3>
+          <h3 className="text-lg font-bold text-slate-800">{mode === "edit" ? messages.ui.webdavEdit() : messages.ui.webdavAdd()}</h3>
         </div>
 
         {/* Button to close the settings panel */}
-        <button onClick={onClose} className="text-xs text-slate-400 hover:text-slate-600">取消</button>
+        <button onClick={onClose} className="text-xs text-slate-400 hover:text-slate-600">{messages.ui.cancel()}</button>
       </div>
 
       {/* Add account form */}
@@ -142,7 +143,7 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
         <div className="grid grid-cols-2 gap-4">
           {/* Vendor select */}
           <Select
-            label="选择云厂商"
+            label={messages.ui.selectVendor()}
             value={form.vendorId}
             options={vendors}
             onChange={(val) => setForm({ ...form, vendorId: val })}
@@ -150,7 +151,7 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
 
           {/* Username input */}
           <Input
-            label="用户名"
+            label={messages.ui.username()}
             value={form.username}
             onChange={(val) => setForm({ ...form, username: val })}
             placeholder="Account Email"
@@ -159,7 +160,7 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
 
         {/* Password and file path inputs */}
         <Input
-          label="应用密码"
+          label={messages.ui.appPassword()}
           value={form.password}
           type="password"
           onChange={(val) => setForm({ ...form, password: val })}
@@ -168,7 +169,7 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
 
         {/* File path input */}
         <Input
-          label="存储文件路径(必须位于某一文件夹下)"
+          label={messages.ui.filePath()}
           value={form.filePath}
           onChange={(val) => setForm({ ...form, filePath: val || DEFAULT_WEBDAV_FILEPATH })}
           placeholder={DEFAULT_WEBDAV_FILEPATH}
@@ -176,7 +177,7 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
 
         {/* Add account button */}
         <Button
-          label={mode === "edit" ? "保存修改" : "确认添加 WebDAV 账号"}
+          label={mode === "edit" ? messages.ui.saveChanges() : messages.ui.addWebdav()}
           onClick={handleSubmit}
           loading={saving}
           className="bg-white border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900"

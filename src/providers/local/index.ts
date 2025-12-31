@@ -7,6 +7,7 @@
 import { type SyncPayload, type Result } from "~/src/types"
 import { BaseProvider } from "~/src/providers"
 import { DEFAULT_FILENAME } from "~src/constants"
+import { messages } from "~/src/i18n"
 
 /**
  * Local file provider
@@ -58,7 +59,7 @@ export class LocalProvider extends BaseProvider {
         } catch (error) {
             return {
                 ok: false,
-                error: error instanceof Error ? error.message : "Failed to download bookmarks"
+                error: error instanceof Error ? error.message : messages.error.downloadFailed()
             }
         }
     }
@@ -80,7 +81,7 @@ export class LocalProvider extends BaseProvider {
             input.onchange = async (e) => {
                 const file = (e.target as HTMLInputElement).files?.[0]
                 if (!file) {
-                    resolve({ ok: false, error: "No file selected" })
+                    resolve({ ok: false, error: messages.error.noFileSelected() })
                     return
                 }
 
@@ -88,18 +89,18 @@ export class LocalProvider extends BaseProvider {
                     const text = await file.text()
                     const data = JSON.parse(text) as SyncPayload
                     if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
-                        resolve({ ok: false, error: "Invalid bookmark data in file" })
+                        resolve({ ok: false, error: messages.error.invalidData() })
                         return
                     }
                     resolve({ ok: true, data })
                 } catch (error) {
-                    resolve({ ok: false, error: "Failed to read or parse the file" })
+                    resolve({ ok: false, error: messages.error.parseFailed() })
                 }
             }
 
             // Handle cancelation
             input.oncancel = () => {
-                resolve({ ok: false, error: "File selection canceled" })
+                resolve({ ok: false, error: messages.error.canceled() })
             }
 
             // click -> file -> onchange or oncancel

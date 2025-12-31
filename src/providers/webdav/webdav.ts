@@ -1,7 +1,8 @@
 import { type SyncPayload, type Result } from "~/src/types"
 import { HttpProvider } from "~/src/providers"
 import { HttpStatus } from "~/src/constants"
-import { WebDAVStatus, WebDAVStatusMessage } from "~/src/constants"
+import { WebDAVStatus, getWebDAVStatusMessage } from "~/src/constants"
+import { messages } from "~/src/i18n"
 
 /**
  * WebDAV protocol storage provider
@@ -122,7 +123,7 @@ export class WebDAVProvider extends HttpProvider {
             const { status } = response
 
             if (status === HttpStatus.NOT_FOUND) {
-                return { ok: false, status, error: "File not found: please upload first" }
+                return { ok: false, status, error: messages.error.fileNotFound() }
             }
 
             if (!this.isSuccess(status)) {
@@ -135,11 +136,11 @@ export class WebDAVProvider extends HttpProvider {
             try {
                 const data = JSON.parse(content) as SyncPayload
                 if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
-                    return { ok: false, error: "Invalid file format: missing bookmarks field" }
+                    return { ok: false, error: messages.error.invalidFormat() }
                 }
                 return { ok: true, data }
             } catch {
-                return { ok: false, error: "Invalid file format: cannot parse JSON" }
+                return { ok: false, error: messages.error.invalidJson() }
             }
         } catch (error) {
             return this.handleNetworkError(error)
@@ -189,7 +190,7 @@ export class WebDAVProvider extends HttpProvider {
      * @returns Human-readable error message
      */
     protected getErrorMessage(status: number): string {
-        return WebDAVStatusMessage[status] || this.getHttpErrorMessage(status)
+        return getWebDAVStatusMessage(status) || this.getHttpErrorMessage(status)
     }
 
     /**

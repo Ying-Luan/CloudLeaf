@@ -8,6 +8,7 @@ import { getBookmarks } from "~/src/core/bookmark"
 import { LocalProvider } from "~/src/providers"
 import { type Result, type SyncStatus, type SyncPayload } from "~/src/types"
 import { getSyncStatus } from "~/src/core/sync/utils"
+import { messages } from "~/src/i18n"
 
 const provider = new LocalProvider()
 
@@ -23,11 +24,11 @@ export async function exportBookmarks(): Promise<Result<{ status: SyncStatus }>>
     const res = await provider.upload(data)
 
     if (!res.ok)
-      return { ok: false, error: res.error || "Export failed" }
+      return { ok: false, error: res.error || messages.alert.exportFailed("") }
 
     return { ok: true, data: { status: 'synced' } }
   } catch (error) {
-    return { ok: false, error: error instanceof Error ? error.message : "Export failed" }
+    return { ok: false, error: error instanceof Error ? error.message : messages.alert.exportFailed("") }
   }
 }
 
@@ -45,7 +46,7 @@ export async function importBookmarks(): Promise<Result<{ status: SyncStatus, pa
     if (!res.ok || !res.data) {
       return {
         ok: false,
-        error: res.error || "Import failed"
+        error: res.error || messages.alert.importFailed("")
       }
     }
 
@@ -54,6 +55,6 @@ export async function importBookmarks(): Promise<Result<{ status: SyncStatus, pa
     const status = getSyncStatus(browser, file)
     return { ok: true, data: { status, payload: file } }
   } catch (error) {
-    return { ok: false, error: error instanceof Error ? error.message : "Import failed" }
+    return { ok: false, error: error instanceof Error ? error.message : messages.alert.importFailed("") }
   }
 }

@@ -41,31 +41,78 @@ export const WebDAVStatus = {
     INSUFFICIENT_STORAGE: 507,
 } as const
 
+import { t } from "~/src/i18n"
+
 /**
- * HTTP status code to error message
- * @readonly
+ * HTTP status code to i18n message key mapping
+ * @internal
  */
-export const HttpStatusMessage: Record<number, string> = {
-    [HttpStatus.BAD_REQUEST]: "请求格式错误",
-    [HttpStatus.UNAUTHORIZED]: "认证失败：凭据无效",
-    [HttpStatus.FORBIDDEN]: "权限不足：访问被拒绝",
-    [HttpStatus.NOT_FOUND]: "资源不存在",
-    [HttpStatus.METHOD_NOT_ALLOWED]: "方法不允许",
-    [HttpStatus.INTERNAL_SERVER_ERROR]: "服务器内部错误",
-    [HttpStatus.BAD_GATEWAY]: "网关错误",
-    [HttpStatus.SERVICE_UNAVAILABLE]: "服务暂时不可用",
-    [HttpStatus.GATEWAY_TIMEOUT]: "网关超时",
+const httpStatusKeys: Record<number, string> = {
+    [HttpStatus.BAD_REQUEST]: "http_bad_request",
+    [HttpStatus.UNAUTHORIZED]: "http_unauthorized",
+    [HttpStatus.FORBIDDEN]: "http_forbidden",
+    [HttpStatus.NOT_FOUND]: "http_not_found",
+    [HttpStatus.METHOD_NOT_ALLOWED]: "http_method_not_allowed",
+    [HttpStatus.INTERNAL_SERVER_ERROR]: "http_internal_server_error",
+    [HttpStatus.BAD_GATEWAY]: "http_bad_gateway",
+    [HttpStatus.SERVICE_UNAVAILABLE]: "http_service_unavailable",
+    [HttpStatus.GATEWAY_TIMEOUT]: "http_gateway_timeout",
 }
 
 /**
- * WebDAV extended status code to error message
+ * WebDAV status code to i18n message key mapping
+ * @internal
+ */
+const webdavStatusKeys: Record<number, string> = {
+    [WebDAVStatus.MULTI_STATUS]: "webdav_multi_status",
+    [WebDAVStatus.CONFLICT]: "webdav_conflict",
+    [WebDAVStatus.PRECONDITION_FAILED]: "webdav_precondition_failed",
+    [WebDAVStatus.UNSUPPORTED_MEDIA_TYPE]: "webdav_unsupported_media_type",
+    [WebDAVStatus.LOCKED]: "webdav_locked",
+    [WebDAVStatus.INSUFFICIENT_STORAGE]: "webdav_insufficient_storage",
+}
+
+/**
+ * Get HTTP error message by status code (i18n)
+ * @param status HTTP status code
+ * @returns Localized error message
+ */
+export const getHttpStatusMessage = (status: number): string => {
+    const key = httpStatusKeys[status]
+    return key ? t(key) : t("http_request_failed", String(status))
+}
+
+/**
+ * Get WebDAV error message by status code (i18n)
+ * @param status WebDAV status code
+ * @returns Localized error message
+ */
+export const getWebDAVStatusMessage = (status: number): string => {
+    const key = webdavStatusKeys[status]
+    return key ? t(key) : t("webdav_error", String(status))
+}
+
+/**
+ * HTTP status code to error message (legacy, for backward compatibility)
+ * @deprecated Use getHttpStatusMessage() for i18n support
  * @readonly
  */
-export const WebDAVStatusMessage: Record<number, string> = {
-    [WebDAVStatus.MULTI_STATUS]: "多状态响应",
-    [WebDAVStatus.CONFLICT]: "冲突：父目录可能不存在",
-    [WebDAVStatus.PRECONDITION_FAILED]: "前置条件失败",
-    [WebDAVStatus.UNSUPPORTED_MEDIA_TYPE]: "不支持的媒体类型",
-    [WebDAVStatus.LOCKED]: "资源被锁定",
-    [WebDAVStatus.INSUFFICIENT_STORAGE]: "存储空间不足",
-}
+export const HttpStatusMessage: Record<number, string> = new Proxy({}, {
+    get: (_, prop) => {
+        const status = Number(prop)
+        return getHttpStatusMessage(status)
+    }
+})
+
+/**
+ * WebDAV extended status code to error message (legacy, for backward compatibility)
+ * @deprecated Use getWebDAVStatusMessage() for i18n support
+ * @readonly
+ */
+export const WebDAVStatusMessage: Record<number, string> = new Proxy({}, {
+    get: (_, prop) => {
+        const status = Number(prop)
+        return getWebDAVStatusMessage(status)
+    }
+})
+
