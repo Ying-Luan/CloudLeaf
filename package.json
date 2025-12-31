@@ -2,7 +2,7 @@
   "name": "cloud-leaf",
   "displayName": "Cloud Leaf",
   "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
+  "description": "Browser Bookmark Cloud Sync Extension.",
   "author": "Ying Luan & KamikazEr101",
   "scripts": {
     "dev": "npm run postinstall && plasmo dev",
