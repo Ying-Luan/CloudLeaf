@@ -31,17 +31,22 @@
 npm install
 
 # 运行开发服务器
-npm run dev:edge    # Microsoft Edge
 npm run dev         # Chrome
+npm run dev:edge    # Microsoft Edge
 
 # 构建生产版本
-npm run build
+npm run build       # Chrome
+npm run build:edge  # Microsoft Edge
+
+# 打包发布文件
+npm run package       # Chrome
+npm run package:edge  # Microsoft Edge
 ```
 
 ## 支持的云服务
 
-| 服务商        | 协议     | 状态     |
-| ------------- | -------- | -------- |
+| 服务商        | 协议     | 状态   |
+| ------------- | -------- | ------ |
 | GitHub Gist   | REST API | 已支持 |
 | 坚果云        | WebDAV   | 已支持 |
 | 自定义 WebDAV | WebDAV   | 已支持 |

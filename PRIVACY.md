@@ -1,42 +1,49 @@
-# Privacy Policy
+# Chrome Extension Privacy Policy
 
-*Last updated: December 2025*
+([中文版](PRIVACY_zh.md))
 
-## Overview
+**Effective Date:** 2025-12-31
 
-CloudLeaf is a browser extension that helps you sync bookmarks across devices. **We do not collect, store, or transmit any of your data to our servers.**
+**CloudLeaf** (hereinafter referred to as "this Extension") is committed to protecting your privacy. This document explains how we collect, use, and protect your information when you use this Extension.
 
-## Data Storage
+### 1. Information We Collect
 
-All data is stored locally in your browser using `chrome.storage.local`:
-- Configuration settings
-- Access tokens and credentials
-- Sync preferences
+*   **Non-Personal Information:** This Extension does not collect any non-personal information beyond what is necessary to enable its functionality. If in the future such information is collected, it will be clearly stated in an updated privacy policy.
 
-## Third-Party Services
+*   **Personal Information:** This Extension uses the following personal information:
+    *   **Bookmarks:** The extension reads and modifies your browser bookmarks to provide synchronization functionality. This data is only processed locally or transmitted to your configured cloud storage provider securely.
+    *   **Cloud Storage Credentials:** We store your GitHub Token or WebDAV credentials (username/password) to authenticate with your chosen cloud provider. These are stored securely in your browser's local storage and are never sent to our servers.
 
-CloudLeaf can sync your bookmarks to third-party services **only when you explicitly configure them**:
+### 2. How We Use Your Information
 
-- **GitHub Gist** - Your bookmarks are sent to GitHub using your personal access token
-- **WebDAV Services** - Your bookmarks are sent to your configured WebDAV server
+The collected information is used solely to:
+*   Synchronize your bookmarks between your browser and your configured cloud storage (GitHub Gist or WebDAV).
+*   Facilitate authentication with your chosen cloud providers.
 
-We do not have access to your credentials or synced data. All communication happens directly between your browser and the service you configure.
+We do not share, sell, or rent your personal information to third parties. All data transmission occurs directly between your browser and your configured cloud provider.
 
-## Permissions
+### 3. Data Security
 
-| Permission  | Purpose                          |
-| ----------- | -------------------------------- |
-| `bookmarks` | Read and write browser bookmarks |
-| `storage`   | Store configuration locally      |
+We implement reasonable security measures to protect your information. Your credentials are stored locally in your browser and are only used for direct communication with your configured cloud services.
 
-## Data Collection
+### 4. Data Retention
 
-**We collect no data.** Specifically:
-- No analytics or tracking
-- No telemetry
-- No crash reports sent to us
-- No personal information collected
+We do not retain any of your personal data on our servers. Your data resides in your browser and your personal cloud storage.
 
-## Contact
+### 5. User Rights
 
-If you have questions about this privacy policy, please open an issue on our [GitHub repository](https://github.com/Ying-Luan/CloudLeaf).
+You have the right to:
+*   Delete the extension and all locally stored data at any time.
+*   Manage your cloud data directly through your cloud provider (GitHub or WebDAV service).
+
+To exercise these rights, please contact us at: [3433800035@qq.com](mailto:3433800035@qq.com).
+
+### 6. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date. We encourage you to review this policy periodically.
+
+### 7. Contact Us
+
+If you have any questions or concerns about this Privacy Policy or our data practices, please contact us:
+
+**Email:** [3433800035@qq.com](mailto:3433800035@qq.com)

@@ -31,17 +31,22 @@
 npm install
 
 # Run development server
-npm run dev:edge    # For Microsoft Edge
 npm run dev         # For Chrome
+npm run dev:edge    # For Microsoft Edge
 
 # Build for production
-npm run build
+npm run build       # For Chrome
+npm run build:edge  # For Microsoft Edge
+
+# Package for store
+npm run package       # For Chrome
+npm run package:edge  # For Microsoft Edge
 ```
 
 ## Supported Providers
 
-| Provider            | Protocol | Status      |
-| ------------------- | -------- | ----------- |
+| Provider            | Protocol | Status    |
+| ------------------- | -------- | --------- |
 | GitHub Gist         | REST API | Supported |
 | Jianguoyun (坚果云) | WebDAV   | Supported |
 | Custom WebDAV       | WebDAV   | Supported |

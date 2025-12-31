@@ -8,8 +8,9 @@
     "dev": "npm run postinstall && plasmo dev",
     "dev:edge": "npm run postinstall && plasmo dev --target=edge-mv3",
     "build": "npm run postinstall && plasmo build",
-    "build:firefox":"npm run postinstall && plasmo build --target=firefox-mv2",
+    "build:edge": "npm run postinstall && plasmo build --target=edge-mv3",
     "package": "npm run postinstall && plasmo package",
+    "package:edge": "npm run postinstall && plasmo package --target=edge-mv3",
     "postinstall": "node scripts/patch.js"
   },
   "dependencies": {
