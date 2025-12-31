@@ -1,0 +1,510 @@
+{
+    "error_file_not_found": {
+        "message": "文件未找到：请先上传",
+        "description": "远程文件不存在时的错误"
+    },
+    "error_invalid_format": {
+        "message": "文件格式无效：缺少 bookmarks 字段",
+        "description": "JSON 缺少必需的 bookmarks 数组时的错误"
+    },
+    "error_invalid_json": {
+        "message": "文件格式无效：无法解析 JSON",
+        "description": "文件内容不是有效 JSON 时的错误"
+    },
+    "error_no_file_selected": {
+        "message": "未选择文件",
+        "description": "用户未选择文件时的错误"
+    },
+    "error_invalid_data": {
+        "message": "文件中的书签数据无效",
+        "description": "文件包含无效书签结构时的错误"
+    },
+    "error_parse_failed": {
+        "message": "读取或解析文件失败",
+        "description": "文件读取或解析失败时的错误"
+    },
+    "error_canceled": {
+        "message": "文件选择已取消",
+        "description": "用户取消文件选择器时的消息"
+    },
+    "error_timeout": {
+        "message": "请求超时",
+        "description": "网络请求超时时的错误"
+    },
+    "error_network": {
+        "message": "网络错误：$1",
+        "description": "带详情的网络错误",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "连接被拒绝"
+            }
+        }
+    },
+    "error_unknown": {
+        "message": "未知网络错误",
+        "description": "通用网络错误"
+    },
+    "error_invalid_token": {
+        "message": "无效的访问令牌",
+        "description": "GitHub token 无效时的错误"
+    },
+    "error_gist_file_not_found": {
+        "message": "Gist 中未找到文件 $1",
+        "description": "Gist 中找不到文件时的错误",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "cloudleaf.json"
+            }
+        }
+    },
+    "error_upload_failed": {
+        "message": "上传失败",
+        "description": "通用上传错误"
+    },
+    "error_download_failed": {
+        "message": "下载失败",
+        "description": "通用下载错误"
+    },
+    "error_all_providers_failed": {
+        "message": "所有提供者上传失败",
+        "description": "所有同步提供者都失败时的错误"
+    },
+    "error_no_sync_source": {
+        "message": "无可用同步源数据",
+        "description": "没有同步源有数据时的错误"
+    },
+    "error_unknown_error": {
+        "message": "未知错误",
+        "description": "通用未知错误"
+    },
+    "alert_settings_saved": {
+        "message": "设置已保存",
+        "description": "设置保存时显示"
+    },
+    "alert_upload_success": {
+        "message": "上传成功",
+        "description": "上传成功后显示"
+    },
+    "alert_upload_failed": {
+        "message": "上传失败：$1",
+        "description": "上传失败时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "网络错误"
+            }
+        }
+    },
+    "alert_force_upload_success": {
+        "message": "强制上传成功",
+        "description": "强制上传后显示"
+    },
+    "alert_download_success": {
+        "message": "下载成功",
+        "description": "下载成功后显示"
+    },
+    "alert_download_failed": {
+        "message": "下载失败：$1",
+        "description": "下载失败时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "网络错误"
+            }
+        }
+    },
+    "alert_force_download_success": {
+        "message": "强制下载成功",
+        "description": "强制下载后显示"
+    },
+    "alert_export_success": {
+        "message": "导出成功",
+        "description": "导出成功后显示"
+    },
+    "alert_export_failed": {
+        "message": "导出失败：$1",
+        "description": "导出失败时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "文件错误"
+            }
+        }
+    },
+    "alert_import_success": {
+        "message": "导入成功",
+        "description": "导入成功后显示"
+    },
+    "alert_import_failed": {
+        "message": "导入失败：$1",
+        "description": "导入失败时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "格式无效"
+            }
+        }
+    },
+    "alert_force_import_success": {
+        "message": "强制导入成功",
+        "description": "强制导入后显示"
+    },
+    "alert_no_provider": {
+        "message": "未配置同步提供者，无法同步书签",
+        "description": "未配置提供者时显示"
+    },
+    "alert_gist_ok": {
+        "message": "Gist 连接正常",
+        "description": "Gist 测试成功时显示"
+    },
+    "alert_gist_failed": {
+        "message": "Gist 连接失败：$1",
+        "description": "Gist 测试失败时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "无效令牌"
+            }
+        }
+    },
+    "alert_webdav_ok": {
+        "message": "WebDAV [$1] 连接正常",
+        "description": "WebDAV 测试成功时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "user@example.com"
+            }
+        }
+    },
+    "alert_webdav_failed": {
+        "message": "WebDAV 连接失败：$1",
+        "description": "WebDAV 测试失败时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "认证失败"
+            }
+        }
+    },
+    "alert_exception": {
+        "message": "发生异常：$1",
+        "description": "捕获异常时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "TypeError"
+            }
+        }
+    },
+    "alert_incomplete_info": {
+        "message": "请填写完整信息",
+        "description": "表单不完整时显示"
+    },
+    "alert_vendor_registered": {
+        "message": "已成功注册云厂商：$1",
+        "description": "自定义厂商注册成功时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "我的私有云"
+            }
+        }
+    },
+    "alert_vendor_failed": {
+        "message": "添加失败：$1",
+        "description": "厂商注册失败时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "ID 重复"
+            }
+        }
+    },
+    "alert_vendor_deleted": {
+        "message": "已成功删除云厂商",
+        "description": "厂商删除成功时显示"
+    },
+    "alert_vendor_delete_failed": {
+        "message": "删除失败：$1",
+        "description": "厂商删除失败时显示",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "未找到"
+            }
+        }
+    },
+    "confirm_force_upload": {
+        "message": "云端数据较新，是否强制上传覆盖？",
+        "description": "强制上传确认对话框"
+    },
+    "confirm_force_download": {
+        "message": "本地数据较新，是否强制下载覆盖？",
+        "description": "强制下载确认对话框"
+    },
+    "confirm_force_import": {
+        "message": "本地数据较新，是否强制导入覆盖？",
+        "description": "强制导入确认对话框"
+    },
+    "confirm_delete_vendor": {
+        "message": "确定删除该厂商？关联的账号可能失效",
+        "description": "删除厂商确认对话框"
+    },
+    "confirm_remove_gist": {
+        "message": "确定移除 GitHub Gist 配置吗？",
+        "description": "移除 Gist 确认对话框"
+    },
+    "confirm_remove_webdav": {
+        "message": "确定移除该 WebDAV 账号吗？",
+        "description": "移除 WebDAV 确认对话框"
+    },
+    "http_bad_request": {
+        "message": "请求格式错误",
+        "description": "HTTP 400 错误"
+    },
+    "http_unauthorized": {
+        "message": "认证失败：凭据无效",
+        "description": "HTTP 401 错误"
+    },
+    "http_forbidden": {
+        "message": "权限不足：访问被拒绝",
+        "description": "HTTP 403 错误"
+    },
+    "http_not_found": {
+        "message": "资源不存在",
+        "description": "HTTP 404 错误"
+    },
+    "http_method_not_allowed": {
+        "message": "方法不允许",
+        "description": "HTTP 405 错误"
+    },
+    "http_internal_server_error": {
+        "message": "服务器内部错误",
+        "description": "HTTP 500 错误"
+    },
+    "http_bad_gateway": {
+        "message": "网关错误",
+        "description": "HTTP 502 错误"
+    },
+    "http_service_unavailable": {
+        "message": "服务暂时不可用",
+        "description": "HTTP 503 错误"
+    },
+    "http_gateway_timeout": {
+        "message": "网关超时",
+        "description": "HTTP 504 错误"
+    },
+    "webdav_multi_status": {
+        "message": "多状态响应",
+        "description": "WebDAV 207 状态"
+    },
+    "webdav_conflict": {
+        "message": "冲突：父目录可能不存在",
+        "description": "WebDAV 409 错误"
+    },
+    "webdav_precondition_failed": {
+        "message": "前置条件失败",
+        "description": "WebDAV 412 错误"
+    },
+    "webdav_unsupported_media_type": {
+        "message": "不支持的媒体类型",
+        "description": "WebDAV 415 错误"
+    },
+    "webdav_locked": {
+        "message": "资源被锁定",
+        "description": "WebDAV 423 错误"
+    },
+    "webdav_insufficient_storage": {
+        "message": "存储空间不足",
+        "description": "WebDAV 507 错误"
+    },
+    "http_request_failed": {
+        "message": "请求失败：$1",
+        "description": "未知 HTTP 状态码的 fallback",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "418"
+            }
+        }
+    },
+    "webdav_error": {
+        "message": "WebDAV 错误：$1",
+        "description": "未知 WebDAV 状态码的 fallback",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "418"
+            }
+        }
+    },
+    "ui_loading": {
+        "message": "正在加载...",
+        "description": "加载状态"
+    },
+    "ui_settings_title": {
+        "message": "CloudLeaf 设置",
+        "description": "设置页面标题"
+    },
+    "ui_cloud_preview": {
+        "message": "云端书签预览",
+        "description": "侧边栏标题"
+    },
+    "ui_refresh_data": {
+        "message": "刷新数据",
+        "description": "刷新按钮提示"
+    },
+    "ui_reading_cloud": {
+        "message": "正在读取云端数据...",
+        "description": "加载云端数据"
+    },
+    "ui_preview_cloud": {
+        "message": "预览云端书签",
+        "description": "预览按钮提示"
+    },
+    "ui_open_settings": {
+        "message": "打开设置",
+        "description": "设置按钮提示"
+    },
+    "ui_upload_bookmarks": {
+        "message": "上传书签",
+        "description": "上传按钮"
+    },
+    "ui_download_bookmarks": {
+        "message": "下载书签",
+        "description": "下载按钮"
+    },
+    "ui_export_bookmarks": {
+        "message": "导出书签",
+        "description": "导出按钮"
+    },
+    "ui_import_bookmarks": {
+        "message": "导入书签",
+        "description": "导入按钮"
+    },
+    "ui_enabled_sources": {
+        "message": "已启用的同步源",
+        "description": "同步源标题"
+    },
+    "ui_no_sources": {
+        "message": "暂未配置任何同步源",
+        "description": "空状态"
+    },
+    "ui_add_source": {
+        "message": "新增同步源",
+        "description": "添加按钮"
+    },
+    "ui_connecting": {
+        "message": "正在连接...",
+        "description": "测试连接中"
+    },
+    "ui_verify_connection": {
+        "message": "验证连接状态",
+        "description": "测试按钮"
+    },
+    "ui_edit": {
+        "message": "修改",
+        "description": "编辑按钮"
+    },
+    "ui_remove": {
+        "message": "移除",
+        "description": "移除按钮"
+    },
+    "ui_cancel": {
+        "message": "取消",
+        "description": "取消按钮"
+    },
+    "ui_gist_config": {
+        "message": "GitHub Gist 配置",
+        "description": "Gist 设置标题"
+    },
+    "ui_reset_config": {
+        "message": "重置配置",
+        "description": "重置按钮"
+    },
+    "ui_gist_id_placeholder": {
+        "message": "填写你的 Gist ID",
+        "description": "Gist ID 占位符"
+    },
+    "ui_filename": {
+        "message": "存储文件名",
+        "description": "文件名标签"
+    },
+    "ui_save_gist": {
+        "message": "保存 Gist 设置",
+        "description": "保存按钮"
+    },
+    "ui_webdav_edit": {
+        "message": "编辑 WebDAV 账号",
+        "description": "编辑模式标题"
+    },
+    "ui_webdav_add": {
+        "message": "WebDAV 账号管理",
+        "description": "添加模式标题"
+    },
+    "ui_select_vendor": {
+        "message": "选择云厂商",
+        "description": "厂商选择标签"
+    },
+    "ui_username": {
+        "message": "用户名",
+        "description": "用户名标签"
+    },
+    "ui_app_password": {
+        "message": "应用密码",
+        "description": "密码标签"
+    },
+    "ui_file_path": {
+        "message": "存储文件路径(必须位于某一文件夹下)",
+        "description": "路径标签"
+    },
+    "ui_save_changes": {
+        "message": "保存修改",
+        "description": "保存编辑按钮"
+    },
+    "ui_add_webdav": {
+        "message": "确认添加 WebDAV 账号",
+        "description": "添加账号按钮"
+    },
+    "ui_vendor_manager": {
+        "message": "自定义云厂商管理",
+        "description": "厂商管理标题"
+    },
+    "ui_vendor_id": {
+        "message": "厂商 ID (唯一)",
+        "description": "厂商ID标签"
+    },
+    "ui_display_name": {
+        "message": "显示名称",
+        "description": "厂商名标签"
+    },
+    "ui_vendor_placeholder": {
+        "message": "我的私有云",
+        "description": "厂商名占位符"
+    },
+    "ui_server_url": {
+        "message": "服务器 WebDAV 地址",
+        "description": "服务器地址标签"
+    },
+    "ui_save_vendor": {
+        "message": "保存并注册云厂商",
+        "description": "注册按钮"
+    },
+    "error_sync_status_check": {
+        "message": "检查同步状态失败：$1",
+        "description": "同步状态检查失败时的错误",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "WebDAV"
+            }
+        }
+    },
+    "vendor_jianguoyun": {
+        "message": "坚果云",
+        "description": "坚果云厂商名称"
+    }
+}

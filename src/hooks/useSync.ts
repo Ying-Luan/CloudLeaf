@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { uploadBookmarks, downloadBookmarks, exportBookmarks, importBookmarks } from "~src/core/sync"
 import { type SyncStatus, type Result, type SyncPayload } from "~src/types"
+import { messages } from "~/src/i18n"
 
 /**
  * Hook that provides sync actions and state for UI use.
@@ -26,7 +27,7 @@ export function useSync() {
       if (process.env.NODE_ENV === 'development') console.log(`[hooks/useSync] In performUpload, starting upload when force = ${force}`)
       const res = await uploadBookmarks(force)
       if (!res.ok) {
-        setError(res.error || "上传失败")
+        setError(res.error || messages.error.uploadFailed())
       }
       return res
     } catch (e) {
@@ -48,7 +49,7 @@ export function useSync() {
     try {
       const res = await downloadBookmarks()
       if (!res.ok) {
-        setError(res.error || "下载失败")
+        setError(res.error || messages.error.downloadFailed())
       }
       return res
     } catch (e) {
@@ -70,7 +71,7 @@ export function useSync() {
     try {
       const res = await exportBookmarks()
       if (!res.ok) {
-        setError(res.error || "导出失败")
+        setError(res.error || messages.alert.exportFailed(""))
       }
       return res
     } catch (e) {
@@ -92,7 +93,7 @@ export function useSync() {
     try {
       const res = await importBookmarks()
       if (!res.ok) {
-        setError(res.error || "导入失败")
+        setError(res.error || messages.alert.importFailed(""))
         if (process.env.NODE_ENV === 'development') console.error("[hooks/useSync] In performImport, Import failed:", res.error)
       }
       return res

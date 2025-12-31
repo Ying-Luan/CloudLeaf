@@ -10,6 +10,7 @@ import { WebDAVRegistry, GistProvider, BaseProvider } from "~/src/providers"
 import { DEFAULT_FILENAME, HttpStatus, WebDAVStatus } from "~/src/constants"
 import { type Result, type SyncPayload, type SyncStatus } from "~/src/types"
 import { getSyncStatus } from "~/src/core/sync/utils"
+import { messages } from "~/src/i18n"
 
 /**
  * Build providers from user config
@@ -70,7 +71,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
           // If file or folder not found, continue to upload
           if (res.status === HttpStatus.NOT_FOUND || res.status === WebDAVStatus.CONFLICT) return { ok: true, data: { status: 'synced' } }
           if (process.env.NODE_ENV === "development") console.error(`[core/sync/cloud] Download from ${item.provider.name} failed during upload check`)
-          return { ok: false, error: `Failed to check sync status from ${item.provider.name}: ${res.error || "下载失败"}` }
+          return { ok: false, error: `${messages.error.syncStatusCheck(item.provider.name)}: ${res.error || messages.error.downloadFailed()}` }
         }
       }
       return { ok: true, data: { status: 'synced' } }
@@ -86,7 +87,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
         successCount++
       } else {
         if (process.env.NODE_ENV === "development") console.error(`[core/sync/cloud] Upload to ${item.provider.name} failed`)
-        errors.push(`${item.provider.name}: ${res.error || "上传失败"}`)
+        errors.push(`${item.provider.name}: ${res.error || messages.error.uploadFailed()}`)
       }
     }
 
@@ -96,7 +97,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
     }
 
     // fail or error
-    return { ok: false, error: errors.join("\n") || "所有提供者上传失败" }
+    return { ok: false, error: errors.join("\n") || messages.error.allProvidersFailed() }
   } catch (error) {
     return { ok: false, error: String(error) }
   }
@@ -128,10 +129,10 @@ export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus, 
         const status = getSyncStatus(local, cloud)
         return { ok: true, data: { status, payload: cloud } }
       }
-      errors.push(`${item.provider.name}: ${res.error || "下载失败"}`)
+      errors.push(`${item.provider.name}: ${res.error || messages.error.downloadFailed()}`)
     }
 
-    return { ok: false, error: errors.join("\n") || "无可用同步源数据" }
+    return { ok: false, error: errors.join("\n") || messages.error.noSyncSource() }
   } catch (error) {
     return { ok: false, error: String(error) }
   }

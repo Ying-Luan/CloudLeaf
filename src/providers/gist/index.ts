@@ -7,6 +7,7 @@
 import { type SyncPayload, type Result } from "~/src/types"
 import { HttpProvider } from "~/src/providers"
 import { GIST_ENDPOINTS, HttpStatus } from "~/src/constants"
+import { messages } from "~/src/i18n"
 
 /**
  * GitHub Gist storage provider
@@ -90,7 +91,7 @@ export class GistProvider extends HttpProvider {
                 headers: { "Authorization": `Bearer ${this.accessToken}`, }
             })
             if (!userResponse.ok) {
-                return { ok: true, data: false, error: "Invalid token" }
+                return { ok: true, data: false, error: messages.error.invalidToken() }
             }
 
             const gistData = await gistResponse.json()
@@ -151,12 +152,12 @@ export class GistProvider extends HttpProvider {
             const file = gistData.files[this.fileName]
 
             if (!file) {
-                return { ok: false, status: HttpStatus.NOT_FOUND, error: `File ${this.fileName} not found` }
+                return { ok: false, status: HttpStatus.NOT_FOUND, error: messages.error.gistFileNotFound(this.fileName) }
             }
 
             const payload = JSON.parse(file.content) as SyncPayload
             if (!payload.bookmarks || !Array.isArray(payload.bookmarks)) {
-                return { ok: false, error: "Invalid file format: missing bookmarks field" }
+                return { ok: false, error: messages.error.invalidFormat() }
             }
             return { ok: true, data: payload }
         } catch (error) {

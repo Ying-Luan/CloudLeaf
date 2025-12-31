@@ -7,6 +7,7 @@
 import { type Result } from "~/src/types"
 import { BaseProvider } from "~/src/providers"
 import { HttpStatusMessage } from "~/src/constants"
+import { messages } from "~/src/i18n"
 
 /**
  * HTTP method types
@@ -130,9 +131,9 @@ export abstract class HttpProvider extends BaseProvider {
       console.error("[providers/http] Network error")
     }
     if (error instanceof Error) {
-      if (error.name === "AbortError") return { ok: false, error: "Request timeout" }
-      return { ok: false, error: `Network error: ${error.message}` }
+      if (error.name === "AbortError") return { ok: false, error: messages.error.timeout() }
+      return { ok: false, error: messages.error.network(error.message) }
     }
-    return { ok: false, error: "Unknown network error" }
+    return { ok: false, error: messages.error.unknown() }
   }
 }

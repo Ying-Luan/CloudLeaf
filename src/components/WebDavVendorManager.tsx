@@ -4,6 +4,7 @@ import Input from "./Input"
 import Button from "./Button"
 import type { CustomVendorConfig } from "~src/types"
 import { WebDAVRegistry } from "~src/providers"
+import { messages } from "~/src/i18n"
 
 /**
  * Props for the `WebDavVendorManager` component.
@@ -54,7 +55,7 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
    */
   const handleAddVendor = () => {
     const { id, name, serverUrl } = vendorForm
-    if (!id || !name || !serverUrl) return alert("请填写完整的厂商信息")
+    if (!id || !name || !serverUrl) return alert(messages.alert.incompleteInfo())
     try {
       const current = useSettingsStore.getState().config
       const newVendors = addCustomVendorToConfig(current, vendorForm)
@@ -63,9 +64,9 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
       })
       persistConfig()
       setVendorForm({ id: "", name: "", serverUrl: "" })
-      alert(`已成功注册云厂商: ${name}`)
+      alert(messages.alert.vendorRegistered(name))
     } catch (e) {
-      alert(`添加失败: ${String(e)}`)
+      alert(messages.alert.vendorFailed(String(e)))
     }
   }
 
@@ -76,7 +77,7 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
    * @param id Vendor ID to remove
    */
   const handleDeleteVendor = (id: string) => {
-    if (!confirm("确定删除该厂商？关联的账号可能失效")) return
+    if (!confirm(messages.confirm.deleteVendor())) return
     try {
       const current = useSettingsStore.getState().config
       const newVendors = removeCustomVendorFromConfig(current, id)
@@ -84,9 +85,9 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
         draft.customVendors = newVendors
       })
       persistConfig()
-      alert(`已成功删除云厂商`)
+      alert(messages.alert.vendorDeleted())
     } catch (e) {
-      alert(`删除失败: ${String(e)}`)
+      alert(messages.alert.vendorDeleteFailed(String(e)))
     }
   }
 
@@ -102,7 +103,7 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-bold text-slate-800 font-mono">自定义云厂商管理</h3>
+        <h3 className="text-lg font-bold text-slate-800 font-mono">{messages.ui.vendorManager()}</h3>
       </div>
 
       {/* Vendor list */}
@@ -129,7 +130,7 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
                 onClick={() => handleDeleteVendor(v.id)}
                 className="absolute top-3 right-16 opacity-0 group-hover:opacity-100 text-[10px] text-red-400 hover:text-red-600 transition-all cursor-pointer font-mono"
               >
-                [移除]
+                [{messages.ui.remove()}]
               </button>
             )}
           </div>
@@ -141,7 +142,7 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
         <div className="grid grid-cols-2 gap-4">
           {/* Input for the id of new vendor registration */}
           <Input
-            label="厂商 ID (唯一)"
+            label={messages.ui.vendorId()}
             value={vendorForm.id}
             onChange={(val) => setVendorForm({ ...vendorForm, id: val })}
             placeholder="my-server"
@@ -149,16 +150,16 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
 
           {/* Input for the name of new vendor registration */}
           <Input
-            label="显示名称"
+            label={messages.ui.displayName()}
             value={vendorForm.name}
             onChange={(val) => setVendorForm({ ...vendorForm, name: val })}
-            placeholder="我的私有云"
+            placeholder={messages.ui.vendorPlaceholder()}
           />
         </div>
 
         {/* Input for the server URL of new vendor registration */}
         <Input
-          label="服务器 WebDAV 地址"
+          label={messages.ui.serverUrl()}
           value={vendorForm.serverUrl}
           onChange={(val) => setVendorForm({ ...vendorForm, serverUrl: val })}
           placeholder="https://dav.example.com/dav"
@@ -166,7 +167,7 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
 
         {/* Button to save and register the new vendor */}
         <Button
-          label="保存并注册云厂商"
+          label={messages.ui.saveVendor()}
           onClick={handleAddVendor}
           loading={saving}
           className="bg-white border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900"
