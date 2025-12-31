@@ -1,0 +1,510 @@
+{
+    "error_file_not_found": {
+        "message": "File not found: please upload first",
+        "description": "Error when remote file does not exist"
+    },
+    "error_invalid_format": {
+        "message": "Invalid file format: missing bookmarks field",
+        "description": "Error when JSON is missing required bookmarks array"
+    },
+    "error_invalid_json": {
+        "message": "Invalid file format: cannot parse JSON",
+        "description": "Error when file content is not valid JSON"
+    },
+    "error_no_file_selected": {
+        "message": "No file selected",
+        "description": "Error when user did not select a file"
+    },
+    "error_invalid_data": {
+        "message": "Invalid bookmark data in file",
+        "description": "Error when file contains invalid bookmark structure"
+    },
+    "error_parse_failed": {
+        "message": "Failed to read or parse the file",
+        "description": "Error when file reading or parsing fails"
+    },
+    "error_canceled": {
+        "message": "File selection canceled",
+        "description": "Message when user cancels file picker"
+    },
+    "error_timeout": {
+        "message": "Request timeout",
+        "description": "Error when network request times out"
+    },
+    "error_network": {
+        "message": "Network error: $1",
+        "description": "Error with network details",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "Connection refused"
+            }
+        }
+    },
+    "error_unknown": {
+        "message": "Unknown network error",
+        "description": "Generic network error"
+    },
+    "error_invalid_token": {
+        "message": "Invalid token",
+        "description": "Error when GitHub token is invalid"
+    },
+    "error_gist_file_not_found": {
+        "message": "File $1 not found in Gist",
+        "description": "Error when file is not in Gist",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "cloudleaf.json"
+            }
+        }
+    },
+    "error_upload_failed": {
+        "message": "Upload failed",
+        "description": "Generic upload error"
+    },
+    "error_download_failed": {
+        "message": "Download failed",
+        "description": "Generic download error"
+    },
+    "error_all_providers_failed": {
+        "message": "All providers failed to upload",
+        "description": "Error when all sync providers fail"
+    },
+    "error_no_sync_source": {
+        "message": "No available sync source",
+        "description": "Error when no sync source has data"
+    },
+    "error_unknown_error": {
+        "message": "Unknown error",
+        "description": "Generic unknown error"
+    },
+    "alert_settings_saved": {
+        "message": "Settings saved",
+        "description": "Shown when settings are saved"
+    },
+    "alert_upload_success": {
+        "message": "Upload successful",
+        "description": "Shown after successful upload"
+    },
+    "alert_upload_failed": {
+        "message": "Upload failed: $1",
+        "description": "Shown when upload fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "Network error"
+            }
+        }
+    },
+    "alert_force_upload_success": {
+        "message": "Force upload successful",
+        "description": "Shown after force upload"
+    },
+    "alert_download_success": {
+        "message": "Download successful",
+        "description": "Shown after successful download"
+    },
+    "alert_download_failed": {
+        "message": "Download failed: $1",
+        "description": "Shown when download fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "Network error"
+            }
+        }
+    },
+    "alert_force_download_success": {
+        "message": "Force download successful",
+        "description": "Shown after force download"
+    },
+    "alert_export_success": {
+        "message": "Export successful",
+        "description": "Shown after successful export"
+    },
+    "alert_export_failed": {
+        "message": "Export failed: $1",
+        "description": "Shown when export fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "File error"
+            }
+        }
+    },
+    "alert_import_success": {
+        "message": "Import successful",
+        "description": "Shown after successful import"
+    },
+    "alert_import_failed": {
+        "message": "Import failed: $1",
+        "description": "Shown when import fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "Invalid format"
+            }
+        }
+    },
+    "alert_force_import_success": {
+        "message": "Force import successful",
+        "description": "Shown after force import"
+    },
+    "alert_no_provider": {
+        "message": "No sync provider configured. Cannot sync bookmarks.",
+        "description": "Shown when no provider is configured"
+    },
+    "alert_gist_ok": {
+        "message": "Gist connection OK",
+        "description": "Shown when Gist test succeeds"
+    },
+    "alert_gist_failed": {
+        "message": "Gist connection failed: $1",
+        "description": "Shown when Gist test fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "Invalid token"
+            }
+        }
+    },
+    "alert_webdav_ok": {
+        "message": "WebDAV [$1] connection OK",
+        "description": "Shown when WebDAV test succeeds",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "user@example.com"
+            }
+        }
+    },
+    "alert_webdav_failed": {
+        "message": "WebDAV connection failed: $1",
+        "description": "Shown when WebDAV test fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "Auth failed"
+            }
+        }
+    },
+    "alert_exception": {
+        "message": "Exception occurred: $1",
+        "description": "Shown when an exception is caught",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "TypeError"
+            }
+        }
+    },
+    "alert_incomplete_info": {
+        "message": "Please fill in all required fields",
+        "description": "Shown when form is incomplete"
+    },
+    "alert_vendor_registered": {
+        "message": "Vendor registered: $1",
+        "description": "Shown when custom vendor is registered",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "My Cloud"
+            }
+        }
+    },
+    "alert_vendor_failed": {
+        "message": "Failed to add vendor: $1",
+        "description": "Shown when vendor registration fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "Duplicate ID"
+            }
+        }
+    },
+    "alert_vendor_deleted": {
+        "message": "Vendor deleted",
+        "description": "Shown when vendor is deleted"
+    },
+    "alert_vendor_delete_failed": {
+        "message": "Failed to delete vendor: $1",
+        "description": "Shown when vendor deletion fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "Not found"
+            }
+        }
+    },
+    "confirm_force_upload": {
+        "message": "Cloud data is newer. Force upload and overwrite?",
+        "description": "Confirm dialog for force upload"
+    },
+    "confirm_force_download": {
+        "message": "Local data is newer. Force download and overwrite?",
+        "description": "Confirm dialog for force download"
+    },
+    "confirm_force_import": {
+        "message": "Local data is newer. Force import and overwrite?",
+        "description": "Confirm dialog for force import"
+    },
+    "confirm_delete_vendor": {
+        "message": "Delete this vendor? Associated accounts may stop working.",
+        "description": "Confirm dialog for deleting vendor"
+    },
+    "confirm_remove_gist": {
+        "message": "Remove GitHub Gist configuration?",
+        "description": "Confirm dialog for removing Gist"
+    },
+    "confirm_remove_webdav": {
+        "message": "Remove this WebDAV account?",
+        "description": "Confirm dialog for removing WebDAV"
+    },
+    "http_bad_request": {
+        "message": "Bad request format",
+        "description": "HTTP 400 error"
+    },
+    "http_unauthorized": {
+        "message": "Authentication failed: invalid credentials",
+        "description": "HTTP 401 error"
+    },
+    "http_forbidden": {
+        "message": "Permission denied: access forbidden",
+        "description": "HTTP 403 error"
+    },
+    "http_not_found": {
+        "message": "Resource not found",
+        "description": "HTTP 404 error"
+    },
+    "http_method_not_allowed": {
+        "message": "Method not allowed",
+        "description": "HTTP 405 error"
+    },
+    "http_internal_server_error": {
+        "message": "Internal server error",
+        "description": "HTTP 500 error"
+    },
+    "http_bad_gateway": {
+        "message": "Bad gateway",
+        "description": "HTTP 502 error"
+    },
+    "http_service_unavailable": {
+        "message": "Service temporarily unavailable",
+        "description": "HTTP 503 error"
+    },
+    "http_gateway_timeout": {
+        "message": "Gateway timeout",
+        "description": "HTTP 504 error"
+    },
+    "webdav_multi_status": {
+        "message": "Multi-status response",
+        "description": "WebDAV 207 status"
+    },
+    "webdav_conflict": {
+        "message": "Conflict: parent directory may not exist",
+        "description": "WebDAV 409 error"
+    },
+    "webdav_precondition_failed": {
+        "message": "Precondition failed",
+        "description": "WebDAV 412 error"
+    },
+    "webdav_unsupported_media_type": {
+        "message": "Unsupported media type",
+        "description": "WebDAV 415 error"
+    },
+    "webdav_locked": {
+        "message": "Resource is locked",
+        "description": "WebDAV 423 error"
+    },
+    "webdav_insufficient_storage": {
+        "message": "Insufficient storage space",
+        "description": "WebDAV 507 error"
+    },
+    "http_request_failed": {
+        "message": "Request failed: $1",
+        "description": "Fallback for unknown HTTP status",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "418"
+            }
+        }
+    },
+    "webdav_error": {
+        "message": "WebDAV error: $1",
+        "description": "Fallback for unknown WebDAV status",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "418"
+            }
+        }
+    },
+    "ui_loading": {
+        "message": "Loading...",
+        "description": "Loading state"
+    },
+    "ui_settings_title": {
+        "message": "CloudLeaf Settings",
+        "description": "Settings page title"
+    },
+    "ui_cloud_preview": {
+        "message": "Cloud Bookmarks Preview",
+        "description": "Sidepanel title"
+    },
+    "ui_refresh_data": {
+        "message": "Refresh data",
+        "description": "Refresh button tooltip"
+    },
+    "ui_reading_cloud": {
+        "message": "Reading cloud data...",
+        "description": "Loading cloud data"
+    },
+    "ui_preview_cloud": {
+        "message": "Preview cloud bookmarks",
+        "description": "Preview button tooltip"
+    },
+    "ui_open_settings": {
+        "message": "Open settings",
+        "description": "Settings button tooltip"
+    },
+    "ui_upload_bookmarks": {
+        "message": "Upload Bookmarks",
+        "description": "Upload button label"
+    },
+    "ui_download_bookmarks": {
+        "message": "Download Bookmarks",
+        "description": "Download button label"
+    },
+    "ui_export_bookmarks": {
+        "message": "Export Bookmarks",
+        "description": "Export button label"
+    },
+    "ui_import_bookmarks": {
+        "message": "Import Bookmarks",
+        "description": "Import button label"
+    },
+    "ui_enabled_sources": {
+        "message": "Enabled Sync Sources",
+        "description": "Sources section title"
+    },
+    "ui_no_sources": {
+        "message": "No sync sources configured",
+        "description": "Empty sources state"
+    },
+    "ui_add_source": {
+        "message": "Add Sync Source",
+        "description": "Add source button"
+    },
+    "ui_connecting": {
+        "message": "Connecting...",
+        "description": "Testing connection"
+    },
+    "ui_verify_connection": {
+        "message": "Verify Connection",
+        "description": "Test button label"
+    },
+    "ui_edit": {
+        "message": "Edit",
+        "description": "Edit button"
+    },
+    "ui_remove": {
+        "message": "Remove",
+        "description": "Remove button"
+    },
+    "ui_cancel": {
+        "message": "Cancel",
+        "description": "Cancel button"
+    },
+    "ui_gist_config": {
+        "message": "GitHub Gist Configuration",
+        "description": "Gist settings title"
+    },
+    "ui_reset_config": {
+        "message": "Reset Configuration",
+        "description": "Reset button"
+    },
+    "ui_gist_id_placeholder": {
+        "message": "Enter your Gist ID",
+        "description": "Gist ID placeholder"
+    },
+    "ui_filename": {
+        "message": "Storage Filename",
+        "description": "Filename label"
+    },
+    "ui_save_gist": {
+        "message": "Save Gist Settings",
+        "description": "Save Gist button"
+    },
+    "ui_webdav_edit": {
+        "message": "Edit WebDAV Account",
+        "description": "Edit mode title"
+    },
+    "ui_webdav_add": {
+        "message": "WebDAV Account Management",
+        "description": "Add mode title"
+    },
+    "ui_select_vendor": {
+        "message": "Select Cloud Vendor",
+        "description": "Vendor select label"
+    },
+    "ui_username": {
+        "message": "Username",
+        "description": "Username label"
+    },
+    "ui_app_password": {
+        "message": "App Password",
+        "description": "Password label"
+    },
+    "ui_file_path": {
+        "message": "Storage File Path (must be under a folder)",
+        "description": "File path label"
+    },
+    "ui_save_changes": {
+        "message": "Save Changes",
+        "description": "Save edit button"
+    },
+    "ui_add_webdav": {
+        "message": "Add WebDAV Account",
+        "description": "Add account button"
+    },
+    "ui_vendor_manager": {
+        "message": "Custom Cloud Vendor Manager",
+        "description": "Vendor manager title"
+    },
+    "ui_vendor_id": {
+        "message": "Vendor ID (unique)",
+        "description": "Vendor ID label"
+    },
+    "ui_display_name": {
+        "message": "Display Name",
+        "description": "Vendor name label"
+    },
+    "ui_vendor_placeholder": {
+        "message": "My Private Cloud",
+        "description": "Vendor name placeholder"
+    },
+    "ui_server_url": {
+        "message": "Server WebDAV URL",
+        "description": "Server URL label"
+    },
+    "ui_save_vendor": {
+        "message": "Save & Register Vendor",
+        "description": "Register vendor button"
+    },
+    "error_sync_status_check": {
+        "message": "Failed to check sync status from $1",
+        "description": "Error when sync status check fails",
+        "placeholders": {
+            "1": {
+                "content": "$1",
+                "example": "WebDAV"
+            }
+        }
+    },
+    "vendor_jianguoyun": {
+        "message": "Nutstore",
+        "description": "Jianguoyun vendor name"
+    }
+}

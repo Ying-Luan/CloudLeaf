@@ -1,21 +1,32 @@
 {
   "name": "cloud-leaf",
-  "displayName": "Cloud leaf",
+  "displayName": "Cloud Leaf",
   "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
-  "author": "Plasmo Corp. <foss@plasmo.com>",
+  "description": "Browser Bookmark Cloud Sync Extension.",
+  "author": "Ying Luan & KamikazEr101",
   "scripts": {
-    "dev": "plasmo dev",
-    "build": "plasmo build",
-    "package": "plasmo package"
+    "dev": "npm run postinstall && plasmo dev",
+    "dev:edge": "npm run postinstall && plasmo dev --target=edge-mv3",
+    "build": "npm run postinstall && plasmo build",
+    "build:edge": "npm run postinstall && plasmo build --target=edge-mv3",
+    "package": "npm run postinstall && plasmo package",
+    "package:edge": "npm run postinstall && plasmo package --target=edge-mv3",
+    "postinstall": "node scripts/patch.js"
   },
   "dependencies": {
+    "@plasmohq/storage": "^1.15.0",
+    "@tailwindcss/postcss": "^4.1.18",
+    "immer": "^11.1.3",
     "plasmo": "0.90.5",
+    "postcss": "^8.5.6",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "tailwindcss": "^4.1.18",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@playwright/test": "^1.57.0",
     "@types/chrome": "0.0.258",
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
@@ -24,6 +35,12 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "default_locale": "en",
+    "permissions": [
+      "bookmarks",
+      "sidePanel",
+      "storage"
+    ],
     "host_permissions": [
       "https://*/*"
     ]
