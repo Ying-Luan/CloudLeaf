@@ -1,7 +1,7 @@
 {
   "name": "cloud-leaf",
-  "displayName": "Cloud Leaf",
-  "version": "0.0.1",
+  "displayName": "__MSG_extension_displayName__",
+  "version": "0.0.2",
   "description": "Browser Bookmark Cloud Sync Extension.",
   "author": "Ying Luan & KamikazEr101",
   "scripts": {

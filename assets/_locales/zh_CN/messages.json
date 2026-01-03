@@ -1,4 +1,8 @@
 {
+    "extension_displayName": {
+        "message": "CloudLeaf - 浏览器书签云同步扩展",
+        "description": "扩展的显示名称"
+    },
     "error_file_not_found": {
         "message": "文件未找到：请先上传",
         "description": "远程文件不存在时的错误"
