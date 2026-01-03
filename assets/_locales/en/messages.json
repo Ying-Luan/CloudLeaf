@@ -1,4 +1,8 @@
 {
+    "extension_displayName": {
+        "message": "CloudLeaf - Browser Bookmark Cloud Sync Extension",
+        "description": "The display name of the extension"
+    },
     "error_file_not_found": {
         "message": "File not found: please upload first",
         "description": "Error when remote file does not exist"
