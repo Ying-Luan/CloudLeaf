@@ -8,6 +8,7 @@
 
 [![Plasmo](https://img.shields.io/badge/Built%20with-Plasmo-blue)](https://docs.plasmo.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FYing-Luan%2FCloudLeaf.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FYing-Luan%2FCloudLeaf?ref=badge_shield)
 
 [English](README.md) | [中文](README_zh.md)
 
@@ -62,3 +63,7 @@ npm run package:edge  # For Microsoft Edge
 1. Go to Jianguoyun → Account Info → Security Options → Third-party Apps
 2. Add a new app to get the **app password** (not your login password)
 3. Enter your email and app password in the extension settings
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FYing-Luan%2FCloudLeaf.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FYing-Luan%2FCloudLeaf?ref=badge_large)
