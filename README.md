@@ -6,6 +6,7 @@
 
 **Browser Bookmark Cloud Sync Extension**
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ef41d3ee1ee94bfbbee2888c2f02cbf6)](https://app.codacy.com/gh/Ying-Luan/CloudLeaf?utm_source=github.com&utm_medium=referral&utm_content=Ying-Luan/CloudLeaf&utm_campaign=Badge_Grade)
 [![Plasmo](https://img.shields.io/badge/Built%20with-Plasmo-blue)](https://docs.plasmo.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
