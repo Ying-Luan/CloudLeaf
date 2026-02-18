@@ -6,8 +6,12 @@
 
 **Browser Bookmark Cloud Sync Extension**
 
-[![Plasmo](https://img.shields.io/badge/Built%20with-Plasmo-blue)](https://docs.plasmo.com/)
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/knpkebnhpcbklnknkcpgkiochlimhcoi)
+![Chrome Web Store Size](https://img.shields.io/chrome-web-store/size/knpkebnhpcbklnknkcpgkiochlimhcoi)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+[![Plasmo](https://img.shields.io/badge/Built%20with-Plasmo-blue)](https://docs.plasmo.com/)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/635543f1c45042b191b09831fb6ff3b8)](https://app.codacy.com/gh/Ying-Luan/CloudLeaf/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 [English](README.md) | [中文](README_zh.md)
 
@@ -48,7 +52,7 @@ npm run package:edge  # For Microsoft Edge
 | Provider            | Protocol | Status    |
 | ------------------- | -------- | --------- |
 | GitHub Gist         | REST API | Supported |
-| Jianguoyun (坚果云) | WebDAV   | Supported |
+| Jianguoyun          | WebDAV   | Supported |
 | Custom WebDAV       | WebDAV   | Supported |
 
 ## Configuration
