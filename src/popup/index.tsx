@@ -4,6 +4,7 @@ import { useSync } from "~src/hooks"
 import { setBookmarks } from "~src/core/bookmark"
 import { Button } from "~src/components"
 import { messages } from "~/src/i18n"
+import { logger } from "~src/utils"
 
 /**
  * Popup page component for CloudLeaf extension.
@@ -34,7 +35,7 @@ function IndexPopup() {
    * allowing force upload if confirmed.
    */
   const handleUpload = async () => {
-    if (process.env.NODE_ENV === 'development') console.log("[popup] Starting upload...")
+    logger.withTag('popup').info("Starting upload...")
     const result = await performUpload()
     if (!result.ok) {
       alert(messages.alert.uploadFailed(result.error || messages.error.unknownError()))

@@ -2,6 +2,7 @@ import { useState } from "react"
 import { uploadBookmarks, downloadBookmarks, exportBookmarks, importBookmarks } from "~src/core/sync"
 import { type SyncStatus, type Result, type SyncPayload } from "~src/types"
 import { messages } from "~/src/i18n"
+import { logger } from "~src/utils"
 
 /**
  * Hook that provides sync actions and state for UI use.
@@ -24,7 +25,7 @@ export function useSync() {
     setLoading(true)
     setError(null)
     try {
-      if (process.env.NODE_ENV === 'development') console.log(`[hooks/useSync] In performUpload, starting upload when force = ${force}`)
+      logger.withTag('hooks/useSync').info(`In performUpload, starting upload when force = ${force}`)
       const res = await uploadBookmarks(force)
       if (!res.ok) {
         setError(res.error || messages.error.uploadFailed())

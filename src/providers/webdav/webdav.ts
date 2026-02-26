@@ -3,6 +3,7 @@ import { HttpProvider } from "~/src/providers"
 import { HttpStatus } from "~/src/constants"
 import { WebDAVStatus, getWebDAVStatusMessage } from "~/src/constants"
 import { messages } from "~/src/i18n"
+import { logger } from "~src/utils"
 
 /**
  * WebDAV protocol storage provider
@@ -96,7 +97,7 @@ export class WebDAVProvider extends HttpProvider {
             // --- Ensure parent directory exists ---
             await this.ensureDirectory()
 
-            if (process.env.NODE_ENV === "development") console.log(`[providers/webdav] Start uploading to ${this.name}...`)
+            logger.withTag('providers/webdav').info(`Start uploading to ${this.name}...`)
             const response = await this.request("PUT", this.filePath, {
                 body: data,
                 headers: { "Content-Type": "application/json; charset=utf-8" },
