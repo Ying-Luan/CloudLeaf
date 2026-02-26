@@ -58,11 +58,13 @@ npm run package:edge  # For Microsoft Edge
 ## Configuration
 
 ### GitHub Gist
+
 1. Create a GitHub [Personal Access Token](https://github.com/settings/tokens) with `gist` scope
 2. Create a new Gist (can be private)
 3. Enter your token and Gist ID in the extension settings
 
 ### WebDAV (Jianguoyun)
+
 1. Go to Jianguoyun → Account Info → Security Options → Third-party Apps
 2. Add a new app to get the **app password** (not your login password)
 3. Enter your email and app password in the extension settings

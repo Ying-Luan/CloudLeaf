@@ -1,10 +1,11 @@
 /**
  * Bookmark core functions
- * @module core/bookmark
+ * 
  * @packageDocumentation
  */
 
 import { type BookMark, type SyncPayload } from "~/src/types"
+import { logger } from "~src/utils"
 
 /**
  * maximum timestamp among all bookmark folders
@@ -19,7 +20,9 @@ let numBookmarks = 0
  * Recursively process a chrome bookmark node into the internal `BookMark` interface.
  * 
  * Updates module-level counters `maxTimestamp` and `numBookmarks` as a side effect.
- * @param node Chrome bookmark tree node
+ * 
+ * @param node - Chrome bookmark tree node
+ * 
  * @returns `BookMark` when the node represents a folder or a valid bookmark, otherwise `null`
  */
 function processBookmarkNode(node: chrome.bookmarks.BookmarkTreeNode): BookMark | null {
@@ -50,6 +53,7 @@ function processBookmarkNode(node: chrome.bookmarks.BookmarkTreeNode): BookMark 
 
 /**
  * Get bookmarks from the browser and convert to `SyncPayload`.
+ * 
  * @returns Sync payload containing `bookmarks`, `numBookmarks`, and `updatedAt` timestamp.
  */
 export async function getBookmarks(): Promise<SyncPayload> {
@@ -65,7 +69,7 @@ export async function getBookmarks(): Promise<SyncPayload> {
 
     // error
   } catch (error) {
-    console.error("Failed to get bookmarks:", error)
+    logger.withTag('core/bookmark').error('Failed to get bookmarks:', error)
     return { updatedAt: Date.now(), numBookmarks: 0, bookmarks: [] }
   }
 }
@@ -74,8 +78,9 @@ export async function getBookmarks(): Promise<SyncPayload> {
  * Create bookmark nodes under the given parent ID.
  * 
  * Recursively creates folders and bookmarks according to the `BookMark` structure.
- * @param parentId Parent bookmark folder ID
- * @param nodes Array of `BookMark` nodes to create
+ * 
+ * @param parentId - Parent bookmark folder ID
+ * @param nodes - Array of `BookMark` nodes to create
  */
 async function createBookmarkNodes(parentId: string, nodes: BookMark[]): Promise<void> {
   for (const node of nodes) {
@@ -94,7 +99,8 @@ async function createBookmarkNodes(parentId: string, nodes: BookMark[]): Promise
  * Replace current browser bookmarks with the provided payload.
  * 
  * Clears existing user folders (preserving system root folders) and recreates nodes from `payload.bookmarks`.
- * @param payload Sync payload containing the bookmark tree to set
+ * 
+ * @param payload - Sync payload containing the bookmark tree to set
  */
 export async function setBookmarks(payload: SyncPayload): Promise<void> {
   const tree = await chrome.bookmarks.getTree()

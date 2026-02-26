@@ -1,6 +1,6 @@
 /**
  * Constants module
- * @module constants
+ * 
  * @packageDocumentation
  */
 

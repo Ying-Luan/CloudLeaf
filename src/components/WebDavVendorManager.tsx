@@ -7,21 +7,14 @@ import { WebDAVRegistry } from "~src/providers"
 import { messages } from "~/src/i18n"
 
 /**
- * Props for the `WebDavVendorManager` component.
- *
- * Represents the current user configuration and an update callback.
- */
-interface WebDavVendorManagerProps { }
-
-/**
  * Component for managing custom WebDAV vendor configurations.
  *
  * Displays all available vendors (preset + custom) and provides UI
  * for registering new custom vendors or removing existing ones.
- * @param props WebDavVendorManager component properties
+ * 
  * @returns A JSX element rendering the vendor management interface
  */
-const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
+const WebDavVendorManager = () => {
   const config = useSettingsStore(state => state.config)
   const saving = useSettingsStore(state => state.saving)
   const updateConfig = useSettingsStore(state => state.updateConfig)
@@ -74,7 +67,8 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
    * Remove a custom vendor from the configuration by ID.
    *
    * Prompts for confirmation before removing the vendor.
-   * @param id Vendor ID to remove
+   * 
+   * @param id - Vendor ID to remove
    */
   const handleDeleteVendor = (id: string) => {
     if (!confirm(messages.confirm.deleteVendor())) return

@@ -12,6 +12,7 @@ import "./index.css"
  * configure Gist and WebDAV accounts, and customize cloud vendor settings.
  * 
  * Uses Zustand store for centralized state management.
+ * 
  * @returns A JSX element rendering the full options page
  */
 function OptionsPage() {

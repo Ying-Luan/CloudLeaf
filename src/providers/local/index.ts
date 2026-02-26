@@ -1,6 +1,6 @@
 /**
  * Local file provider module
- * @module providers/local
+ * 
  * @packageDocumentation
  */
 
@@ -11,6 +11,7 @@ import { messages } from "~/src/i18n"
 
 /**
  * Local file provider
+ * 
  * @remarks Orchestrates native browser save/open dialogs for JSON sync payloads.
  */
 export class LocalProvider extends BaseProvider {
@@ -25,6 +26,7 @@ export class LocalProvider extends BaseProvider {
 
     /**
      * Validate local provider (always valid)
+     * 
      * @returns Always true since local storage is always available
      */
     async isValid(): Promise<Result<boolean>> {
@@ -34,8 +36,10 @@ export class LocalProvider extends BaseProvider {
     /**
      * Trigger Browser Download to save data as a local file
      * 
-     * browser -> local file
-     * @param data Bookmark payload
+     * browser -\> local file
+     * 
+     * @param data - Bookmark payload
+     * 
      * @returns Ok or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
@@ -67,7 +71,8 @@ export class LocalProvider extends BaseProvider {
     /**
      * Trigger File Picker to get data from a local file
      * 
-     * local file -> browser
+     * local file -\> browser
+     * 
      * @returns Bookmark payload from local file
      */
     async download(): Promise<Result<SyncPayload>> {
@@ -93,7 +98,7 @@ export class LocalProvider extends BaseProvider {
                         return
                     }
                     resolve({ ok: true, data })
-                } catch (error) {
+                } catch {
                     resolve({ ok: false, error: messages.error.parseFailed() })
                 }
             }

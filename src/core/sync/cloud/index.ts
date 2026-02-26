@@ -1,6 +1,6 @@
 /**
  * Cloud Sync Module
- * @module core/sync/cloud
+ * 
  * @packageDocumentation
  */
 
@@ -15,6 +15,7 @@ import { logger } from "~src/utils"
 
 /**
  * Build providers from user config
+ * 
  * @returns 
  * - providers sorted providers by priority
  * - config user config
@@ -46,11 +47,15 @@ async function buildProviders() {
 }
 
 /**
- * Upload bookmarks: local browser -> cloud
- * @param force whether to force upload even if cloud is newer
+ * Upload bookmarks: local browser -\> cloud
+ * 
+ * @param force - whether to force upload even if cloud is newer
+ * 
  * @returns sync status
+ * 
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
- * @see {@link ~src/hooks/useSync.ts useSync}
+ * 
+ * @see {@link src/hooks/useSync.ts#useSync}
  */
 export async function uploadBookmarks(force = false): Promise<Result<{ status: SyncStatus }>> {
   try {
@@ -105,12 +110,15 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
 }
 
 /**
- * Download bookmarks: cloud -> local browser
+ * Download bookmarks: cloud -\> local browser
+ * 
  * @returns 
  * - sync status
  * - sync payload if applicable
+ * 
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
- * @see {@link ~src/hooks/useSync.ts useSync}
+ * 
+ * @see {@link src/hooks/useSync.ts#useSync}
  */
 export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus, payload?: SyncPayload }>> {
   try {

@@ -6,6 +6,7 @@ import { logger } from "~src/utils"
 
 /**
  * Hook that provides sync actions and state for UI use.
+ * 
  * @returns
  * - `loading`: whether a sync operation is in progress
  * - `error`: last error message if any
@@ -18,7 +19,9 @@ export function useSync() {
 
   /**
    * Perform upload of local bookmarks to cloud providers.
-   * @param force When true, upload even if remote appears newer
+   * 
+   * @param force - When true, upload even if remote appears newer
+   * 
    * @returns Result object containing sync `status` on success or `error` on failure
    */
   const performUpload = async (force = false): Promise<Result<{ status: SyncStatus }>> => {
@@ -42,6 +45,7 @@ export function useSync() {
 
   /**
    * Perform download from configured providers and return payload if available.
+   * 
    * @returns Result object containing `status` and optional `payload` when successful
    */
   const performDownload = async (): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
@@ -64,6 +68,7 @@ export function useSync() {
 
   /**
    * Perform export of bookmarks to a local file.
+   * 
    * @returns Result object containing sync `status` on success or `error` on failure
    */
   const performExport = async (): Promise<Result<{ status: SyncStatus }>> => {
@@ -86,6 +91,7 @@ export function useSync() {
 
   /**
    * Perform import of bookmarks from a local file.
+   * 
    * @returns Result object containing `status` and optional `payload` when importing from a local file
    */
   const performImport = async (): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
@@ -95,7 +101,8 @@ export function useSync() {
       const res = await importBookmarks()
       if (!res.ok) {
         setError(res.error || messages.alert.importFailed(""))
-        if (process.env.NODE_ENV === 'development') console.error("[hooks/useSync] In performImport, Import failed:", res.error)
+
+        logger.withTag('hooks/useSync').error(`In performImport, Import failed: ${res.error}`)
       }
       return res
     } catch (e) {

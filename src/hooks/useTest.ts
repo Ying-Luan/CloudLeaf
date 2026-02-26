@@ -5,6 +5,7 @@ import { messages } from "~/src/i18n"
 
 /**
  * Hook for testing connectivity to configured sync providers.
+ * 
  * @returns
  * - `testingMap`: record of testing states per provider id
  * - `testGist(config)`: validate Gist provider settings
@@ -16,8 +17,9 @@ export const useTest = () => {
 
   /**
    * Set testing state for a single provider id.
-   * @param id Provider identifier (e.g. 'gist' or 'webdav-0')
-   * @param isTesting Whether the provider is currently being tested
+   * 
+   * @param id - Provider identifier (e.g. 'gist' or 'webdav-0')
+   * @param isTesting - Whether the provider is currently being tested
    */
   const setItemTesting = (id: string, isTesting: boolean) => {
     setTestingMap(prev => ({ ...prev, [id]: isTesting }))
@@ -27,7 +29,8 @@ export const useTest = () => {
    * Test Gist provider configuration by attempting to validate credentials.
    * 
    * Shows an alert with the result and updates `testingMap` during the check.
-   * @param config User configuration containing `gist` settings
+   * 
+   * @param config - User configuration containing `gist` settings
    */
   const testGist = async (config: UserConfig) => {
     if (!config?.gist) return
@@ -52,8 +55,9 @@ export const useTest = () => {
    * Test a WebDAV account configuration by index in `config.webDavConfigs`.
    * 
    * Shows an alert with the result and updates `testingMap` during the check.
-   * @param config User configuration containing `webDavConfigs`
-   * @param index Index of the WebDAV account to test
+   * 
+   * @param config - User configuration containing `webDavConfigs`
+   * @param index - Index of the WebDAV account to test
    */
   const testWebDav = async (config: UserConfig, index: number) => {
     const acc = config?.webDavConfigs?.[index]

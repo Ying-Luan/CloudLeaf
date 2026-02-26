@@ -1,6 +1,6 @@
 /**
  * Utilities module.
- * @module utils
+ * 
  * @packageDocumentation
  */
 

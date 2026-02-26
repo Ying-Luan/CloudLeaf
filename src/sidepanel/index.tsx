@@ -7,6 +7,7 @@ import "./index.css"
 
 /**
  * Side panel component for cloud bookmark preview.
+ * 
  * @returns A JSX element rendering the side panel for cloud bookmark preview.
  */
 function SidePanel() {

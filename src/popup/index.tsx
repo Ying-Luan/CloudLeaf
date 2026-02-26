@@ -11,11 +11,12 @@ import { logger } from "~src/utils"
  *
  * Provides quick access to upload and download bookmarks, with automatic
  * conflict detection and resolution prompts.
+ * 
  * @returns A JSX element rendering the popup interface
  */
 function IndexPopup() {
   // Sync operations and state from useSync hook
-  const { loading, error, performUpload, performDownload, performExport, performImport } = useSync()
+  const { loading, performUpload, performDownload, performExport, performImport } = useSync()
   /**
    * Extension version from package.json.
    */
@@ -106,8 +107,7 @@ function IndexPopup() {
   const handleImport = async () => {
     const result = await performImport()
     if (!result.ok) {
-      if (process.env.NODE_ENV === 'development')
-        console.error("[popup/index] Import failed:", result.error)
+      logger.withTag('popup').error(`Import failed: ${result.error}`)
       alert(messages.alert.importFailed(result.error || messages.error.unknownError()))
       return
     }
@@ -129,8 +129,8 @@ function IndexPopup() {
     try {
       const window = await chrome.windows.getCurrent()
       await chrome.sidePanel.open({ windowId: window.id })
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') console.error("Failed to open side panel")
+    } catch {
+      logger.withTag('popup').error("Failed to open side panel")
     }
   }
 

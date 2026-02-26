@@ -3,12 +3,14 @@ import { type UserConfig, DEFAULT_USER_CONFIG } from "~/src/types"
 
 /**
  * Storage key for user configuration
+ * 
  * @readonly
  */
 const CONFIG_KEY = "userConfig"
 
 /**
  * Plasmo storage instance for browser extension
+ * 
  * @readonly
  */
 export const storage = new Storage({
@@ -17,6 +19,7 @@ export const storage = new Storage({
 
 /**
  * Retrieve user configuration from storage
+ * 
  * @returns User config with defaults applied
  */
 export async function getUserConfig(): Promise<UserConfig> {
@@ -36,12 +39,15 @@ export async function getUserConfig(): Promise<UserConfig> {
 
 /**
  * Get the highest priority number across all sources
+ * 
  * @returns Maximum priority value (higher = lower priority)
+ * 
  * @remarks
  * Used when adding new sources
  * 
  * Not intended for direct use. For frontend integration, please refer to the function below
- * @see {@link ~src/store/settings.ts useSettingsStore(state => state.getNextPriority)}
+ * 
+ * @see {@link src/store/settings.ts#useSettingsStore(state => state.getNextPriority)}
  */
 export async function getMaxPriority(): Promise<number> {
   const config = await getUserConfig()
@@ -55,9 +61,12 @@ export async function getMaxPriority(): Promise<number> {
 
 /**
  * Replace entire user configuration
- * @param config Complete config to save
+ * 
+ * @param config - Complete config to save
+ * 
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
- * @see {@link ~src/store/settings.ts useSettingsStore(state => state.persistConfig)}
+ * 
+ * @see {@link src/store/settings.ts#useSettingsStore(state => state.persistConfig)}
  */
 export async function setUserConfig(config: UserConfig): Promise<void> {
   await storage.set(CONFIG_KEY, config)

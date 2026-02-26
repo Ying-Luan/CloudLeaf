@@ -1,13 +1,15 @@
 /**
  * Internationalization module
- * @module i18n
+ * 
  * @packageDocumentation
  */
 
 /**
  * Get localized message from Chrome i18n API
- * @param key Message key defined in _locales/[lang]/messages.json
- * @param substitutions Optional substitution strings
+ * 
+ * @param key - Message key defined in _locales/[lang]/messages.json
+ * @param substitutions - Optional substitution strings
+ * 
  * @returns Localized message string
  */
 export function t(key: string, substitutions?: string | string[]): string {
@@ -16,6 +18,7 @@ export function t(key: string, substitutions?: string | string[]): string {
 
 /**
  * Centralized message definitions
+ * 
  * @remarks All user-visible strings should be defined here
  */
 export const messages = {

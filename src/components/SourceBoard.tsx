@@ -65,7 +65,9 @@ interface SourceBoardProps {
 
 /**
  * Card component showing a single sync source and related actions.
- * @param props Source board properties
+ * 
+ * @param props - Source board properties
+ * 
  * @returns A JSX element rendering the source board
  */
 const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, isTesting, saving, onMoveUp, onMoveDown, index, total, onUpdateEnabled, onEdit }: SourceBoardProps) => {
@@ -75,11 +77,13 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
 
   /**
    * Base classes for move up/down buttons.
+   * 
    * @readonly
    */
   const btnBase = "text-[10px] px-1.5 py-1 rounded cursor-pointer font-mono transition-all disabled:opacity-20 disabled:cursor-not-allowed"
   /**
    * Theme classes for move up/down buttons based on source type.
+   * 
    * @readonly
    */
   const moveBtnTheme = isGist
@@ -87,6 +91,7 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
     : "bg-slate-200/50 hover:bg-slate-300 text-slate-600"
   /**
    * Theme classes for the entire source board based on source type.
+   * 
    * @readonly
    */
   const themes = {
@@ -95,6 +100,7 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
   }
   /**
    * Theme classes for the source type badge based on source type.
+   * 
    * @readonly
    */
   const badgeThemes = {
@@ -104,7 +110,6 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
 
   return (
     <div
-      key={source.id}
       className={`flex flex-col rounded-lg overflow-hidden group transition-all font-mono font-bold ${themes[source.type]}`}
     >
       {/* Top title bar */}

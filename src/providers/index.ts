@@ -1,8 +1,9 @@
 /**
  * Providers module
- * @module providers
- * @remarks Provider hierarchy: BaseProvider -> HttpProvider -> GistProvider/WebDAVProvider; LocalProvider
+ * 
  * @packageDocumentation
+ * 
+ * @remarks Provider hierarchy: BaseProvider -\> HttpProvider -\> GistProvider/WebDAVProvider; LocalProvider
  */
 
 // L1: Contract layer

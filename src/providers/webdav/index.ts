@@ -1,6 +1,6 @@
 /**
  * WebDAV provider module
- * @module providers/webdav
+ * 
  * @packageDocumentation
  */
 

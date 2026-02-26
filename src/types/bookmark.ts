@@ -1,5 +1,6 @@
 /**
  * Bookmark node structure
+ * 
  * @remarks Supports nested folder hierarchy via children property
  */
 export interface BookMark {

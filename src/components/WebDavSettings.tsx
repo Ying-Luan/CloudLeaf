@@ -33,7 +33,9 @@ interface WebDavSettingsProps {
  *
  * Allows users to add new WebDAV accounts by providing vendor, credentials,
  * and file path information.
- * @param props WebDavSettings component properties
+ * 
+ * @param props - WebDavSettings component properties
+ * 
  * @returns A JSX element rendering the WebDAV account form
  */
 const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSettingsProps) => {

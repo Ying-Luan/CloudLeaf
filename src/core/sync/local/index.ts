@@ -1,6 +1,6 @@
 /**
  * Local Sync Module
- * @module core/sync/local
+ * 
  * @packageDocumentation
  */
 
@@ -15,9 +15,12 @@ const provider = new LocalProvider()
 
 /**
  * Export browser bookmarks to a local JSON file
+ * 
  * @returns sync status
+ * 
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
- * @see {@link ~src/hooks/useSync.ts useSync}
+ * 
+ * @see {@link src/hooks/useSync.ts#useSync}
  */
 export async function exportBookmarks(): Promise<Result<{ status: SyncStatus }>> {
   try {
@@ -35,9 +38,12 @@ export async function exportBookmarks(): Promise<Result<{ status: SyncStatus }>>
 
 /**
  * Import bookmarks from a local JSON file
+ * 
  * @returns sync status and payload
+ * 
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
- * @see {@link ~src/hooks/useSync.ts useSync}
+ * 
+ * @see {@link src/hooks/useSync.ts#useSync}
  */
 export async function importBookmarks(): Promise<Result<{ status: SyncStatus, payload?: SyncPayload }>> {
   try {

@@ -1,6 +1,6 @@
 /**
  * GitHub Gist provider module
- * @module providers/gist
+ * 
  * @packageDocumentation
  */
 
@@ -8,9 +8,11 @@ import { type SyncPayload, type Result } from "~/src/types"
 import { HttpProvider } from "~/src/providers"
 import { GIST_ENDPOINTS, HttpStatus } from "~/src/constants"
 import { messages } from "~/src/i18n"
+import { logger } from "~src/utils"
 
 /**
  * GitHub Gist storage provider
+ * 
  * @remarks Stores bookmarks as a file in a GitHub Gist
  */
 export class GistProvider extends HttpProvider {
@@ -43,9 +45,10 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Create a new GistProvider instance
-     * @param accessToken GitHub personal access token
-     * @param gistId Target Gist ID
-     * @param fileName Filename to store bookmarks
+     * 
+     * @param accessToken - GitHub personal access token
+     * @param gistId - Target Gist ID
+     * @param fileName - Filename to store bookmarks
      */
     constructor(accessToken: string, gistId: string, fileName: string) {
         super()
@@ -56,6 +59,7 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Get base headers for GitHub API
+     * 
      * @returns Headers with GitHub API version
      */
     protected getBaseHeaders(): Record<string, string> {
@@ -67,6 +71,7 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Get authentication headers
+     * 
      * @returns Empty object (auth passed per-request)
      */
     protected getAuthHeaders(): Record<string, string> {
@@ -75,6 +80,7 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Validate Gist configuration and access token
+     * 
      * @returns Whether configuration is valid
      */
     async isValid(): Promise<Result<boolean>> {
@@ -107,7 +113,9 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Upload bookmarks to Gist
-     * @param data Bookmark payload
+     * 
+     * @param data - Bookmark payload
+     * 
      * @returns Ok or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
@@ -126,7 +134,7 @@ export class GistProvider extends HttpProvider {
             })
 
             if (!response.ok) {
-                if (process.env.NODE_ENV === "development") console.error("Gist upload failed")
+                logger.withTag('providers/gist').error('Gist upload failed')
                 return this.handleError(response)
             }
 
@@ -138,6 +146,7 @@ export class GistProvider extends HttpProvider {
 
     /**
      * Download bookmarks from Gist
+     * 
      * @returns Bookmark payload
      */
     async download(): Promise<Result<SyncPayload>> {

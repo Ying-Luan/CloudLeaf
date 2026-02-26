@@ -16,11 +16,13 @@ interface ButtonProps {
   onClick: () => void | Promise<void>
   /**
    * Whether the button shows a loading spinner and is disabled.
+   * 
    * @defaultValue false
    */
   loading?: boolean
   /**
    * Disable the button (non-interactive).
+   * 
    * @defaultValue false
    */
   disabled?: boolean
@@ -32,7 +34,9 @@ interface ButtonProps {
 
 /**
  * Simple styled button component with optional loading state.
- * @param props Button properties
+ * 
+ * @param props - Button properties
+ * 
  * @returns A JSX button element
  */
 const Button = ({

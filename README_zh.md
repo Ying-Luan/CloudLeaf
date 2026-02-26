@@ -58,11 +58,13 @@ npm run package:edge  # Microsoft Edge
 ## 配置说明
 
 ### GitHub Gist 配置
+
 1. 创建 GitHub [个人访问令牌](https://github.com/settings/tokens)，勾选 `gist` 权限
 2. 创建一个新的 Gist（可以是私有的）
 3. 在扩展设置中输入令牌和 Gist ID
 
 ### 坚果云 WebDAV 配置
+
 1. 进入坚果云 → 账户信息 → 安全选项 → 第三方应用管理
 2. 添加应用获取**应用密码**（不是登录密码）
 3. 在扩展设置中输入邮箱和应用密码

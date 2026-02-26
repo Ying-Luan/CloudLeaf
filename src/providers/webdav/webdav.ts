@@ -7,6 +7,7 @@ import { logger } from "~src/utils"
 
 /**
  * WebDAV protocol storage provider
+ * 
  * @remarks Extends HttpProvider with WebDAV-specific functionality
  */
 export class WebDAVProvider extends HttpProvider {
@@ -26,12 +27,13 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Create a new WebDAVProvider instance
-     * @param id Provider unique identifier
-     * @param name Provider display name
-     * @param serverUrl WebDAV server URL
-     * @param username WebDAV username
-     * @param password WebDAV password
-     * @param filePath File path for bookmark storage
+     * 
+     * @param id - Provider unique identifier
+     * @param name - Provider display name
+     * @param serverUrl - WebDAV server URL
+     * @param username - WebDAV username
+     * @param password - WebDAV password
+     * @param filePath - File path for bookmark storage
      */
     constructor(
         id: string,
@@ -56,6 +58,7 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Validate WebDAV configuration and connection
+     * 
      * @returns Whether configuration is valid
      */
     async isValid(): Promise<Result<boolean>> {
@@ -89,7 +92,9 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Upload bookmarks to WebDAV server
-     * @param data Bookmark payload
+     * 
+     * @param data - Bookmark payload
+     * 
      * @returns Ok or error result
      */
     async upload(data: SyncPayload): Promise<Result<void>> {
@@ -115,6 +120,7 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Download bookmarks from WebDAV server
+     * 
      * @returns Bookmark payload
      */
     async download(): Promise<Result<SyncPayload>> {
@@ -150,7 +156,9 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Normalize URL by removing trailing slash
-     * @param url URL to normalize
+     * 
+     * @param url - URL to normalize
+     * 
      * @returns Normalized URL
      */
     private normalizeUrl(url: string): string {
@@ -159,7 +167,9 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Normalize path by ensuring leading slash
-     * @param path Path to normalize
+     * 
+     * @param path - Path to normalize
+     * 
      * @returns Normalized path
      */
     private normalizePath(path: string): string {
@@ -168,6 +178,7 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Get authentication headers (Basic Auth)
+     * 
      * @returns Headers with Basic Auth credentials
      */
     protected getAuthHeaders(): Record<string, string> {
@@ -179,6 +190,7 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Override base headers
+     * 
      * @returns Empty headers (WebDAV doesn't need default Content-Type)
      */
     protected getBaseHeaders(): Record<string, string> {
@@ -187,7 +199,9 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Get error message by status code
-     * @param status HTTP/WebDAV status code
+     * 
+     * @param status - HTTP/WebDAV status code
+     * 
      * @returns Human-readable error message
      */
     protected getErrorMessage(status: number): string {
@@ -196,7 +210,9 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Check if status code indicates success
-     * @param status HTTP status code
+     * 
+     * @param status - HTTP status code
+     * 
      * @returns Whether status is in 2xx range
      */
     protected isSuccess(status: number): boolean {
@@ -205,16 +221,19 @@ export class WebDAVProvider extends HttpProvider {
 
     /**
      * Handle WebDAV-specific errors
-     * @param status HTTP/WebDAV status code
+     * 
+     * @param status - HTTP/WebDAV status code
+     * 
      * @returns Error result
      */
     protected handleWebDAVError(status: number): Result<never> {
-        if (process.env.NODE_ENV === "development") console.error(`[providers/webdav] WebDAV error: ${status} - ${this.getErrorMessage(status)}`)
+        logger.withTag('providers/webdav').error(`WebDAV request failed: ${status} - ${this.getErrorMessage(status)}`)
         return { ok: false, status, error: this.getErrorMessage(status) }
     }
 
     /**
      * Ensure parent directory exists
+     * 
      * @remarks Creates directories recursively using MKCOL
      */
     protected async ensureDirectory(): Promise<void> {
