@@ -1,5 +1,6 @@
 import packageInfo from "package.json"
 import "./index.css"
+import { useEffect } from "react"
 import { useSync } from "~src/hooks"
 import { setBookmarks } from "~src/core/bookmark"
 import { Button } from "~src/components"
@@ -15,6 +16,12 @@ import { logger } from "~src/utils"
  * @returns A JSX element rendering the popup interface
  */
 function IndexPopup() {
+  // fix page title localization
+  useEffect(() => {
+    const localizedTitle = chrome.i18n.getMessage("extension_displayName")
+    document.title = localizedTitle
+  }, [])
+
   // Sync operations and state from useSync hook
   const { loading, performUpload, performDownload, performExport, performImport } = useSync()
   /**

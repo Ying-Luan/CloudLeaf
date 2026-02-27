@@ -4,8 +4,67 @@
  * @packageDocumentation
  */
 
-import { type BookMark, type SyncPayload } from "~/src/types"
+import { type BookmarkSystemRole, type BookMark, type SyncPayload } from "~src/types"
 import { logger } from "~src/utils"
+
+/**
+ * Runtime bookmarks API.
+ *
+ * @remarks Uses `browser` first for Firefox compatibility and falls back to `chrome`.
+ */
+const runtimeApi =
+  (globalThis as typeof globalThis & { browser?: typeof chrome }).browser ?? chrome
+
+/**
+ * Supported browser runtime families.
+ */
+type BrowserType =
+  | "chrome"
+  | "firefox"
+
+/**
+ * Browser-specific IDs for top-level system folders.
+ * 
+ * @remarks
+ * System reserved folder IDs are usually
+ * - root:
+ *   - "0"/"root________" (for the root folder)
+ * 
+ * - son of root:
+ *   - ???/'menu________'
+ *   - '1'/'toolbar_____' (Bookmarks Bar)
+ *   - '2'/'unfiled_____' (Other Bookmarks)
+ *   - '3'/'mobile______' (Mobile Bookmarks)
+ */
+const SYSTEM_FOLDER_IDS: Record<BrowserType, Partial<Record<BookmarkSystemRole, string>>> = {
+  chrome: {
+    bar: "1",
+    other: "2",
+    mobile: "3"
+  },
+  firefox: {
+    menu: "menu________",
+    bar: "toolbar_____",
+    other: "unfiled_____",
+    mobile: "mobile______"
+  }
+}
+
+/**
+ * Resolve a raw folder ID into a normalized system role.
+ *
+ * @param id - Raw bookmark folder ID from browser runtime or payload.
+ *
+ * @returns Normalized system role when matched, otherwise `null`.
+ */
+function resolveSystemRoleById(id?: string): BookmarkSystemRole | null {
+  if (!id) return null
+  if (id === "menu" || id === "menu________") return "menu"
+  if (id === "bar" || id === "1" || id === "toolbar_____") return "bar"
+  if (id === "other" || id === "2" || id === "unfiled_____") return "other"
+  if (id === "mobile" || id === "3" || id === "mobile______") return "mobile"
+  return null
+}
 
 /**
  * maximum timestamp among all bookmark folders
@@ -22,17 +81,25 @@ let numBookmarks = 0
  * Updates module-level counters `maxTimestamp` and `numBookmarks` as a side effect.
  * 
  * @param node - Chrome bookmark tree node
+ * @param includeId - Whether to include id in the node
  * 
- * @returns `BookMark` when the node represents a folder or a valid bookmark, otherwise `null`
+ * @returns
+ * `BookMark` when the node represents a folder or a valid bookmark,
+ * otherwise `null`
  */
-function processBookmarkNode(node: chrome.bookmarks.BookmarkTreeNode): BookMark | null {
+function processBookmarkNode(
+  node: chrome.bookmarks.BookmarkTreeNode,
+  includeId: boolean
+): BookMark | null {
   // folder node
   if (node.children) {
     maxTimestamp = Math.max(maxTimestamp, node.dateGroupModified || 0)
     const children = node.children
-      .map(child => processBookmarkNode(child))
+      .map(child => processBookmarkNode(child, false))
       .filter((child): child is BookMark => child !== null)
+    const normalizedId = resolveSystemRoleById(node.id)
     return {
+      ...(includeId && normalizedId ? { id: normalizedId } : {}),
       title: node.title,
       children: children
     }
@@ -41,9 +108,20 @@ function processBookmarkNode(node: chrome.bookmarks.BookmarkTreeNode): BookMark 
   // leaf bookmark node
   if (node.title && node.url) {
     numBookmarks++
+    const normalizedId = resolveSystemRoleById(node.id)
     return {
+      ...(includeId && normalizedId ? { id: normalizedId } : {}),
       title: node.title,
       url: node.url
+    }
+  }
+
+  // empty folder node
+  if (node.title) {
+    const normalizedId = resolveSystemRoleById(node.id)
+    return {
+      ...(includeId && normalizedId ? { id: normalizedId } : {}),
+      title: node.title
     }
   }
 
@@ -54,17 +132,30 @@ function processBookmarkNode(node: chrome.bookmarks.BookmarkTreeNode): BookMark 
 /**
  * Get bookmarks from the browser and convert to `SyncPayload`.
  * 
- * @returns Sync payload containing `bookmarks`, `numBookmarks`, and `updatedAt` timestamp.
+ * @returns
+ * Sync payload containing `bookmarks`, `numBookmarks`,
+ * and `updatedAt` timestamp.
  */
 export async function getBookmarks(): Promise<SyncPayload> {
   try {
-    const tree = await chrome.bookmarks.getTree()
+    const tree = await runtimeApi.bookmarks.getTree()
+    const currentBrowserType: BrowserType =
+      tree[0].id === "root________" ? "firefox" : "chrome"
     const collects = tree[0].children
     maxTimestamp = 0
     numBookmarks = 0
     const bookmarks = collects
-      .map(child => processBookmarkNode(child))
+      .map(child => processBookmarkNode(child, true))
       .filter((child): child is BookMark => child !== null)
+
+    if (currentBrowserType === "firefox") {
+      const menuIndex = bookmarks.findIndex((node) => node.id === "menu")
+      if (menuIndex >= 0) {
+        const [menuFolder] = bookmarks.splice(menuIndex, 1)
+        bookmarks.push(menuFolder)
+      }
+    }
+
     return { updatedAt: maxTimestamp || Date.now(), numBookmarks, bookmarks }
 
     // error
@@ -86,11 +177,11 @@ async function createBookmarkNodes(parentId: string, nodes: BookMark[]): Promise
   for (const node of nodes) {
     // folder node
     if (node.children && node.children.length > 0) {
-      const folder = await chrome.bookmarks.create({ parentId, title: node.title })
+      const folder = await runtimeApi.bookmarks.create({ parentId, title: node.title })
       await createBookmarkNodes(folder.id, node.children)
       // leaf bookmark node
     } else {
-      await chrome.bookmarks.create({ parentId, title: node.title, url: node.url })
+      await runtimeApi.bookmarks.create({ parentId, title: node.title, url: node.url })
     }
   }
 }
@@ -103,28 +194,63 @@ async function createBookmarkNodes(parentId: string, nodes: BookMark[]): Promise
  * @param payload - Sync payload containing the bookmark tree to set
  */
 export async function setBookmarks(payload: SyncPayload): Promise<void> {
-  const tree = await chrome.bookmarks.getTree()
+  const tree = await runtimeApi.bookmarks.getTree()
   const root = tree[0]
+
+  const currentBrowserType: BrowserType =
+    root.id === "root________" ? "firefox" : "chrome"
+  const targetSystemFolderIds = SYSTEM_FOLDER_IDS[currentBrowserType]
+  const systemFolderIdSet = new Set(Object.values(targetSystemFolderIds))
 
   // --- remove all bookmarks except system folders --- 
   if (root.children) {
     for (const child of root.children) {
-      // System reserved folder IDs are usually '1' (Bookmarks Bar), '2' (Other Bookmarks), '3' (Mobile Bookmarks)
-      const isSystemFolder = ['1', '2', '3'].includes(child.id)
-      if (isSystemFolder) {
+      // if it's a system folder, only remove its children
+      if (child.id && systemFolderIdSet.has(child.id)) {
         if (child.children)
           for (const grandChild of child.children)
-            await chrome.bookmarks.removeTree(grandChild.id).catch(() => { })
+            await runtimeApi.bookmarks.removeTree(grandChild.id).catch(() => { })
+        // if it's not a system folder, remove it entirely
       } else {
-        await chrome.bookmarks.removeTree(child.id).catch(() => { })
+        await runtimeApi.bookmarks.removeTree(child.id).catch(() => { })
       }
     }
   }
 
   // --- create new bookmarks from payload ---
-  const [bar, other, mobile, ...rest] = payload.bookmarks
-  if (bar && bar.children) await createBookmarkNodes('1', bar.children)
-  if (other && other.children) await createBookmarkNodes('2', other.children)
-  if (mobile && mobile.children) await createBookmarkNodes('3', mobile.children)
-  if (rest && rest.length > 0) await createBookmarkNodes(root.id, rest)
+  const roleFolderMap: Partial<Record<BookmarkSystemRole, BookMark>> = {}
+  const restFolders: BookMark[] = []
+
+  for (const node of payload.bookmarks) {
+    const role = resolveSystemRoleById(node.id)
+    const targetId = role ? targetSystemFolderIds[role] : undefined
+    if (role && targetId) {
+      roleFolderMap[role] = node
+    } else {
+      restFolders.push(node)
+    }
+  }
+
+  // --- legacy payload fallback ---
+  // Legacy payloads only contained Chrome-style top-level ordering.
+  // This fallback keeps transition compatibility with old synced data.
+  const hasRoleMatchedFolders = Object.keys(roleFolderMap).length > 0
+  if (!hasRoleMatchedFolders) {
+    restFolders.length = 0
+    const [bar, other, mobile, ...rest] = payload.bookmarks
+    if (bar?.children) roleFolderMap.bar = bar
+    if (other?.children) roleFolderMap.other = other
+    if (mobile?.children) roleFolderMap.mobile = mobile
+    restFolders.push(...rest)
+  }
+
+  if (roleFolderMap.menu?.children && targetSystemFolderIds.menu)
+    await createBookmarkNodes(targetSystemFolderIds.menu, roleFolderMap.menu.children)
+  if (roleFolderMap.bar?.children && targetSystemFolderIds.bar)
+    await createBookmarkNodes(targetSystemFolderIds.bar, roleFolderMap.bar.children)
+  if (roleFolderMap.other?.children && targetSystemFolderIds.other)
+    await createBookmarkNodes(targetSystemFolderIds.other, roleFolderMap.other.children)
+  if (roleFolderMap.mobile?.children && targetSystemFolderIds.mobile)
+    await createBookmarkNodes(targetSystemFolderIds.mobile, roleFolderMap.mobile.children)
+  if (restFolders.length > 0) await createBookmarkNodes(root.id, restFolders)
 }
