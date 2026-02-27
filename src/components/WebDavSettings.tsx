@@ -7,6 +7,7 @@ import type { WebDAVUserConfig } from "~src/types"
 import { DEFAULT_WEBDAV_FILEPATH } from "~src/constants"
 import { loadCustomVendorsFromConfig, useSettingsStore } from "~src/store"
 import { messages } from "~/src/i18n"
+import { toast } from "sonner"
 
 /**
  * Props for the `WebDavSettings` component.
@@ -101,7 +102,7 @@ const WebDavSettings = ({ mode = "add", editingIndex = null, onClose }: WebDavSe
    * and resets username/password fields.
    */
   const handleSubmit = async () => {
-    if (!form.username || !form.password) return alert(messages.alert.incompleteInfo())
+    if (!form.username || !form.password) return void toast(messages.alert.incompleteInfo())
     if (mode === "add") {
       const priority = await getNextPriority()
       updateWebDavConfigs(draft => {

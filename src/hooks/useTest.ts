@@ -2,6 +2,7 @@ import { useState } from "react"
 import { GistProvider, WebDAVRegistry } from "~src/providers"
 import { type UserConfig } from "~src/types"
 import { messages } from "~/src/i18n"
+import { toast } from "sonner"
 
 /**
  * Hook for testing connectivity to configured sync providers.
@@ -43,9 +44,9 @@ export const useTest = () => {
         config.gist.fileName
       )
       const res = await provider.isValid()
-      alert(res.ok && res.data ? messages.alert.gistOk() : messages.alert.gistFailed(res.error || ""))
+      toast(res.ok && res.data ? messages.alert.gistOk() : messages.alert.gistFailed(res.error || ""))
     } catch (e) {
-      alert(messages.alert.exception(String(e)))
+      toast(messages.alert.exception(String(e)))
     } finally {
       setItemTesting(id, false)
     }
@@ -67,9 +68,9 @@ export const useTest = () => {
     try {
       const provider = WebDAVRegistry.createProvider(acc.vendorId, acc)
       const res = await provider.isValid()
-      alert(res.ok && res.data ? messages.alert.webdavOk(acc.username) : messages.alert.webdavFailed(res.error || ""))
+      toast(res.ok && res.data ? messages.alert.webdavOk(acc.username) : messages.alert.webdavFailed(res.error || ""))
     } catch (e) {
-      alert(messages.alert.exception(String(e)))
+      toast(messages.alert.exception(String(e)))
     } finally {
       setItemTesting(id, false)
     }

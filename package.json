@@ -23,6 +23,7 @@
     "plasmo": "0.90.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "sonner": "^2.0.7",
     "zustand": "^5.0.9"
   },
   "devDependencies": {

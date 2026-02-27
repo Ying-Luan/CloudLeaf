@@ -6,6 +6,7 @@ import { setBookmarks } from "~src/core/bookmark"
 import { Button } from "~src/components"
 import { messages } from "~/src/i18n"
 import { logger } from "~src/utils"
+import { Toaster, toast } from "sonner"
 
 /**
  * Popup page component for CloudLeaf extension.
@@ -46,22 +47,22 @@ function IndexPopup() {
     logger.withTag('popup').info("Starting upload...")
     const result = await performUpload()
     if (!result.ok) {
-      alert(messages.alert.uploadFailed(result.error || messages.error.unknownError()))
+      toast(messages.alert.uploadFailed(result.error || messages.error.unknownError()))
       return
     }
     // status === 'behind' means cloud data is newer
     if (result.data.status === 'behind') {
       if (confirm(messages.confirm.forceUpload())) {
         await performUpload(true)
-        alert(messages.alert.forceUploadSuccess())
+        toast(messages.alert.forceUploadSuccess())
       }
       // status === 'none' means no provider configured
     } else if (result.data.status === 'none') {
-      alert(messages.alert.noProvider())
+      toast(messages.alert.noProvider())
       // Normal case: upload succeeded without conflicts
     } else {
       await performUpload(true)
-      alert(messages.alert.uploadSuccess())
+      toast(messages.alert.uploadSuccess())
     }
   }
 
@@ -74,22 +75,22 @@ function IndexPopup() {
   const handleDownload = async () => {
     const result = await performDownload()
     if (!result.ok) {
-      alert(messages.alert.downloadFailed(result.error || messages.error.unknownError()))
+      toast(messages.alert.downloadFailed(result.error || messages.error.unknownError()))
       return
     }
     // status === 'ahead' means local data is newer
     if (result.data.status === 'ahead') {
       if (confirm(messages.confirm.forceDownload())) {
         await setBookmarks(result.data.payload)
-        alert(messages.alert.forceDownloadSuccess())
+        toast(messages.alert.forceDownloadSuccess())
       }
       // status === 'none' means no provider configured
     } else if (result.data.status === 'none') {
-      alert(messages.alert.noProvider())
+      toast(messages.alert.noProvider())
       // Normal case: download succeeded without conflicts
     } else {
       await setBookmarks(result.data.payload)
-      alert(messages.alert.downloadSuccess())
+      toast(messages.alert.downloadSuccess())
     }
   }
 
@@ -99,10 +100,10 @@ function IndexPopup() {
   const handleExport = async () => {
     const result = await performExport()
     if (!result.ok) {
-      alert(messages.alert.exportFailed(result.error || messages.error.unknownError()))
+      toast(messages.alert.exportFailed(result.error || messages.error.unknownError()))
       return
     }
-    alert(messages.alert.exportSuccess())
+    toast(messages.alert.exportSuccess())
   }
 
   /**
@@ -115,17 +116,17 @@ function IndexPopup() {
     const result = await performImport()
     if (!result.ok) {
       logger.withTag('popup').error(`Import failed: ${result.error}`)
-      alert(messages.alert.importFailed(result.error || messages.error.unknownError()))
+      toast(messages.alert.importFailed(result.error || messages.error.unknownError()))
       return
     }
     if (result.data.status === 'ahead') {
       if (confirm(messages.confirm.forceImport())) {
         await setBookmarks(result.data.payload)
-        alert(messages.alert.forceImportSuccess())
+        toast(messages.alert.forceImportSuccess())
       }
     } else {
       await setBookmarks(result.data.payload)
-      alert(messages.alert.importSuccess())
+      toast(messages.alert.importSuccess())
     }
   }
 
@@ -217,6 +218,9 @@ function IndexPopup() {
           />
         </div>
       </div>
+
+      {/* Toaster for notifications */}
+      <Toaster richColors position="top-center" />
     </div>
   )
 }

@@ -5,6 +5,7 @@ import Button from "./Button"
 import type { CustomVendorConfig } from "~src/types"
 import { WebDAVRegistry } from "~src/providers"
 import { messages } from "~/src/i18n"
+import { toast } from "sonner"
 
 /**
  * Component for managing custom WebDAV vendor configurations.
@@ -48,7 +49,7 @@ const WebDavVendorManager = () => {
    */
   const handleAddVendor = () => {
     const { id, name, serverUrl } = vendorForm
-    if (!id || !name || !serverUrl) return alert(messages.alert.incompleteInfo())
+    if (!id || !name || !serverUrl) return void toast(messages.alert.incompleteInfo())
     try {
       const current = useSettingsStore.getState().config
       const newVendors = addCustomVendorToConfig(current, vendorForm)
@@ -57,9 +58,9 @@ const WebDavVendorManager = () => {
       })
       persistConfig()
       setVendorForm({ id: "", name: "", serverUrl: "" })
-      alert(messages.alert.vendorRegistered(name))
+      toast(messages.alert.vendorRegistered(name))
     } catch (e) {
-      alert(messages.alert.vendorFailed(String(e)))
+      toast(messages.alert.vendorFailed(String(e)))
     }
   }
 
@@ -79,9 +80,9 @@ const WebDavVendorManager = () => {
         draft.customVendors = newVendors
       })
       persistConfig()
-      alert(messages.alert.vendorDeleted())
+      toast(messages.alert.vendorDeleted())
     } catch (e) {
-      alert(messages.alert.vendorDeleteFailed(String(e)))
+      toast(messages.alert.vendorDeleteFailed(String(e)))
     }
   }
 

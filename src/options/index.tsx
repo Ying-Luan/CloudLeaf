@@ -4,6 +4,7 @@ import { GistSettings, Sources, WebDavSettings, WebDavVendorManager } from "~src
 import { type Editor } from "~src/types"
 import { messages } from "~/src/i18n"
 import "./index.css"
+import { Toaster } from "sonner"
 
 /**
  * Options page component for CloudLeaf extension.
@@ -72,6 +73,9 @@ function OptionsPage() {
           <WebDavVendorManager />
         </main>
       </div>
+
+      {/* Toaster for notifications */}
+      <Toaster richColors position="top-center" />
     </div>
   )
 }

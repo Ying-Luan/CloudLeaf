@@ -3,6 +3,7 @@ import { immer } from "zustand/middleware/immer"
 import { type UserConfig, DEFAULT_USER_CONFIG, type GistConfig, type WebDAVUserConfig } from "~src/types"
 import { getUserConfig, setUserConfig, getMaxPriority } from "./config"
 import { messages } from "~/src/i18n"
+import { toast } from "sonner"
 
 /**
  * Settings store using Zustand + Immer
@@ -168,7 +169,7 @@ export const useSettingsStore = create<SettingsState>()(
       await setUserConfig(config)
       set((state) => { state.saving = false })
 
-      if (!force) alert(messages.alert.settingsSaved())
+      if (!force) toast(messages.alert.settingsSaved())
     },
 
     /**
