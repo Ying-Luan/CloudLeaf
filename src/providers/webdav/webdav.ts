@@ -109,6 +109,7 @@ export class WebDAVProvider extends HttpProvider {
             })
 
             if (this.isSuccess(response.status)) {
+                logger.withTag('providers/webdav').info(`Successfully uploaded to ${this.name}`)
                 return { ok: true, status: response.status }
             }
 
@@ -125,6 +126,7 @@ export class WebDAVProvider extends HttpProvider {
      */
     async download(): Promise<Result<SyncPayload>> {
         try {
+            logger.withTag('providers/webdav').info(`Start downloading from ${this.name}...`)
             const response = await this.request("GET", this.filePath)
 
             const { status } = response
@@ -145,6 +147,7 @@ export class WebDAVProvider extends HttpProvider {
                 if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
                     return { ok: false, error: messages.error.invalidFormat() }
                 }
+                logger.withTag('providers/webdav').info(`Successfully downloaded from ${this.name}`)
                 return { ok: true, data }
             } catch {
                 return { ok: false, error: messages.error.invalidJson() }

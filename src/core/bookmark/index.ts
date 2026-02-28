@@ -137,6 +137,7 @@ function processBookmarkNode(
  */
 export async function getBookmarks(): Promise<SyncPayload> {
   try {
+    logger.withTag('core/bookmark').info(`Start getting bookmarks from browser...`)
     const tree = await runtimeApi.bookmarks.getTree()
     const currentBrowserType: BrowserType =
       tree[0].id === "root________" ? "firefox" : "chrome"
@@ -155,6 +156,7 @@ export async function getBookmarks(): Promise<SyncPayload> {
       }
     }
 
+    logger.withTag('core/bookmark').info(`Successfully got bookmarks from browser: ${numBookmarks} bookmarks, max timestamp: ${maxTimestamp}`)
     return { updatedAt: maxTimestamp || Date.now(), numBookmarks, bookmarks }
 
     // error

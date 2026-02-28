@@ -50,19 +50,25 @@ async function buildProviders() {
  * Upload bookmarks: local browser -\> cloud
  * 
  * @param force - whether to force upload even if cloud is newer
+ * @param localSnapshot - optional cached local payload from a previous check
  * 
- * @returns sync status
+ * @returns
+ * - sync status
+ * - local snapshot payload if `force` is false
  * 
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
  * 
  * @see {@link src/hooks/useSync.ts#useSync}
  */
-export async function uploadBookmarks(force = false): Promise<Result<{ status: SyncStatus }>> {
+export async function uploadBookmarks(
+  force = false,
+  localSnapshot?: SyncPayload
+): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> {
   try {
     const { providers } = await buildProviders()
     // no providers configured
     if (providers.length === 0) return { ok: true, data: { status: 'none' } }
-    const local = await getBookmarks()
+    const local = localSnapshot ?? await getBookmarks()
 
     // --- Check if any cloud is newer ---
     if (!force) {
@@ -71,7 +77,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
         const res = await item.provider.download()
         if (res.ok && res.data) {
           if (getSyncStatus(local, res.data) === 'behind') {
-            return { ok: true, data: { status: 'behind' } }
+            return { ok: true, data: { status: 'behind', payload: local } }
           }
         } else {
           // If file or folder not found, continue to upload
@@ -80,7 +86,7 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
           return { ok: false, error: `${messages.error.syncStatusCheck(item.provider.name)}: ${res.error || messages.error.downloadFailed()}` }
         }
       }
-      return { ok: true, data: { status: 'synced' } }
+      return { ok: true, data: { status: 'synced', payload: local } }
     }
 
     // --- Proceed to upload to all providers ---

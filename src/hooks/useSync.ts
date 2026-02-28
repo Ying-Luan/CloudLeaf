@@ -10,7 +10,7 @@ import { logger } from "~src/utils"
  * @returns
  * - `loading`: whether a sync operation is in progress
  * - `error`: last error message if any
- * - `performUpload(force?)`: upload local bookmarks to configured providers
+ * - `performUpload(force?, localSnapshot?)`: upload local bookmarks to configured providers
  * - `performDownload()`: download bookmarks from providers
  */
 export function useSync() {
@@ -21,18 +21,26 @@ export function useSync() {
    * Perform upload of local bookmarks to cloud providers.
    * 
    * @param force - When true, upload even if remote appears newer
+   * @param localSnapshot - Optional cached local payload from a previous check
    * 
-   * @returns Result object containing sync `status` on success or `error` on failure
+   * @returns
+   * - sync status
+   * - local snapshot payload if `force` is false
    */
-  const performUpload = async (force = false): Promise<Result<{ status: SyncStatus }>> => {
+  const performUpload = async (
+    force = false,
+    localSnapshot?: SyncPayload
+  ): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
     setLoading(true)
     setError(null)
     try {
       logger.withTag('hooks/useSync').info(`In performUpload, starting upload when force = ${force}`)
-      const res = await uploadBookmarks(force)
+      const res = await uploadBookmarks(force, localSnapshot)
       if (!res.ok) {
+        logger.withTag('hooks/useSync').error(`In performUpload, upload failed: ${res.error}`)
         setError(res.error || messages.error.uploadFailed())
       }
+      logger.withTag('hooks/useSync').info(`In performUpload, successfully uploaded to providers when force = ${force}`)
       return res
     } catch (e) {
       const msg = String(e)

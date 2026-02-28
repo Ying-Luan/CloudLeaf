@@ -53,7 +53,8 @@ function IndexPopup() {
     // status === 'behind' means cloud data is newer
     if (result.data.status === 'behind') {
       if (await confirm(messages.confirm.forceUpload())) {
-        await performUpload(true)
+        await performUpload(true, result.data.payload)
+        logger.withTag('popup').info(`Force uploaded to providers after conflict detected.`)
         toast(messages.alert.forceUploadSuccess())
       }
       // status === 'none' means no provider configured
@@ -61,7 +62,8 @@ function IndexPopup() {
       toast(messages.alert.noProvider())
       // Normal case: upload succeeded without conflicts
     } else {
-      await performUpload(true)
+      await performUpload(true, result.data.payload)
+      logger.withTag('popup').info(`Successfully uploaded to providers.`)
       toast(messages.alert.uploadSuccess())
     }
   }
