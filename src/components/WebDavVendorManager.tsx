@@ -2,7 +2,8 @@ import { useState, useEffect } from "react"
 import { addCustomVendorToConfig, removeCustomVendorFromConfig, loadCustomVendorsFromConfig, useSettingsStore } from "~src/store"
 import Input from "./Input"
 import Button from "./Button"
-import type { CustomVendorConfig } from "~src/types"
+import { confirm } from "~src/utils"
+import { type CustomVendorConfig } from "~src/types"
 import { WebDAVRegistry } from "~src/providers"
 import { messages } from "~/src/i18n"
 import { toast } from "sonner"
@@ -71,8 +72,8 @@ const WebDavVendorManager = () => {
    * 
    * @param id - Vendor ID to remove
    */
-  const handleDeleteVendor = (id: string) => {
-    if (!confirm(messages.confirm.deleteVendor())) return
+  const handleDeleteVendor = async (id: string) => {
+    if (!await confirm(messages.confirm.deleteVendor())) return
     try {
       const current = useSettingsStore.getState().config
       const newVendors = removeCustomVendorFromConfig(current, id)

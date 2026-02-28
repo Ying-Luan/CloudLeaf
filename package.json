@@ -24,6 +24,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sonner": "^2.0.7",
+    "sweetalert2": "^11.26.20",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
@@ -32,6 +33,7 @@
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/chrome": "0.0.258",
+    "@types/firefox-webext-browser": "^143.0.0",
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",

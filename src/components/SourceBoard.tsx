@@ -121,7 +121,11 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
             className={`p-1 -ml-1 transition-transform duration-300 cursor-pointer ${isExpanded ? "rotate-180" : ""}`}
           >
             {/* Expand/collapse icon */}
-            <svg className="w-4 h-4 opacity-40 hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg
+              className="w-4 h-4 opacity-40 hover:opacity-100"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
@@ -169,13 +173,18 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
           </div>
 
           {/* Status indicator dot */}
-          <div className={`w-2.5 h-2.5 rounded-full ${isGist ? "bg-green-400 animate-pulse" : "bg-blue-400"}`} />
+          <div className={`
+            w-2.5 h-2.5 rounded-full
+            ${isGist ? "bg-green-400 animate-pulse" : "bg-blue-400"}
+            `} />
         </div>
       </div>
 
       {/* The expanded panel content */}
       <div
-        className={`grid transition-all duration-300 ease-in-out ${isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        className={`
+          grid transition-all duration-300 ease-in-out
+          ${isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
           }`}
       >
         <div className="overflow-hidden">
@@ -210,8 +219,12 @@ const SourceBoard = ({ source, testGist, testWebDav, removeGist, removeWebDav, i
               <button
                 onClick={() => isGist ? removeGist() : removeWebDav(source.rawIndex!)}
                 disabled={saving}
-                className={`px-4 py-2 rounded-md text-[11px] transition-all cursor-pointer font-bold ${isGist ? "bg-red-500/20 hover:bg-red-500 text-white" : "text-red-500 hover:bg-red-50 hover:text-red-600"
-                  }`}
+                className={`
+                    px-4 py-2 rounded-md text-[11px] transition-all cursor-pointer font-bold
+                    ${isGist ?
+                    "bg-red-500/20 hover:bg-red-500 text-white" :
+                    "text-red-500 hover:bg-red-50 hover:text-red-600"}
+                `}
               >
                 {messages.ui.remove()}
               </button>

@@ -12,7 +12,8 @@
     "ignoreDeprecations": "6.0",
     "types": [
       "node",
-      "chrome"
+      "firefox-webext-browser",
+      "chrome",
     ],
     "paths": {
       "~*": [

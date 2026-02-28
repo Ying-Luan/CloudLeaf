@@ -1,9 +1,10 @@
 import React, { useState } from "react"
 import { type SourceItem, type Editor } from "~src/types"
-import { useSettingsStore } from "~src/store/settings"
+import { useSettingsStore } from "~src/store"
 import SourceBoard from "./SourceBoard"
 import { useTest } from "~src/hooks"
 import { messages } from "~/src/i18n"
+import { confirm } from "~src/utils"
 
 /**
  * Props for the `Sources` component.
@@ -67,8 +68,8 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
   /**
    * Remove Gist configuration after user confirmation.
    */
-  const removeGist = () => {
-    if (!confirm(messages.confirm.removeGist())) return
+  const removeGist = async () => {
+    if (!await confirm(messages.confirm.removeGist())) return
     updateConfig(draft => {
       draft.gist = undefined
     })
@@ -80,8 +81,8 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
    * 
    * @param index - Index of the WebDAV account to remove
    */
-  const removeWebDav = (index: number) => {
-    if (!confirm(messages.confirm.removeWebdav())) return
+  const removeWebDav = async (index: number) => {
+    if (!await confirm(messages.confirm.removeWebdav())) return
     updateConfig(draft => {
       draft.webDavConfigs!.splice(index, 1)
     })

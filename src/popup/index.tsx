@@ -5,7 +5,7 @@ import { useSync } from "~src/hooks"
 import { setBookmarks } from "~src/core/bookmark"
 import { Button } from "~src/components"
 import { messages } from "~/src/i18n"
-import { logger } from "~src/utils"
+import { confirm, logger } from "~src/utils"
 import { Toaster, toast } from "sonner"
 
 /**
@@ -52,7 +52,7 @@ function IndexPopup() {
     }
     // status === 'behind' means cloud data is newer
     if (result.data.status === 'behind') {
-      if (confirm(messages.confirm.forceUpload())) {
+      if (await confirm(messages.confirm.forceUpload())) {
         await performUpload(true)
         toast(messages.alert.forceUploadSuccess())
       }
@@ -80,7 +80,7 @@ function IndexPopup() {
     }
     // status === 'ahead' means local data is newer
     if (result.data.status === 'ahead') {
-      if (confirm(messages.confirm.forceDownload())) {
+      if (await confirm(messages.confirm.forceDownload())) {
         await setBookmarks(result.data.payload)
         toast(messages.alert.forceDownloadSuccess())
       }
@@ -120,7 +120,7 @@ function IndexPopup() {
       return
     }
     if (result.data.status === 'ahead') {
-      if (confirm(messages.confirm.forceImport())) {
+      if (await confirm(messages.confirm.forceImport())) {
         await setBookmarks(result.data.payload)
         toast(messages.alert.forceImportSuccess())
       }
@@ -135,10 +135,15 @@ function IndexPopup() {
    */
   const handleOpenPreview = async () => {
     try {
-      const window = await chrome.windows.getCurrent()
-      await chrome.sidePanel.open({ windowId: window.id })
-    } catch {
-      logger.withTag('popup').error("Failed to open side panel")
+      logger.withTag('popup').info("Opening side panel for preview...")
+      if (typeof browser !== 'undefined')
+        await browser.sidebarAction.open()
+      else {
+        const window = await chrome.windows.getCurrent()
+        await chrome.sidePanel.open({ windowId: window.id })
+      }
+    } catch (error) {
+      logger.withTag('popup').error("Failed to open side panel:", error)
     }
   }
 

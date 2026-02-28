@@ -12,8 +12,7 @@ import { logger } from "~src/utils"
  *
  * @remarks Uses `browser` first for Firefox compatibility and falls back to `chrome`.
  */
-const runtimeApi =
-  (globalThis as typeof globalThis & { browser?: typeof chrome }).browser ?? chrome
+const runtimeApi = typeof browser !== 'undefined' ? browser : chrome
 
 /**
  * Supported browser runtime families.

@@ -4,4 +4,5 @@
  * @packageDocumentation
  */
 
+export * from './confirm'
 export * from './logger'
