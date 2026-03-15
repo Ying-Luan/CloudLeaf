@@ -208,22 +208,23 @@ function IndexPopup() {
           loading={loading}
         />
 
-        {/* Buttons to export and import bookmarks */}
-        <div className="flex gap-3">
-          {/* Button to export bookmarks */}
-          <Button
-            label={messages.ui.exportBookmarks()}
-            onClick={handleExport}
-            loading={loading}
-          />
+        {/* Buttons to export and import bookmarks only in chrome */}
+        {typeof browser === 'undefined' &&
+          <div className="flex gap-3">
+            {/* Button to export bookmarks */}
+            <Button
+              label={messages.ui.exportBookmarks()}
+              onClick={handleExport}
+              loading={loading}
+            />
 
-          {/* Button to import bookmarks */}
-          <Button
-            label={messages.ui.importBookmarks()}
-            onClick={handleImport}
-            loading={loading}
-          />
-        </div>
+            {/* Button to import bookmarks */}
+            <Button
+              label={messages.ui.importBookmarks()}
+              onClick={handleImport}
+              loading={loading}
+            />
+          </div>}
       </div>
 
       {/* Toaster for notifications */}
