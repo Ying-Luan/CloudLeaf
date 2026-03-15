@@ -6,7 +6,9 @@
 
 **浏览器书签云同步扩展**
 
-![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/knpkebnhpcbklnknkcpgkiochlimhcoi)
+[![Chrome 网上应用店](https://img.shields.io/chrome-web-store/v/knpkebnhpcbklnknkcpgkiochlimhcoi?label=Chrome)](https://chrome.google.com/webstore/detail/knpkebnhpcbklnknkcpgkiochlimhcoi)
+[![Edge 附加组件](https://img.shields.io/badge/Edge-%E5%B7%B2%E6%94%AF%E6%8C%81-blue.svg)](https://microsoftedge.microsoft.com/addons/detail/knpkebnhpcbklnknkcpgkiochlimhcoi)
+[![Firefox 附加组件](https://img.shields.io/badge/Firefox-%E5%AE%A1%E6%A0%B8%E4%B8%AD-orange)](#)
 ![Chrome Web Store Size](https://img.shields.io/chrome-web-store/size/knpkebnhpcbklnknkcpgkiochlimhcoi)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -21,6 +23,7 @@
 
 ## 功能特性
 
+- **多浏览器支持** - 全面支持 Chrome、Edge 和 Firefox
 - **上传到 GitHub Gist** - 将书签同步到私有 Gist
 - **通过 WebDAV 上传** - 同步书签到任何支持 WebDAV 的云盘（坚果云等）
 - **导出到本地文件** - 将书签下载为 JSON 文件
