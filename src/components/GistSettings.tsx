@@ -20,7 +20,9 @@ interface GistSettingsProps {
  * Gist settings component.
  * 
  * Uses Zustand store for state management - no more props drilling!
- * @param props Gist settings properties
+ * 
+ * @param props - Gist settings properties
+ * 
  * @returns A JSX element rendering Gist settings inputs and save button
  */
 const GistSettings = ({ onClose }: GistSettingsProps) => {
@@ -48,8 +50,9 @@ const GistSettings = ({ onClose }: GistSettingsProps) => {
 
   /**
    * Handle changes to a specific Gist configuration field.
-   * @param field Field name in `GistConfig` to update
-   * @param value New value for the specified field
+   * 
+   * @param field - Field name in `GistConfig` to update
+   * @param value - New value for the specified field
    */
   const handleChange = (field: keyof GistConfig, value: string | boolean | number) => {
     setGist(current => ({

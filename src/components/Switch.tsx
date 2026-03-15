@@ -16,14 +16,17 @@ interface SwitchProps {
   enabled: boolean
   /**
    * Called when the switch is toggled with the new boolean value.
-   * @param val New enabled state
+   * 
+   * @param val - New enabled state
    */
   onChange: (val: boolean) => void
 }
 
 /**
  * Small toggle switch component.
- * @param props Switch properties
+ * 
+ * @param props - Switch properties
+ * 
  * @returns A JSX element rendering a clickable switch
  */
 export const Switch = ({ label, enabled, onChange }: SwitchProps) => {

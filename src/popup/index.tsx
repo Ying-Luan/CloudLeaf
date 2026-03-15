@@ -1,20 +1,30 @@
 import packageInfo from "package.json"
 import "./index.css"
+import { useEffect } from "react"
 import { useSync } from "~src/hooks"
 import { setBookmarks } from "~src/core/bookmark"
 import { Button } from "~src/components"
 import { messages } from "~/src/i18n"
+import { confirm, logger } from "~src/utils"
+import { Toaster, toast } from "sonner"
 
 /**
  * Popup page component for CloudLeaf extension.
  *
  * Provides quick access to upload and download bookmarks, with automatic
  * conflict detection and resolution prompts.
+ * 
  * @returns A JSX element rendering the popup interface
  */
 function IndexPopup() {
+  // fix page title localization
+  useEffect(() => {
+    const localizedTitle = chrome.i18n.getMessage("extension_displayName")
+    document.title = localizedTitle
+  }, [])
+
   // Sync operations and state from useSync hook
-  const { loading, error, performUpload, performDownload, performExport, performImport } = useSync()
+  const { loading, performUpload, performDownload, performExport, performImport } = useSync()
   /**
    * Extension version from package.json.
    */
@@ -34,25 +44,27 @@ function IndexPopup() {
    * allowing force upload if confirmed.
    */
   const handleUpload = async () => {
-    if (process.env.NODE_ENV === 'development') console.log("[popup] Starting upload...")
+    logger.withTag('popup').info("Starting upload...")
     const result = await performUpload()
     if (!result.ok) {
-      alert(messages.alert.uploadFailed(result.error || messages.error.unknownError()))
+      toast(messages.alert.uploadFailed(result.error || messages.error.unknownError()))
       return
     }
     // status === 'behind' means cloud data is newer
     if (result.data.status === 'behind') {
-      if (confirm(messages.confirm.forceUpload())) {
-        await performUpload(true)
-        alert(messages.alert.forceUploadSuccess())
+      if (await confirm(messages.confirm.forceUpload())) {
+        await performUpload(true, result.data.payload)
+        logger.withTag('popup').info(`Force uploaded to providers after conflict detected.`)
+        toast(messages.alert.forceUploadSuccess())
       }
       // status === 'none' means no provider configured
     } else if (result.data.status === 'none') {
-      alert(messages.alert.noProvider())
+      toast(messages.alert.noProvider())
       // Normal case: upload succeeded without conflicts
     } else {
-      await performUpload(true)
-      alert(messages.alert.uploadSuccess())
+      await performUpload(true, result.data.payload)
+      logger.withTag('popup').info(`Successfully uploaded to providers.`)
+      toast(messages.alert.uploadSuccess())
     }
   }
 
@@ -65,22 +77,22 @@ function IndexPopup() {
   const handleDownload = async () => {
     const result = await performDownload()
     if (!result.ok) {
-      alert(messages.alert.downloadFailed(result.error || messages.error.unknownError()))
+      toast(messages.alert.downloadFailed(result.error || messages.error.unknownError()))
       return
     }
     // status === 'ahead' means local data is newer
     if (result.data.status === 'ahead') {
-      if (confirm(messages.confirm.forceDownload())) {
+      if (await confirm(messages.confirm.forceDownload())) {
         await setBookmarks(result.data.payload)
-        alert(messages.alert.forceDownloadSuccess())
+        toast(messages.alert.forceDownloadSuccess())
       }
       // status === 'none' means no provider configured
     } else if (result.data.status === 'none') {
-      alert(messages.alert.noProvider())
+      toast(messages.alert.noProvider())
       // Normal case: download succeeded without conflicts
     } else {
       await setBookmarks(result.data.payload)
-      alert(messages.alert.downloadSuccess())
+      toast(messages.alert.downloadSuccess())
     }
   }
 
@@ -90,10 +102,10 @@ function IndexPopup() {
   const handleExport = async () => {
     const result = await performExport()
     if (!result.ok) {
-      alert(messages.alert.exportFailed(result.error || messages.error.unknownError()))
+      toast(messages.alert.exportFailed(result.error || messages.error.unknownError()))
       return
     }
-    alert(messages.alert.exportSuccess())
+    toast(messages.alert.exportSuccess())
   }
 
   /**
@@ -105,19 +117,18 @@ function IndexPopup() {
   const handleImport = async () => {
     const result = await performImport()
     if (!result.ok) {
-      if (process.env.NODE_ENV === 'development')
-        console.error("[popup/index] Import failed:", result.error)
-      alert(messages.alert.importFailed(result.error || messages.error.unknownError()))
+      logger.withTag('popup').error(`Import failed: ${result.error}`)
+      toast(messages.alert.importFailed(result.error || messages.error.unknownError()))
       return
     }
     if (result.data.status === 'ahead') {
-      if (confirm(messages.confirm.forceImport())) {
+      if (await confirm(messages.confirm.forceImport())) {
         await setBookmarks(result.data.payload)
-        alert(messages.alert.forceImportSuccess())
+        toast(messages.alert.forceImportSuccess())
       }
     } else {
       await setBookmarks(result.data.payload)
-      alert(messages.alert.importSuccess())
+      toast(messages.alert.importSuccess())
     }
   }
 
@@ -126,10 +137,15 @@ function IndexPopup() {
    */
   const handleOpenPreview = async () => {
     try {
-      const window = await chrome.windows.getCurrent()
-      await chrome.sidePanel.open({ windowId: window.id })
+      logger.withTag('popup').info("Opening side panel for preview...")
+      if (typeof browser !== 'undefined')
+        await browser.sidebarAction.open()
+      else {
+        const window = await chrome.windows.getCurrent()
+        await chrome.sidePanel.open({ windowId: window.id })
+      }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') console.error("Failed to open side panel")
+      logger.withTag('popup').error("Failed to open side panel:", error)
     }
   }
 
@@ -192,23 +208,27 @@ function IndexPopup() {
           loading={loading}
         />
 
-        {/* Buttons to export and import bookmarks */}
-        <div className="flex gap-3">
-          {/* Button to export bookmarks */}
-          <Button
-            label={messages.ui.exportBookmarks()}
-            onClick={handleExport}
-            loading={loading}
-          />
+        {/* Buttons to export and import bookmarks only in chrome */}
+        {typeof browser === 'undefined' &&
+          <div className="flex gap-3">
+            {/* Button to export bookmarks */}
+            <Button
+              label={messages.ui.exportBookmarks()}
+              onClick={handleExport}
+              loading={loading}
+            />
 
-          {/* Button to import bookmarks */}
-          <Button
-            label={messages.ui.importBookmarks()}
-            onClick={handleImport}
-            loading={loading}
-          />
-        </div>
+            {/* Button to import bookmarks */}
+            <Button
+              label={messages.ui.importBookmarks()}
+              onClick={handleImport}
+              loading={loading}
+            />
+          </div>}
       </div>
+
+      {/* Toaster for notifications */}
+      <Toaster richColors position="top-center" />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 /**
  * UI representation of a sync source for settings display
+ * 
  * @remarks
  * Used in Sources component to render and manage sync providers.
  *
@@ -15,7 +16,7 @@ export interface SourceItem {
    */
   id: string
   /**
-   * Display label shown in UI, e.g. "jianguoyun / user@example.com /path"
+   * Display label shown in UI, e.g. "jianguoyun / user\@example.com /path"
    */
   label: string
   /**

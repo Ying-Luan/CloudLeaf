@@ -34,7 +34,8 @@ interface SelectProps {
   options: Option[]
   /**
    * Callback invoked when the selected value changes.
-   * @param val The new selected value
+   * 
+   * @param val - The new selected value
    */
   onChange: (val: string) => void
   /**
@@ -46,7 +47,8 @@ interface SelectProps {
 /**
  * Dropdown select component with custom styling.
  *
- * @param props Select component properties
+ * @param props - Select component properties
+ * 
  * @returns A JSX element rendering a styled select dropdown
  */
 const Select = ({ label, value, options, onChange, className = "" }: SelectProps) => {

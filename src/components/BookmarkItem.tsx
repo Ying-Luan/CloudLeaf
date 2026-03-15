@@ -17,7 +17,9 @@ interface BookmarkItemProps {
 
 /**
  * Recursive component to render a bookmark or folder item.
- * @param props Props containing the bookmark/folder node and its depth.
+ * 
+ * @param props - Props containing the bookmark/folder node and its depth.
+ * 
  * @returns A JSX element representing the bookmark or folder item.
  */
 function BookmarkItem({ node, depth }: BookmarkItemProps) {
@@ -47,7 +49,7 @@ function BookmarkItem({ node, depth }: BookmarkItemProps) {
       </div>
 
       {/* recursive child nodes */}
-      {isFolder && isOpen && node.children.map((child: any, idx: number) => (
+      {isFolder && isOpen && node.children.map((child: BookMark, idx: number) => (
         <BookmarkItem key={idx} node={child} depth={depth + 1} />
       ))}
     </div>

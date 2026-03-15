@@ -1,5 +1,6 @@
 /**
  * HTTP protocol status codes (RFC 7231)
+ * 
  * @readonly
  */
 export const HttpStatus = {
@@ -24,7 +25,9 @@ export const HttpStatus = {
 
 /**
  * WebDAV protocol extended status codes (RFC 4918)
+ * 
  * @remarks Only includes WebDAV-specific codes, not general HTTP codes
+ * 
  * @readonly
  */
 export const WebDAVStatus = {
@@ -45,6 +48,7 @@ import { t } from "~/src/i18n"
 
 /**
  * HTTP status code to i18n message key mapping
+ * 
  * @internal
  */
 const httpStatusKeys: Record<number, string> = {
@@ -61,6 +65,7 @@ const httpStatusKeys: Record<number, string> = {
 
 /**
  * WebDAV status code to i18n message key mapping
+ * 
  * @internal
  */
 const webdavStatusKeys: Record<number, string> = {
@@ -74,7 +79,9 @@ const webdavStatusKeys: Record<number, string> = {
 
 /**
  * Get HTTP error message by status code (i18n)
- * @param status HTTP status code
+ * 
+ * @param status - HTTP status code
+ * 
  * @returns Localized error message
  */
 export const getHttpStatusMessage = (status: number): string => {
@@ -84,7 +91,9 @@ export const getHttpStatusMessage = (status: number): string => {
 
 /**
  * Get WebDAV error message by status code (i18n)
- * @param status WebDAV status code
+ * 
+ * @param status - WebDAV status code
+ * 
  * @returns Localized error message
  */
 export const getWebDAVStatusMessage = (status: number): string => {
@@ -94,6 +103,7 @@ export const getWebDAVStatusMessage = (status: number): string => {
 
 /**
  * HTTP status code to error message (legacy, for backward compatibility)
+ * 
  * @deprecated Use getHttpStatusMessage() for i18n support
  * @readonly
  */
@@ -106,6 +116,7 @@ export const HttpStatusMessage: Record<number, string> = new Proxy({}, {
 
 /**
  * WebDAV extended status code to error message (legacy, for backward compatibility)
+ * 
  * @deprecated Use getWebDAVStatusMessage() for i18n support
  * @readonly
  */

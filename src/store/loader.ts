@@ -4,7 +4,9 @@ import { type UserConfig, type CustomVendorConfig } from "~/src/types"
 // TODO: consider changing config type from UserConfig to CustomVendorConfig[] for a clearer frontend surface; needs further analysis
 /**
  * Load custom vendors from UserConfig into WebDAVRegistry
- * @param config User configuration
+ * 
+ * @param config - User configuration
+ * 
  * @remarks Should be called at app startup
  */
 export function loadCustomVendorsFromConfig(config: UserConfig): void {
@@ -30,9 +32,12 @@ export function loadCustomVendorsFromConfig(config: UserConfig): void {
 
 /**
  * Add custom vendor and sync to UserConfig
- * @param currentConfig Current user config
- * @param vendor Vendor metadata to add
+ * 
+ * @param currentConfig - Current user config
+ * @param vendor - Vendor metadata to add
+ * 
  * @returns Updated customVendors array
+ * 
  * @remarks Also registers to WebDAVRegistry
  */
 export function addCustomVendorToConfig(
@@ -53,9 +58,12 @@ export function addCustomVendorToConfig(
 
 /**
  * Remove custom vendor and sync to UserConfig
- * @param currentConfig Current user config
- * @param vendorId Vendor ID to remove
+ * 
+ * @param currentConfig - Current user config
+ * @param vendorId - Vendor ID to remove
+ * 
  * @returns Updated customVendors array
+ * 
  * @remarks Also removes from WebDAVRegistry
  */
 export function removeCustomVendorFromConfig(

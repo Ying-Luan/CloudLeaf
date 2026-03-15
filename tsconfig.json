@@ -9,6 +9,12 @@
     "./**/*.tsx"
   ],
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "types": [
+      "node",
+      "firefox-webext-browser",
+      "chrome",
+    ],
     "paths": {
       "~*": [
         "./*"

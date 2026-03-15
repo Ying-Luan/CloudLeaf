@@ -1,6 +1,6 @@
 /**
  * UI components for CloudLeaf application.
- * @module components
+ * 
  * @packageDocumentation
  */
 

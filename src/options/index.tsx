@@ -4,6 +4,7 @@ import { GistSettings, Sources, WebDavSettings, WebDavVendorManager } from "~src
 import { type Editor } from "~src/types"
 import { messages } from "~/src/i18n"
 import "./index.css"
+import { Toaster } from "sonner"
 
 /**
  * Options page component for CloudLeaf extension.
@@ -12,6 +13,7 @@ import "./index.css"
  * configure Gist and WebDAV accounts, and customize cloud vendor settings.
  * 
  * Uses Zustand store for centralized state management.
+ * 
  * @returns A JSX element rendering the full options page
  */
 function OptionsPage() {
@@ -26,6 +28,12 @@ function OptionsPage() {
     // Load user configuration on mount
     loadConfig()
   }, [loadConfig])
+
+  // fix page title localization
+  useEffect(() => {
+    const localizedTitle = chrome.i18n.getMessage("extension_displayName")
+    document.title = localizedTitle
+  }, [])
 
   // Loading state UI
   if (initializing) return <div className="p-20 text-slate-400">{messages.ui.loading()}</div>
@@ -65,6 +73,9 @@ function OptionsPage() {
           <WebDavVendorManager />
         </main>
       </div>
+
+      {/* Toaster for notifications */}
+      <Toaster richColors position="top-center" />
     </div>
   )
 }

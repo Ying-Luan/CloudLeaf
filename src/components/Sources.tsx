@@ -1,9 +1,10 @@
 import React, { useState } from "react"
 import { type SourceItem, type Editor } from "~src/types"
-import { useSettingsStore } from "~src/store/settings"
+import { useSettingsStore } from "~src/store"
 import SourceBoard from "./SourceBoard"
 import { useTest } from "~src/hooks"
 import { messages } from "~/src/i18n"
+import { confirm } from "~src/utils"
 
 /**
  * Props for the `Sources` component.
@@ -22,7 +23,9 @@ interface SourcesProps {
  * reorder and toggle each source.
  * 
  * Uses Zustand store for state management - no more props drilling!
- * @param props Sources component properties
+ * 
+ * @param props - Sources component properties
+ * 
  * @returns A JSX element rendering the sources list
  */
 const Sources = ({ onOpenEditor }: SourcesProps) => {
@@ -65,8 +68,8 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
   /**
    * Remove Gist configuration after user confirmation.
    */
-  const removeGist = () => {
-    if (!confirm(messages.confirm.removeGist())) return
+  const removeGist = async () => {
+    if (!await confirm(messages.confirm.removeGist())) return
     updateConfig(draft => {
       draft.gist = undefined
     })
@@ -75,10 +78,11 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
 
   /**
    * Remove a WebDAV account configuration by index after confirmation.
-   * @param index Index of the WebDAV account to remove
+   * 
+   * @param index - Index of the WebDAV account to remove
    */
-  const removeWebDav = (index: number) => {
-    if (!confirm(messages.confirm.removeWebdav())) return
+  const removeWebDav = async (index: number) => {
+    if (!await confirm(messages.confirm.removeWebdav())) return
     updateConfig(draft => {
       draft.webDavConfigs!.splice(index, 1)
     })
@@ -87,7 +91,8 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
 
   /**
    * Move the source at `index` one position up by changing priorities
-   * @param index Index of the source to move up
+   * 
+   * @param index - Index of the source to move up
    */
   const onMoveUp = (index: number) => {
     const source = allSources[index]
@@ -112,7 +117,8 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
 
   /**
    * Move the source at `index` one position down by changing priorities.
-   * @param index Index of the source to move down
+   * 
+   * @param index - Index of the source to move down
    */
   const onMoveDown = (index: number) => {
     const source = allSources[index]
@@ -137,8 +143,9 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
 
   /**
    * Toggle enabled state for the given source and persist the change.
-   * @param source Source item to update
-   * @param enabled New enabled state
+   * 
+   * @param source - Source item to update
+   * @param enabled - New enabled state
    */
   const onUpdateEnabled = (source: SourceItem, enabled: boolean) => {
     updateConfig(draft => {
@@ -177,6 +184,7 @@ const Sources = ({ onOpenEditor }: SourcesProps) => {
             const isTesting = testingMap[source.id]
             return (
               <SourceBoard
+                key={source.id}
                 source={source}
                 testGist={() => testGist(config)}
                 testWebDav={(index) => testWebDav(config, index)}

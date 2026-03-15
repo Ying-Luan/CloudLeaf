@@ -4,9 +4,11 @@ import { type SyncPayload } from "~src/types"
 import { BookmarkItem } from "~src/components"
 import { messages } from "~/src/i18n"
 import "./index.css"
+import { Toaster } from "sonner"
 
 /**
  * Side panel component for cloud bookmark preview.
+ * 
  * @returns A JSX element rendering the side panel for cloud bookmark preview.
  */
 function SidePanel() {
@@ -64,6 +66,9 @@ function SidePanel() {
           </div>
         )}
       </main>
+
+      {/* Toaster for notifications */}
+      <Toaster richColors position="top-center" />
     </div>
   )
 }

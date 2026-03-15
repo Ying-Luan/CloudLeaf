@@ -2,26 +2,21 @@ import { useState, useEffect } from "react"
 import { addCustomVendorToConfig, removeCustomVendorFromConfig, loadCustomVendorsFromConfig, useSettingsStore } from "~src/store"
 import Input from "./Input"
 import Button from "./Button"
-import type { CustomVendorConfig } from "~src/types"
+import { confirm } from "~src/utils"
+import { type CustomVendorConfig } from "~src/types"
 import { WebDAVRegistry } from "~src/providers"
 import { messages } from "~/src/i18n"
-
-/**
- * Props for the `WebDavVendorManager` component.
- *
- * Represents the current user configuration and an update callback.
- */
-interface WebDavVendorManagerProps { }
+import { toast } from "sonner"
 
 /**
  * Component for managing custom WebDAV vendor configurations.
  *
  * Displays all available vendors (preset + custom) and provides UI
  * for registering new custom vendors or removing existing ones.
- * @param props WebDavVendorManager component properties
+ * 
  * @returns A JSX element rendering the vendor management interface
  */
-const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
+const WebDavVendorManager = () => {
   const config = useSettingsStore(state => state.config)
   const saving = useSettingsStore(state => state.saving)
   const updateConfig = useSettingsStore(state => state.updateConfig)
@@ -55,7 +50,7 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
    */
   const handleAddVendor = () => {
     const { id, name, serverUrl } = vendorForm
-    if (!id || !name || !serverUrl) return alert(messages.alert.incompleteInfo())
+    if (!id || !name || !serverUrl) return void toast(messages.alert.incompleteInfo())
     try {
       const current = useSettingsStore.getState().config
       const newVendors = addCustomVendorToConfig(current, vendorForm)
@@ -64,9 +59,9 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
       })
       persistConfig()
       setVendorForm({ id: "", name: "", serverUrl: "" })
-      alert(messages.alert.vendorRegistered(name))
+      toast(messages.alert.vendorRegistered(name))
     } catch (e) {
-      alert(messages.alert.vendorFailed(String(e)))
+      toast(messages.alert.vendorFailed(String(e)))
     }
   }
 
@@ -74,10 +69,11 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
    * Remove a custom vendor from the configuration by ID.
    *
    * Prompts for confirmation before removing the vendor.
-   * @param id Vendor ID to remove
+   * 
+   * @param id - Vendor ID to remove
    */
-  const handleDeleteVendor = (id: string) => {
-    if (!confirm(messages.confirm.deleteVendor())) return
+  const handleDeleteVendor = async (id: string) => {
+    if (!await confirm(messages.confirm.deleteVendor())) return
     try {
       const current = useSettingsStore.getState().config
       const newVendors = removeCustomVendorFromConfig(current, id)
@@ -85,9 +81,9 @@ const WebDavVendorManager = ({ }: WebDavVendorManagerProps) => {
         draft.customVendors = newVendors
       })
       persistConfig()
-      alert(messages.alert.vendorDeleted())
+      toast(messages.alert.vendorDeleted())
     } catch (e) {
-      alert(messages.alert.vendorDeleteFailed(String(e)))
+      toast(messages.alert.vendorDeleteFailed(String(e)))
     }
   }
 

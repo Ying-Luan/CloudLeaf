@@ -1,6 +1,6 @@
 /**
  * Storage module
- * @module store
+ * 
  * @packageDocumentation
  */
 

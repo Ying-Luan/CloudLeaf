@@ -1,6 +1,6 @@
 /**
  * HTTP provider module
- * @module providers/http
+ * 
  * @packageDocumentation
  */
 
@@ -8,9 +8,11 @@ import { type Result } from "~/src/types"
 import { BaseProvider } from "~/src/providers"
 import { HttpStatusMessage } from "~/src/constants"
 import { messages } from "~/src/i18n"
+import { logger } from "~src/utils"
 
 /**
  * HTTP method types
+ * 
  * - `GET` Retrieve resource
  * - `PATCH` Partial update
  * - `PROPFIND` WebDAV property retrieval
@@ -26,6 +28,7 @@ type Method =
 
 /**
  * Abstract HTTP protocol provider
+ * 
  * @remarks Encapsulates common HTTP request logic
  */
 export abstract class HttpProvider extends BaseProvider {
@@ -41,13 +44,16 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Get authentication headers
+   * 
    * @returns Headers with auth credentials
+   * 
    * @remarks Must be implemented by subclasses
    */
   protected abstract getAuthHeaders(): Record<string, string>
 
   /**
    * Get base request headers
+   * 
    * @returns Default headers
    */
   protected getBaseHeaders(): Record<string, string> {
@@ -58,6 +64,7 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Merge all request headers
+   * 
    * @returns Combined base and auth headers
    */
   protected getAllHeaders(): Record<string, string> {
@@ -69,9 +76,11 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Send HTTP request
-   * @param method HTTP method
-   * @param path Request path
-   * @param options Optional config (body, headers)
+   * 
+   * @param method - HTTP method
+   * @param path - Request path
+   * @param options - Optional config (body, headers)
+   * 
    * @returns Fetch response
    */
   protected async request(
@@ -105,7 +114,9 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Get HTTP error message by status code
-   * @param status HTTP status code
+   * 
+   * @param status - HTTP status code
+   * 
    * @returns Human-readable error message
    */
   protected getHttpErrorMessage(status: number): string {
@@ -114,7 +125,9 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Handle HTTP error response
-   * @param response HTTP response object
+   * 
+   * @param response - HTTP response object
+   * 
    * @returns Error result
    */
   protected handleError(response: Response): Result<never> {
@@ -123,13 +136,13 @@ export abstract class HttpProvider extends BaseProvider {
 
   /**
    * Handle network exceptions
-   * @param error Caught error object
+   * 
+   * @param error - Caught error object
+   * 
    * @returns Error result
    */
   protected handleNetworkError(error: unknown): Result<never> {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[providers/http] Network error")
-    }
+    logger.withTag('providers/http').error('Network error')
     if (error instanceof Error) {
       if (error.name === "AbortError") return { ok: false, error: messages.error.timeout() }
       return { ok: false, error: messages.error.network(error.message) }

@@ -2,13 +2,15 @@ import { useState } from "react"
 import { uploadBookmarks, downloadBookmarks, exportBookmarks, importBookmarks } from "~src/core/sync"
 import { type SyncStatus, type Result, type SyncPayload } from "~src/types"
 import { messages } from "~/src/i18n"
+import { logger } from "~src/utils"
 
 /**
  * Hook that provides sync actions and state for UI use.
+ * 
  * @returns
  * - `loading`: whether a sync operation is in progress
  * - `error`: last error message if any
- * - `performUpload(force?)`: upload local bookmarks to configured providers
+ * - `performUpload(force?, localSnapshot?)`: upload local bookmarks to configured providers
  * - `performDownload()`: download bookmarks from providers
  */
 export function useSync() {
@@ -17,18 +19,28 @@ export function useSync() {
 
   /**
    * Perform upload of local bookmarks to cloud providers.
-   * @param force When true, upload even if remote appears newer
-   * @returns Result object containing sync `status` on success or `error` on failure
+   * 
+   * @param force - When true, upload even if remote appears newer
+   * @param localSnapshot - Optional cached local payload from a previous check
+   * 
+   * @returns
+   * - sync status
+   * - local snapshot payload if `force` is false
    */
-  const performUpload = async (force = false): Promise<Result<{ status: SyncStatus }>> => {
+  const performUpload = async (
+    force = false,
+    localSnapshot?: SyncPayload
+  ): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
     setLoading(true)
     setError(null)
     try {
-      if (process.env.NODE_ENV === 'development') console.log(`[hooks/useSync] In performUpload, starting upload when force = ${force}`)
-      const res = await uploadBookmarks(force)
+      logger.withTag('hooks/useSync').info(`In performUpload, starting upload when force = ${force}`)
+      const res = await uploadBookmarks(force, localSnapshot)
       if (!res.ok) {
+        logger.withTag('hooks/useSync').error(`In performUpload, upload failed: ${res.error}`)
         setError(res.error || messages.error.uploadFailed())
       }
+      logger.withTag('hooks/useSync').info(`In performUpload, successfully uploaded to providers when force = ${force}`)
       return res
     } catch (e) {
       const msg = String(e)
@@ -41,6 +53,7 @@ export function useSync() {
 
   /**
    * Perform download from configured providers and return payload if available.
+   * 
    * @returns Result object containing `status` and optional `payload` when successful
    */
   const performDownload = async (): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
@@ -63,6 +76,7 @@ export function useSync() {
 
   /**
    * Perform export of bookmarks to a local file.
+   * 
    * @returns Result object containing sync `status` on success or `error` on failure
    */
   const performExport = async (): Promise<Result<{ status: SyncStatus }>> => {
@@ -85,6 +99,7 @@ export function useSync() {
 
   /**
    * Perform import of bookmarks from a local file.
+   * 
    * @returns Result object containing `status` and optional `payload` when importing from a local file
    */
   const performImport = async (): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> => {
@@ -94,7 +109,8 @@ export function useSync() {
       const res = await importBookmarks()
       if (!res.ok) {
         setError(res.error || messages.alert.importFailed(""))
-        if (process.env.NODE_ENV === 'development') console.error("[hooks/useSync] In performImport, Import failed:", res.error)
+
+        logger.withTag('hooks/useSync').error(`In performImport, Import failed: ${res.error}`)
       }
       return res
     } catch (e) {

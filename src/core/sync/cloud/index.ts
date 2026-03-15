@@ -1,6 +1,6 @@
 /**
  * Cloud Sync Module
- * @module core/sync/cloud
+ * 
  * @packageDocumentation
  */
 
@@ -11,9 +11,11 @@ import { DEFAULT_FILENAME, HttpStatus, WebDAVStatus } from "~/src/constants"
 import { type Result, type SyncPayload, type SyncStatus } from "~/src/types"
 import { getSyncStatus } from "~/src/core/sync/utils"
 import { messages } from "~/src/i18n"
+import { logger } from "~src/utils"
 
 /**
  * Build providers from user config
+ * 
  * @returns 
  * - providers sorted providers by priority
  * - config user config
@@ -45,48 +47,58 @@ async function buildProviders() {
 }
 
 /**
- * Upload bookmarks: local browser -> cloud
- * @param force whether to force upload even if cloud is newer
- * @returns sync status
+ * Upload bookmarks: local browser -\> cloud
+ * 
+ * @param force - whether to force upload even if cloud is newer
+ * @param localSnapshot - optional cached local payload from a previous check
+ * 
+ * @returns
+ * - sync status
+ * - local snapshot payload if `force` is false
+ * 
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
- * @see {@link ~src/hooks/useSync.ts useSync}
+ * 
+ * @see {@link src/hooks/useSync.ts#useSync}
  */
-export async function uploadBookmarks(force = false): Promise<Result<{ status: SyncStatus }>> {
+export async function uploadBookmarks(
+  force = false,
+  localSnapshot?: SyncPayload
+): Promise<Result<{ status: SyncStatus; payload?: SyncPayload }>> {
   try {
     const { providers } = await buildProviders()
     // no providers configured
     if (providers.length === 0) return { ok: true, data: { status: 'none' } }
-    const local = await getBookmarks()
+    const local = localSnapshot ?? await getBookmarks()
 
     // --- Check if any cloud is newer ---
     if (!force) {
       for (const item of providers) {
-        if (process.env.NODE_ENV === "development") console.log(`[core/sync/cloud] Start uploading to ${item.provider.name} when force = ${force}`)
+        logger.withTag('core/sync/cloud').info(`Start uploading to ${item.provider.name} when force = ${force}`)
         const res = await item.provider.download()
         if (res.ok && res.data) {
           if (getSyncStatus(local, res.data) === 'behind') {
-            return { ok: true, data: { status: 'behind' } }
+            return { ok: true, data: { status: 'behind', payload: local } }
           }
         } else {
           // If file or folder not found, continue to upload
           if (res.status === HttpStatus.NOT_FOUND || res.status === WebDAVStatus.CONFLICT) return { ok: true, data: { status: 'synced' } }
-          if (process.env.NODE_ENV === "development") console.error(`[core/sync/cloud] Download from ${item.provider.name} failed during upload check`)
+          logger.withTag('core/sync/cloud').error(`Download from ${item.provider.name} failed during upload check`)
           return { ok: false, error: `${messages.error.syncStatusCheck(item.provider.name)}: ${res.error || messages.error.downloadFailed()}` }
         }
       }
-      return { ok: true, data: { status: 'synced' } }
+      return { ok: true, data: { status: 'synced', payload: local } }
     }
 
     // --- Proceed to upload to all providers ---
     const errors: string[] = []
     let successCount = 0
     for (const item of providers) {
-      if (process.env.NODE_ENV === "development") console.log(`[core/sync/cloud] Start uploading to ${item.provider.name} when force = ${force}`)
+      logger.withTag('core/sync/cloud').info(`Start uploading to ${item.provider.name} when force = ${force}`)
       const res = await item.provider.upload(local)
       if (res.ok) {
         successCount++
       } else {
-        if (process.env.NODE_ENV === "development") console.error(`[core/sync/cloud] Upload to ${item.provider.name} failed`)
+        logger.withTag('core/sync/cloud').error(`Upload to ${item.provider.name} failed`)
         errors.push(`${item.provider.name}: ${res.error || messages.error.uploadFailed()}`)
       }
     }
@@ -104,12 +116,15 @@ export async function uploadBookmarks(force = false): Promise<Result<{ status: S
 }
 
 /**
- * Download bookmarks: cloud -> local browser
+ * Download bookmarks: cloud -\> local browser
+ * 
  * @returns 
  * - sync status
  * - sync payload if applicable
+ * 
  * @remarks Not intended for direct use. For frontend integration, please refer to the function below
- * @see {@link ~src/hooks/useSync.ts useSync}
+ * 
+ * @see {@link src/hooks/useSync.ts#useSync}
  */
 export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus, payload?: SyncPayload }>> {
   try {
@@ -120,9 +135,7 @@ export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus, 
     const errors: string[] = []
 
     for (const item of providers) {
-      if (process.env.NODE_ENV === "development") {
-        console.log(`[core/sync/cloud] Start downloading from ${item.provider.name}...`)
-      }
+      logger.withTag('core/sync/cloud').info(`Start downloading from ${item.provider.name}...`)
       const res = await item.provider.download()
       if (res.ok && res.data) {
         const cloud = res.data

@@ -4,6 +4,7 @@ import { t } from "~/src/i18n"
 
 /**
  * WebDAV vendor registry (static singleton)
+ * 
  * @remarks Manages preset and custom vendors, provides factory method
  */
 export class WebDAVRegistry {
@@ -37,7 +38,9 @@ export class WebDAVRegistry {
 
     /**
      * Get vendor by ID
-     * @param id Vendor ID
+     * 
+     * @param id - Vendor ID
+     * 
      * @returns Vendor config or undefined
      */
     public static getVendor(id: string): CustomVendorConfig | undefined {
@@ -46,9 +49,12 @@ export class WebDAVRegistry {
 
     /**
      * Add custom vendor
-     * @param vendor Vendor config to add
+     * 
+     * @param vendor - Vendor config to add
+     * 
      * @remarks Use `addCustomVendorToConfig` from store/loader.ts instead
-     * @see {@link ~src/store/loader.ts addCustomVendorToConfig}
+     * 
+     * @see {@link src/store/loader.ts#addCustomVendorToConfig}
      */
     public static addCustomVendor(vendor: CustomVendorConfig): void {
         // --- Check if ID exists ---
@@ -60,10 +66,14 @@ export class WebDAVRegistry {
 
     /**
      * Remove custom vendor
-     * @param id Vendor ID to remove
+     * 
+     * @param id - Vendor ID to remove
+     * 
      * @returns Whether removal was successful
+     * 
      * @remarks Use `removeCustomVendorFromConfig` from store/loader.ts instead
-     * @see {@link ~src/store/loader.ts removeCustomVendorFromConfig}
+     * 
+    * @see {@link src/store/loader.ts#removeCustomVendorFromConfig}
      */
     public static removeCustomVendor(id: string): boolean {
         const index = this.customVendors.findIndex(v => v.id === id)
@@ -83,6 +93,7 @@ export class WebDAVRegistry {
 
     /**
      * Get all custom vendors
+     * 
      * @returns Custom vendors array copy
      */
     public static getCustomVendors(): CustomVendorConfig[] {
@@ -91,6 +102,7 @@ export class WebDAVRegistry {
 
     /**
      * Get all preset vendors
+     * 
      * @returns Preset vendors array copy
      */
     public static getPresetVendors(): CustomVendorConfig[] {
@@ -102,8 +114,10 @@ export class WebDAVRegistry {
 
     /**
      * Create WebDAV provider instance
-     * @param vendorId Vendor ID to use
-     * @param config User configuration
+     * 
+     * @param vendorId - Vendor ID to use
+     * @param config - User configuration
+     * 
      * @returns Configured WebDAVProvider instance
      */
     public static createProvider(
