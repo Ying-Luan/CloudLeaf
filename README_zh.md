@@ -35,16 +35,19 @@
 npm install
 
 # 运行开发服务器
-npm run dev         # Chrome
-npm run dev:edge    # Microsoft Edge
+npm run dev          # Chrome
+npm run dev:edge     # Microsoft Edge
+npm run dev:firefox  # Firefox
 
 # 构建生产版本
-npm run build       # Chrome
-npm run build:edge  # Microsoft Edge
+npm run build          # Chrome
+npm run build:edge     # Microsoft Edge
+npm run build:firefox  # Firefox
 
 # 打包发布文件
-npm run package       # Chrome
-npm run package:edge  # Microsoft Edge
+npm run package          # Chrome
+npm run package:edge     # Microsoft Edge
+npm run package:firefox  # Firefox
 ```
 
 ## 支持的云服务

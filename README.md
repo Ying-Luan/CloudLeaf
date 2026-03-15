@@ -35,16 +35,19 @@
 npm install
 
 # Run development server
-npm run dev         # For Chrome
-npm run dev:edge    # For Microsoft Edge
+npm run dev          # For Chrome
+npm run dev:edge     # For Microsoft Edge
+npm run dev:firefox  # For Firefox
 
 # Build for production
-npm run build       # For Chrome
-npm run build:edge  # For Microsoft Edge
+npm run build          # For Chrome
+npm run build:edge     # For Microsoft Edge
+npm run build:firefox  # For Firefox
 
 # Package for store
-npm run package       # For Chrome
-npm run package:edge  # For Microsoft Edge
+npm run package          # For Chrome
+npm run package:edge     # For Microsoft Edge
+npm run package:firefox  # For Firefox
 ```
 
 ## Supported Providers
