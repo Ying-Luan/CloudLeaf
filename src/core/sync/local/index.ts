@@ -9,7 +9,7 @@ import { LocalProvider } from "~/src/providers"
 import { type Result, type SyncStatus, type SyncPayload } from "~/src/types"
 import { getSyncStatus } from "~/src/core/sync/utils"
 import { messages } from "~/src/i18n"
-import { logger } from "~src/utils"
+import { consolo } from "~src/utils"
 
 const provider = new LocalProvider()
 
@@ -48,7 +48,7 @@ export async function exportBookmarks(): Promise<Result<{ status: SyncStatus }>>
 export async function importBookmarks(): Promise<Result<{ status: SyncStatus, payload?: SyncPayload }>> {
   try {
     const res = await provider.download()
-    logger.withTag('core/sync/local').info("Successfully downloaded file from localProvider")
+    consolo.withTag('core/sync/local').info("Successfully downloaded file from localProvider")
     if (!res.ok || !res.data) {
       return {
         ok: false,

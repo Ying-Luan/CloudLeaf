@@ -8,7 +8,7 @@ import { type Result } from "~/src/types"
 import { BaseProvider } from "~/src/providers"
 import { HttpStatusMessage } from "~/src/constants"
 import { messages } from "~/src/i18n"
-import { logger } from "~src/utils"
+import { consolo } from "~src/utils"
 
 /**
  * HTTP method types
@@ -142,7 +142,7 @@ export abstract class HttpProvider extends BaseProvider {
    * @returns Error result
    */
   protected handleNetworkError(error: unknown): Result<never> {
-    logger.withTag('providers/http').error('Network error')
+    consolo.withTag('providers/http').error('Network error')
     if (error instanceof Error) {
       if (error.name === "AbortError") return { ok: false, error: messages.error.timeout() }
       return { ok: false, error: messages.error.network(error.message) }

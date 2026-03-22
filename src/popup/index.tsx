@@ -5,7 +5,7 @@ import { useSync } from "~src/hooks"
 import { setBookmarks } from "~src/core/bookmark"
 import { Button } from "~src/components"
 import { messages } from "~/src/i18n"
-import { confirm, logger } from "~src/utils"
+import { confirm, consolo } from "~src/utils"
 import { Toaster, toast } from "sonner"
 
 /**
@@ -44,7 +44,7 @@ function IndexPopup() {
    * allowing force upload if confirmed.
    */
   const handleUpload = async () => {
-    logger.withTag('popup').info("Starting upload...")
+    consolo.withTag('popup').info("Starting upload...")
     const result = await performUpload()
     if (!result.ok) {
       toast(messages.alert.uploadFailed(result.error || messages.error.unknownError()))
@@ -54,7 +54,7 @@ function IndexPopup() {
     if (result.data.status === 'behind') {
       if (await confirm(messages.confirm.forceUpload())) {
         await performUpload(true, result.data.payload)
-        logger.withTag('popup').info(`Force uploaded to providers after conflict detected.`)
+        consolo.withTag('popup').info(`Force uploaded to providers after conflict detected.`)
         toast(messages.alert.forceUploadSuccess())
       }
       // status === 'none' means no provider configured
@@ -63,7 +63,7 @@ function IndexPopup() {
       // Normal case: upload succeeded without conflicts
     } else {
       await performUpload(true, result.data.payload)
-      logger.withTag('popup').info(`Successfully uploaded to providers.`)
+      consolo.withTag('popup').info(`Successfully uploaded to providers.`)
       toast(messages.alert.uploadSuccess())
     }
   }
@@ -117,7 +117,7 @@ function IndexPopup() {
   const handleImport = async () => {
     const result = await performImport()
     if (!result.ok) {
-      logger.withTag('popup').error(`Import failed: ${result.error}`)
+      consolo.withTag('popup').error(`Import failed: ${result.error}`)
       toast(messages.alert.importFailed(result.error || messages.error.unknownError()))
       return
     }
@@ -137,7 +137,7 @@ function IndexPopup() {
    */
   const handleOpenPreview = async () => {
     try {
-      logger.withTag('popup').info("Opening side panel for preview...")
+      consolo.withTag('popup').info("Opening side panel for preview...")
       if (typeof browser !== 'undefined')
         await browser.sidebarAction.open()
       else {
@@ -145,7 +145,7 @@ function IndexPopup() {
         await chrome.sidePanel.open({ windowId: window.id })
       }
     } catch (error) {
-      logger.withTag('popup').error("Failed to open side panel:", error)
+      consolo.withTag('popup').error("Failed to open side panel:", error)
     }
   }
 
