@@ -6,9 +6,9 @@
 
 **浏览器书签云同步扩展**
 
-[![Chrome 网上应用店](https://img.shields.io/chrome-web-store/v/knpkebnhpcbklnknkcpgkiochlimhcoi?label=Chrome)](https://chrome.google.com/webstore/detail/knpkebnhpcbklnknkcpgkiochlimhcoi)
+[![Chrome 网上应用商店](https://img.shields.io/chrome-web-store/v/knpkebnhpcbklnknkcpgkiochlimhcoi?label=Chrome)](https://chrome.google.com/webstore/detail/knpkebnhpcbklnknkcpgkiochlimhcoi)
 [![Edge 附加组件](https://img.shields.io/badge/Edge-%E5%B7%B2%E6%94%AF%E6%8C%81-blue.svg)](https://microsoftedge.microsoft.com/addons/detail/knpkebnhpcbklnknkcpgkiochlimhcoi)
-[![Firefox 附加组件](https://img.shields.io/badge/Firefox-%E5%AE%A1%E6%A0%B8%E4%B8%AD-orange)](#)
+[![Firefox 附加组件](https://img.shields.io/amo/v/cloudleaf?label=Firefox)](https://addons.mozilla.org/zh-CN/firefox/addon/cloudleaf/)
 ![Chrome Web Store Size](https://img.shields.io/chrome-web-store/size/knpkebnhpcbklnknkcpgkiochlimhcoi)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 

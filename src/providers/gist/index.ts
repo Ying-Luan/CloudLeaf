@@ -8,7 +8,7 @@ import { type SyncPayload, type Result } from "~/src/types"
 import { HttpProvider } from "~/src/providers"
 import { GIST_ENDPOINTS, HttpStatus } from "~/src/constants"
 import { messages } from "~/src/i18n"
-import { logger } from "~src/utils"
+import { consolo } from "~src/utils"
 
 /**
  * GitHub Gist storage provider
@@ -134,7 +134,7 @@ export class GistProvider extends HttpProvider {
             })
 
             if (!response.ok) {
-                logger.withTag('providers/gist').error('Gist upload failed')
+                consolo.withTag('providers/gist').error('Gist upload failed')
                 return this.handleError(response)
             }
 

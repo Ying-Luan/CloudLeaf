@@ -8,7 +8,7 @@
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/knpkebnhpcbklnknkcpgkiochlimhcoi?label=Chrome)](https://chrome.google.com/webstore/detail/knpkebnhpcbklnknkcpgkiochlimhcoi)
 [![Edge Add-ons](https://img.shields.io/badge/Edge-Supported-blue.svg)](https://microsoftedge.microsoft.com/addons/detail/knpkebnhpcbklnknkcpgkiochlimhcoi)
-[![Firefox Add-ons](https://img.shields.io/badge/Firefox-In%20Review-orange)](#)
+[![Mozilla Add-ons](https://img.shields.io/amo/v/cloudleaf?label=Firefox)](https://addons.mozilla.org/zh-CN/firefox/addon/cloudleaf/)
 ![Chrome Web Store Size](https://img.shields.io/chrome-web-store/size/knpkebnhpcbklnknkcpgkiochlimhcoi)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -69,8 +69,8 @@ npm run package:firefox  # For Firefox
 2. Create a new Gist (can be private)
 3. Enter your token and Gist ID in the extension settings
 
-### WebDAV (Jianguoyun)
+### WebDAV (Nutstore)
 
-1. Go to Jianguoyun → Account Info → Security Options → Third-party Apps
+1. Go to Nutstore → Account Info → Security Options → Third-party Apps
 2. Add a new app to get the **app password** (not your login password)
 3. Enter your email and app password in the extension settings

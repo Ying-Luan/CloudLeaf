@@ -3,7 +3,7 @@ import { HttpProvider } from "~/src/providers"
 import { HttpStatus } from "~/src/constants"
 import { WebDAVStatus, getWebDAVStatusMessage } from "~/src/constants"
 import { messages } from "~/src/i18n"
-import { logger } from "~src/utils"
+import { consolo } from "~src/utils"
 
 /**
  * WebDAV protocol storage provider
@@ -102,14 +102,14 @@ export class WebDAVProvider extends HttpProvider {
             // --- Ensure parent directory exists ---
             await this.ensureDirectory()
 
-            logger.withTag('providers/webdav').info(`Start uploading to ${this.name}...`)
+            consolo.withTag('providers/webdav').info(`Start uploading to ${this.name}...`)
             const response = await this.request("PUT", this.filePath, {
                 body: data,
                 headers: { "Content-Type": "application/json; charset=utf-8" },
             })
 
             if (this.isSuccess(response.status)) {
-                logger.withTag('providers/webdav').info(`Successfully uploaded to ${this.name}`)
+                consolo.withTag('providers/webdav').info(`Successfully uploaded to ${this.name}`)
                 return { ok: true, status: response.status }
             }
 
@@ -126,7 +126,7 @@ export class WebDAVProvider extends HttpProvider {
      */
     async download(): Promise<Result<SyncPayload>> {
         try {
-            logger.withTag('providers/webdav').info(`Start downloading from ${this.name}...`)
+            consolo.withTag('providers/webdav').info(`Start downloading from ${this.name}...`)
             const response = await this.request("GET", this.filePath)
 
             const { status } = response
@@ -147,7 +147,7 @@ export class WebDAVProvider extends HttpProvider {
                 if (!data.bookmarks || !Array.isArray(data.bookmarks)) {
                     return { ok: false, error: messages.error.invalidFormat() }
                 }
-                logger.withTag('providers/webdav').info(`Successfully downloaded from ${this.name}`)
+                consolo.withTag('providers/webdav').info(`Successfully downloaded from ${this.name}`)
                 return { ok: true, data }
             } catch {
                 return { ok: false, error: messages.error.invalidJson() }
@@ -230,7 +230,7 @@ export class WebDAVProvider extends HttpProvider {
      * @returns Error result
      */
     protected handleWebDAVError(status: number): Result<never> {
-        logger.withTag('providers/webdav').error(`WebDAV request failed: ${status} - ${this.getErrorMessage(status)}`)
+        consolo.withTag('providers/webdav').error(`WebDAV request failed: ${status} - ${this.getErrorMessage(status)}`)
         return { ok: false, status, error: this.getErrorMessage(status) }
     }
 

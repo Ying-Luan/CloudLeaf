@@ -11,7 +11,7 @@ import { DEFAULT_FILENAME, HttpStatus, WebDAVStatus } from "~/src/constants"
 import { type Result, type SyncPayload, type SyncStatus } from "~/src/types"
 import { getSyncStatus } from "~/src/core/sync/utils"
 import { messages } from "~/src/i18n"
-import { logger } from "~src/utils"
+import { consolo } from "~src/utils"
 
 /**
  * Build providers from user config
@@ -73,7 +73,7 @@ export async function uploadBookmarks(
     // --- Check if any cloud is newer ---
     if (!force) {
       for (const item of providers) {
-        logger.withTag('core/sync/cloud').info(`Start uploading to ${item.provider.name} when force = ${force}`)
+        consolo.withTag('core/sync/cloud').info(`Start uploading to ${item.provider.name} when force = ${force}`)
         const res = await item.provider.download()
         if (res.ok && res.data) {
           if (getSyncStatus(local, res.data) === 'behind') {
@@ -82,7 +82,7 @@ export async function uploadBookmarks(
         } else {
           // If file or folder not found, continue to upload
           if (res.status === HttpStatus.NOT_FOUND || res.status === WebDAVStatus.CONFLICT) return { ok: true, data: { status: 'synced' } }
-          logger.withTag('core/sync/cloud').error(`Download from ${item.provider.name} failed during upload check`)
+          consolo.withTag('core/sync/cloud').error(`Download from ${item.provider.name} failed during upload check`)
           return { ok: false, error: `${messages.error.syncStatusCheck(item.provider.name)}: ${res.error || messages.error.downloadFailed()}` }
         }
       }
@@ -93,12 +93,12 @@ export async function uploadBookmarks(
     const errors: string[] = []
     let successCount = 0
     for (const item of providers) {
-      logger.withTag('core/sync/cloud').info(`Start uploading to ${item.provider.name} when force = ${force}`)
+      consolo.withTag('core/sync/cloud').info(`Start uploading to ${item.provider.name} when force = ${force}`)
       const res = await item.provider.upload(local)
       if (res.ok) {
         successCount++
       } else {
-        logger.withTag('core/sync/cloud').error(`Upload to ${item.provider.name} failed`)
+        consolo.withTag('core/sync/cloud').error(`Upload to ${item.provider.name} failed`)
         errors.push(`${item.provider.name}: ${res.error || messages.error.uploadFailed()}`)
       }
     }
@@ -135,7 +135,7 @@ export async function downloadBookmarks(): Promise<Result<{ status: SyncStatus, 
     const errors: string[] = []
 
     for (const item of providers) {
-      logger.withTag('core/sync/cloud').info(`Start downloading from ${item.provider.name}...`)
+      consolo.withTag('core/sync/cloud').info(`Start downloading from ${item.provider.name}...`)
       const res = await item.provider.download()
       if (res.ok && res.data) {
         const cloud = res.data
